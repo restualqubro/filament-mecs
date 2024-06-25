@@ -11,13 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('user_detail', function (Blueprint $table) {
+        Schema::create('ekspedisi', function (Blueprint $table) {
             $table->id();
-            $table->foreignUlid('user_id')->references('id')->on('users');
-            $table->date('birth_date');
-            $table->string('birth_place');
-            $table->char('telp', 15);
-            $table->string('address');
+            $table->string('name');
+            $table->string('jenis');
             $table->timestamps();
         });
     }
@@ -27,6 +24,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('user_detail');
+        Schema::dropIfExists('ekspedisi');
     }
 };

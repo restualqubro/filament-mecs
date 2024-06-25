@@ -11,13 +11,13 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('user_detail', function (Blueprint $table) {
-            $table->id();
-            $table->foreignUlid('user_id')->references('id')->on('users');
-            $table->date('birth_date');
-            $table->string('birth_place');
+        Schema::create('customers', function (Blueprint $table) {
+            $table->ulid('id')->primary();
+            $table->char('code', 10)->unique();
+            $table->string('name');
             $table->char('telp', 15);
             $table->string('address');
+            $table->enum('type', ['Customer', 'Reseller']);
             $table->timestamps();
         });
     }
@@ -27,6 +27,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('user_detail');
+        Schema::dropIfExists('customers');
     }
 };
