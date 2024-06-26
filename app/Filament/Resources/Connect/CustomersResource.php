@@ -3,7 +3,6 @@
 namespace App\Filament\Resources\Connect;
 
 use App\Filament\Resources\Connect\CustomersResource\Pages;
-use App\Filament\Resources\Connect\CustomersResource\RelationManagers;
 use App\Models\Connect\Customers;
 use Carbon\Carbon;
 use Filament\Forms;
@@ -11,7 +10,6 @@ use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Illuminate\Support\Str;
 
 class CustomersResource extends Resource
@@ -30,10 +28,7 @@ class CustomersResource extends Resource
                     ->required()
                     ->default(function () {                            
                             $date = Carbon::now()->format('my');                            
-                            $record = Customers::latest('code')->whereRaw("MID(code, 4, 4) = ".$date)->first();
-                            // $record = DB::table('customers')
-                            //             ->select('*')
-                            //             ->get();                                        
+                            $record = Customers::latest('code')->whereRaw("MID(code, 4, 4) = ".$date)->first();                                       
                             if ($record === null) {
                                 return "CST".$date."001";                                
                             } else {
@@ -77,12 +72,27 @@ class CustomersResource extends Resource
                     ->label('Nama Lengkap')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('type')
-                    ->label('Jenis Customer')                    
+                    ->label('Jenis Customer'),
+                Tables\Columns\TextColumn::make('address')
+                    ->label('Alamat Customer')
+                    ->limit(20)
             ])
             ->filters([
                 //
             ])
             ->actions([
+                Tables\Actions\Action::make('contact')
+                    ->hiddenLabel()
+                    ->tooltip('Contact')
+                    ->url(function(Customers $record) {
+                        
+                        // return dd($record);
+                        return 'https://wa.me/+62'.$record->telp;
+                    })
+                    ->color('success')
+                    ->icon('heroicon-o-chat-bubble-bottom-center-text')
+                    ->openUrlInNewTab(),
+                Tables\Actions\ViewAction::make()->hiddenLabel()->tooltip('Detail'),
                 Tables\Actions\EditAction::make()->hiddenLabel()->tooltip('Edit'),
                 Tables\Actions\DeleteAction::make()->hiddenLabel()->tooltip('Delete'),
             ])
