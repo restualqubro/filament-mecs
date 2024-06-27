@@ -11,14 +11,15 @@ use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Filament\Pages\SubNavigationPosition;
 
 class ProductCategoriesResource extends Resource
 {
     protected static ?string $model = ProductCategories::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-squares-2x2';
+    protected static SubNavigationPosition $subNavigationPosition = SubNavigationPosition::Top;
+
+    protected static ?string $navigationIcon = 'heroicon-o-tag';
 
     protected static ?string $cluster = Products::class;
 

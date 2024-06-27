@@ -11,12 +11,16 @@ use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
+use Filament\Pages\SubNavigationPosition;
 
 class ProductBrandsResource extends Resource
 {
     protected static ?string $model = ProductBrands::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-squares-2x2';
+
+    protected static SubNavigationPosition $subNavigationPosition = SubNavigationPosition::Top;
+    
 
     protected static ?string $cluster = Products::class;
 

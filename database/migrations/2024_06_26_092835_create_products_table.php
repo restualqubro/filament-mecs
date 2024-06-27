@@ -14,11 +14,14 @@ return new class extends Migration
         Schema::create('products', function (Blueprint $table) {
             $table->ulid('id')->primary();
             $table->string('name');
+            $table->string('code', 12);
             $table->foreignId('category_id')->references('id')->on('product_categories');
             $table->foreignId('brand_id')->references('id')->on('product_brands');
+            $table->bigInteger('hress');
+            $table->bigInteger('hjual');
             $table->enum('kondisi', ['BARU', 'SECOND']);
-            $table->tinyInteger('sale_warranty');
-            $table->string('description');
+            $table->tinyInteger('sale_warranty')->nullable();
+            $table->string('description')->nullable();
             $table->timestamps();
         });
     }
