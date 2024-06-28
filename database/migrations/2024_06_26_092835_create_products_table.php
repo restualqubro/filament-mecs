@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('products', function (Blueprint $table) {
             $table->ulid('id')->primary();
             $table->string('name');
-            $table->string('code', 12);
+            $table->string('code', 12)->unique();
             $table->foreignId('category_id')->references('id')->on('product_categories');
             $table->foreignId('brand_id')->references('id')->on('product_brands');
             $table->bigInteger('hress');
