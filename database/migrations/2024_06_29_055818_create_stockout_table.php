@@ -11,13 +11,13 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('stock', function (Blueprint $table) {
+        Schema::create('stockout', function (Blueprint $table) {
             $table->ulid('id')->primary();
-            $table->foreignUlid('product_id')->references('id')->on('products');                    
-            $table->string('code', 6);
-            $table->bigInteger('hbeli');
-            $table->tinyInteger('stok');
-            $table->tinyInteger('supplier_warranty');
+            $table->string('code', 12);
+            $table->date('tanggal');
+            $table->foreignId('category_id')->references('id')->on('stock_categories');
+            $table->string('description')->unique();
+            $table->foreignUlid('user_id')->references('id')->on('users');
             $table->timestamps();
         });
     }
@@ -27,6 +27,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('stock');
+        Schema::dropIfExists('table_stockout');
     }
 };

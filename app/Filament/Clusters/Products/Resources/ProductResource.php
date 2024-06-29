@@ -53,18 +53,18 @@ class ProductResource extends Resource
                             $brand = ProductBrands::find($get('brand_id'));                                                        
                             
                             if ($category === null || $brand === null) {
-                                $set('id', "Generate Gagal!!");
+                                $set('code', "Generate Gagal!!");
                             } 
                             else {  
                                 $last = Stock::where([
                                     ['category_id', '=', $category->id],
                                     ['brand_id', '=', $brand->id]
-                                ])->max('id');
+                                ])->max('code');
                                 if ($last != null) {                                    
                                     $tmp = substr($last, 7, 3)+1;
-                                    $set('id', $category->init."-".$brand->init.sprintf("%03s", $tmp));
+                                    $set('code', $category->init."-".$brand->init.sprintf("%03s", $tmp));
                                 } else {
-                                    $set('id', $category->init."-".$brand->init."001");
+                                    $set('code', $category->init."-".$brand->init."001");
                                 }                
                             }
                         })->hidden(fn(string $operation): bool => $operation === 'view') 
@@ -82,7 +82,11 @@ class ProductResource extends Resource
                             ->options([
                                 'BARU'  => 'BARU',
                                 'SECOND'=>  'SECOND',
-                            ]),                                                
+                            ]),                                                   
+                        Forms\Components\TextInput::make('sale_warranty')
+                            ->label('Garansi Customer')
+                            ->required()
+                            ->numeric(),                       
                         Forms\Components\TextInput::make('hress')
                             ->label('Harga Resell')
                             ->numeric()
@@ -90,10 +94,7 @@ class ProductResource extends Resource
                         Forms\Components\TextInput::make('hjual')
                             ->label('Harga Jual Umum')
                             ->numeric()
-                            ->required(),                                                     
-                        Forms\Components\TextInput::make('sale_warranty')
-                            ->label('Garansi Customer')
-                            ->numeric(),
+                            ->required(),                           
                         Forms\Components\TextArea::make('description')
                             ->label('Keterangan/Description')
                             ->columnSpan(3),
@@ -117,8 +118,8 @@ class ProductResource extends Resource
                 Tables\Columns\TextColumn::make('name')
                     ->label('Nama Item')
                     ->searchable(),
-                Tables\Columns\TextColumn::make('')
-                    ->label('Stok'),                    
+                Tables\Columns\TextColumn::make('sum')
+                    ->label('Stok'),                                    
                 Tables\Columns\TextColumn::make('hress')
                     ->label('Harga Resell')
                     ->money('IDR'),
@@ -146,7 +147,7 @@ class ProductResource extends Resource
         return [
             //
         ];
-    }
+    }    
 
     public static function getPages(): array
     {

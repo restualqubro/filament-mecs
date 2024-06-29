@@ -11,8 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('stockin', function (Blueprint $table) {
+        Schema::create('detail_stockin', function (Blueprint $table) {
             $table->id();
+            $table->foreignUlid('stockin_id')->references('id')->on('stockin');
+            $table->foreignUlid('stock_id')->references('id')->on('stock');            
+            $table->tinyInteger('qty');            
             $table->timestamps();
         });
     }
@@ -22,6 +25,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('stockins');
+        Schema::dropIfExists('detail_stockin');
     }
 };

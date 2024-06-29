@@ -5,6 +5,7 @@ namespace App\Models\Products;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Spatie\Image\Enums\Fit;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
@@ -17,6 +18,7 @@ class Products extends Model implements HasMedia
 
     protected $table = 'products';
     protected $fillable = [
+        'code',
         'name', 
         'category_id',
         'brand_id',
@@ -37,5 +39,21 @@ class Products extends Model implements HasMedia
             ->addMediaConversion('preview')
             ->fit(Fit::Contain, 600, 600)
             ->nonQueued();
+    }
+
+    public function stock(): HasMany
+    {
+        return $this->hasMany(Stock::class, 'product_id', 'id');
+    }  
+    
+    public function getSumAttribute()
+    {
+        $sum = 0;
+        $get = Stock::select('stok')->where('product_id', $this->id)->get();                
+        foreach($get as $stok)
+        {
+            $sum = $sum + $stok->stok;
+        }
+        return $sum;
     }
 }
