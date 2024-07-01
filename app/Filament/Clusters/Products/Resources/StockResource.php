@@ -13,7 +13,7 @@ use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Filament\Pages\SubNavigationPosition;
-use Illuminate\Support\Str;
+use Illuminate\Support\Carbon;
 
 class StockResource extends Resource
 {
@@ -33,7 +33,10 @@ class StockResource extends Resource
                     ->schema(                        
                         [          
                         Forms\Components\Hidden::make('code')
-                            ->default(Str::random(6)),         
+                            ->default(function() {
+                                $date = Carbon::now()->format('my');
+                                return $date."01";
+                            }),         
                         Forms\Components\Select::make('product_id')
                             ->label('Kode Items')
                             ->required()
@@ -75,7 +78,8 @@ class StockResource extends Resource
                 //
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
+                Tables\Actions\EditAction::make()->hiddenLabel()->tooltip('Edit'),
+                Tables\Actions\DeleteAction::make()->hiddenLabel()->tooltip('Delete')
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
@@ -95,8 +99,8 @@ class StockResource extends Resource
     {
         return [
             'index' => Pages\ListStocks::route('/'),
-            'create' => Pages\CreateStock::route('/create'),
-            'edit' => Pages\EditStock::route('/{record}/edit'),
+            // 'create' => Pages\CreateStock::route('/create'),
+            // 'edit' => Pages\EditStock::route('/{record}/edit'),
         ];
     }
 }

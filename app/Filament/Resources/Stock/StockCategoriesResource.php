@@ -25,7 +25,15 @@ class StockCategoriesResource extends Resource
     {
         return $form
             ->schema([
-                //
+                Forms\Components\TextInput::make('name')
+                    ->label('Nama Kategori')
+                    ->required(),
+                Forms\Components\Select::make('jenis')
+                    ->options([
+                        'Stockin'    => 'STOCKIN',
+                        'Stockout'   => 'STOCKOUT'
+                    ])
+                    ->required()
             ]);
     }
 
@@ -33,13 +41,22 @@ class StockCategoriesResource extends Resource
     {
         return $table
             ->columns([
-                //
+                Tables\Columns\TextColumn::make('name')
+                    ->label('Nama Kategori')
+                    ->searchable(),
+                Tables\Columns\BadgeColumn::make('jenis')
+                    ->label('Jenis Stok')
+                    ->colors([
+                        'primary'   => "Stockin",
+                        'danger'   => "Stockout",
+                    ])
             ])
             ->filters([
                 //
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
+                Tables\Actions\EditAction::make()->hiddenLabel()->tooltip('Edit'),
+                Tables\Actions\DeleteAction::make()->hiddenLabel()->tooltip('Delete'),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
@@ -59,8 +76,8 @@ class StockCategoriesResource extends Resource
     {
         return [
             'index' => Pages\ListStockCategories::route('/'),
-            'create' => Pages\CreateStockCategories::route('/create'),
-            'edit' => Pages\EditStockCategories::route('/{record}/edit'),
+            // 'create' => Pages\CreateStockCategories::route('/create'),
+            // 'edit' => Pages\EditStockCategories::route('/{record}/edit'),
         ];
     }
 }

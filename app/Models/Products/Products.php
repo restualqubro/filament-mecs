@@ -5,6 +5,7 @@ namespace App\Models\Products;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Spatie\Image\Enums\Fit;
 use Spatie\MediaLibrary\HasMedia;
@@ -41,9 +42,9 @@ class Products extends Model implements HasMedia
             ->nonQueued();
     }
 
-    public function stock(): HasMany
+    public function stock(): BelongsToMany
     {
-        return $this->hasMany(Stock::class, 'product_id', 'id');
+        return $this->belongsToMany(Stock::class, "products");
     }  
     
     public function getSumAttribute()
