@@ -44,7 +44,7 @@ class Products extends Model implements HasMedia
 
     public function stock(): BelongsToMany
     {
-        return $this->belongsToMany(Stock::class, "products");
+        return $this->belongsToMany(Stock::class);
     }  
     
     public function getSumAttribute()

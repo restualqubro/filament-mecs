@@ -14,6 +14,7 @@ class DetailStockin extends Model
     protected $fillable = [
         'stockin_id',
         'stock_id',
+        'name',
         'qty'
     ];
 

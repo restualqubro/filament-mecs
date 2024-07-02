@@ -15,7 +15,8 @@ return new class extends Migration
             $table->id();
             $table->foreignUlid('stockout_id')->references('id')->on('stockin');
             $table->foreignUlid('stock_id')->references('id')->on('stock');            
-            $table->tinyInteger('qty');            
+            $table->tinyInteger('qty');   
+            $table->string('name')         ;
             $table->timestamps();
         });
     }

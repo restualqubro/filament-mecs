@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('stockin', function (Blueprint $table) {
             $table->ulid('id')->primary();
-            $table->string('code', 12);
+            $table->string('code', 12)->unique();
             $table->date('tanggal');
             $table->foreignId('category_id')->references('id')->on('stock_categories');
             $table->string('description')->nullable();

@@ -33,14 +33,18 @@ class StockResource extends Resource
                     ->schema(                        
                         [          
                         Forms\Components\Hidden::make('code')
-                            ->default(function() {
+                            ->default(function() {                                
                                 $date = Carbon::now()->format('my');
                                 return $date."01";
                             }),         
                         Forms\Components\Select::make('product_id')
                             ->label('Kode Items')
                             ->required()
-                            ->options(Items::all()->pluck('name', 'id'))
+                            ->options(function() {
+                                $stok = Stock::select('product_id')->get();
+                                $items = Items::query()->whereNotIn('id', $stok)->pluck('code', 'id');
+                                return $items;
+                            })
                             ->searchable(),                                                           
                         Forms\Components\TextInput::make('hbeli')
                             ->label('Harga Beli')
