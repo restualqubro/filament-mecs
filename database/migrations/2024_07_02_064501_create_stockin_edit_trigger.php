@@ -17,10 +17,10 @@ return new class extends Migration
                     WHERE id = NEW.stock_id;
                 END
             ');
-        }
+    }
     
-        public function down()
-        {
-            DB::unprepared('DROP TRIGGER `tr_stockin_edit`');
-        }
+    public function down()
+    {
+        DB::unprepared('DROP TRIGGER `tr_stockin_edit`');
+    }
 };

@@ -11,12 +11,13 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('detail_stockout', function (Blueprint $table) {
+        Schema::create('detail_beli', function (Blueprint $table) {
             $table->id();
-            $table->foreignUlid('stockout_id')->references('id')->on('stockout');
-            $table->foreignUlid('stock_id')->references('id')->on('stock');            
-            $table->tinyInteger('qty');   
+            $table->foreignUlid('beli_id')->references('id')->on('beli');
+            $table->foreignUlid('product_id')->references('id')->on('products');
+            $table->tinyInteger('qty');
             $table->string('name');
+            $table->tinyInteger('supplier_warranty');
             $table->timestamps();
         });
     }
@@ -26,6 +27,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('detail_stockout');
+        Schema::dropIfExists('detail_beli');
     }
 };

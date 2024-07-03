@@ -11,13 +11,15 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('stockout', function (Blueprint $table) {
+        Schema::create('beli', function (Blueprint $table) {
             $table->ulid('id')->primary();
-            $table->string('code', 12);
+            $table->string('code', 20)->unique();
             $table->date('tanggal');
-            $table->foreignId('category_id')->references('id')->on('stock_categories');
-            $table->string('description')->nullable();
             $table->foreignUlid('user_id')->references('id')->on('users');
+            $table->foreignId('supplier_id')->references('id')->on('supplier');
+            $table->bigInteger('tot_har');
+            $table->bigInteger('ongkir');
+            $table->enum('status', ['Lunas, Cash, Utang']);
             $table->timestamps();
         });
     }
@@ -27,6 +29,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('table_stockout');
+        Schema::dropIfExists('beli');
     }
 };
