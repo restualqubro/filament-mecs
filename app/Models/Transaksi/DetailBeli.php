@@ -12,8 +12,8 @@ class DetailBeli extends Model
     protected $table ='detail_beli';
     protected $fillable = [
         'beli_id',
-        'product_id',
-        'name',
+        'product_id',        
+        'hbeli',
         'qty',
         'hbeli',
         'warranty',

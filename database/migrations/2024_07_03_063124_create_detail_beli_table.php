@@ -17,6 +17,7 @@ return new class extends Migration
             $table->foreignUlid('product_id')->references('id')->on('products');
             $table->tinyInteger('qty');
             $table->string('name');
+            $table->bigInteger('hbeli');
             $table->tinyInteger('supplier_warranty');
             $table->timestamps();
         });

@@ -13,6 +13,7 @@ use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Number;
 
 class PembelianResource extends Resource
 {
@@ -33,55 +34,66 @@ class PembelianResource extends Resource
                     ->schema([
                         Forms\Components\Card::make()
                             ->schema([
-                                Forms\Components\TextInput::make('code')
-                                    ->label('Faktur Pembelian')
-                                    ->default(function() {
-                                        $date = Carbon::now()->format('my');
-                                        $last = Pembelian::whereRaw("MID(code, 5, 4) = $date")->max('code');                                        
-                                        if ($last != null) {  
-                                            // foreach($q->result() as $k){
-                                            //     $tmp = substr($k->kd_max, 10,2)+1;
-                                            //     $kd = sprintf("%02s", $tmp);
-                                            // }                                                                                                 
-                                            $tmp = substr($last, 8, 4)+1;
-                                            // return $tmp;
-                                            return "FKB-".$date.sprintf("%03s", $tmp);                                                                            
-                                        } else {
-                                            return "FKB-".$date."001";
-                                        }
-                                    })
-                                    ->readonly()
-                                    ->required()
-                                    ->columnSpan(1),                                
-                                Forms\Components\DatePicker::make('tanggal')
-                                    ->default(now())
-                                    ->required(),                                                               
-                                Forms\Components\Select::make('supplier_id')
-                                    ->label('Supplier')
-                                    ->required()
-                                    ->options(Supplier::all()->pluck('name','id')),
-                                Forms\Components\TextInput::make('ongkir')
-                                    ->label('Ongkos Kirim')
-                                    ->required(),
-                                Forms\Components\TextInput::make('tot_har')
-                                    ->label('Ongkos Kirim')
-                                    ->required(),
-                            ])->columns(3),
+                                Forms\Components\Group::make()
+                                    ->schema([
+                                        Forms\Components\TextInput::make('code')
+                                            ->label('Faktur Pembelian')
+                                            ->default(function() {
+                                                $date = Carbon::now()->format('my');
+                                                $last = Pembelian::whereRaw("MID(code, 5, 4) = $date")->max('code');                                        
+                                                if ($last != null) {  
+                                                    // foreach($q->result() as $k){
+                                                    //     $tmp = substr($k->kd_max, 10,2)+1;
+                                                    //     $kd = sprintf("%02s", $tmp);
+                                                    // }                                                                                                 
+                                                    $tmp = substr($last, 8, 4)+1;
+                                                    // return $tmp;
+                                                    return "FKB-".$date.sprintf("%03s", $tmp);                                                                            
+                                                } else {
+                                                    return "FKB-".$date."001";
+                                                }
+                                            })
+                                            ->readonly()
+                                            ->required()
+                                            ->columnSpan([
+                                                'md' => 2
+                                            ]),                                
+                                        Forms\Components\DatePicker::make('tanggal')
+                                            ->default(now())
+                                            ->required()
+                                            ->columnSpan([
+                                                'md' => 2
+                                            ]),                                                               
+                                        Forms\Components\Select::make('supplier_id')
+                                            ->label('Supplier')
+                                            ->required()
+                                            ->options(Supplier::all()->pluck('name','id'))
+                                            ->columnSpan([
+                                                'md' => 2
+                                            ]), 
+                                    ])->columns(6),                                
+                                Forms\Components\Group::make()
+                                ->schema([
+                                    Forms\Components\TextArea::make('description'),                                
+                                    Forms\Components\SpatieMediaLibraryFileUpload::make('media')
+                                        ->label('Dokumentasi Nota/Invoice')
+                                        ->collection('beli'),
+                                ])
+                                ->columns(2)
+                            ]),
                         Forms\Components\Card::make()
                             ->schema([
                                 Forms\Components\Placeholder::make('Products'),
                                 Repeater::make('detailBeli')
                                     ->label('Detail Items')                                                                    
                                     ->relationship()
+                                    ->collapsible()
                                     ->schema([                                        
                                         Forms\Components\Select::make('product_id')
-                                            ->label('Kode Product')                                            
-                                            // ->options(fn(Forms\Get $get): Collection => Stock::query()
-                                            //                                 ->where('product_id', $get('product_id'))
-                                            //                                 ->pluck('code', 'id'))
+                                            ->label('Kode Product')                                                                                        
                                             ->options(                                                
                                                 $products->mapWithKeys(function (Products $products) {
-                                                    return [$products->id => sprintf($products->code)];
+                                                    return [$products->id => sprintf('%s | %s', $products->code, $products->name)];
                                                 })
                                                 )
                                                     // foreach($stock as $items)
@@ -96,35 +108,84 @@ class PembelianResource extends Resource
                                                     ->reject(fn($id) => $id == $state)
                                                     ->filter()
                                                     ->contains($value);
-                                            })
-                                            ->afterStateUpdated(function($state, callable $set) {
-                                                $products = Products::find($state);
-                                                if ($products) {                                                    
-                                                    $set('name', $products->product->name);                                                    
-                                                }
-                                            })
+                                            })                                            
                                             ->columnSpan([
-                                                'md' => 3
-                                            ]),
-                                        Forms\Components\TextInput::make('name')
-                                            ->label('Nama Item')                                                                                 
-                                            ->disabled()
-                                            ->dehydrated()
-                                            ->columnSpan([
-                                                'md' => 5   
-                                            ]),                                          
-                                        Forms\Components\TextInput::make('qty')                                            
-                                            ->numeric()                                            
+                                                'md' => 5
+                                            ]),                                                 
+                                        Forms\Components\TextInput::make('hbeli')                                            
+                                            ->label('Harga Beli')
+                                            ->numeric()    
+                                            ->required()                                        
                                             ->columnSpan([
                                                 'md' => 2
                                             ]),                                        
+                                        Forms\Components\TextInput::make('qty') 
+                                            ->label('Qty')   
+                                            ->numeric()    
+                                            ->required()                                                                                                                                                                                                                            
+                                            ->columnSpan([
+                                                'md' => 1
+                                            ])
+                                            ->live()
+                                            ->afterStateUpdated(
+                                                function (Forms\Get $get, Forms\Set $set) {
+                                                    $qty = $get('qty');
+                                                    $hbeli = $get('hbeli');
+                                                    $jumlah = $qty * $hbeli;
+                                                    $set('jumlah', number_format($jumlah, 0, '', '.'));
+                                                }
+                                            ),
+                                        Forms\Components\TextInput::make('jumlah') 
+                                            ->label('Jumlah')                                           
+                                            ->disabled()                                                                                    
+                                            ->columnSpan([
+                                                'md' => 2
+                                            ]),
                                     ])
+                                    ->live()
+                                    // After adding a new row, we need to update the totals
+                                    ->afterStateUpdated(function (Forms\Get $get, Forms\Set $set) {
+                                        self::updateTotalHarga($get, $set);
+                                    })
+                                    // After deleting a row, we need to update the totals
+                                    ->deleteAction(
+                                        fn(Forms\Components\Actions\Action $action) => $action->after(fn(Forms\Get $get, Forms\Set $set) => self::updateTotals($get, $set)),
+                                    )
                                     ->defaultItems(1)
                                     ->columns([
                                         'md' => 10
                                     ])
                                     ->columnSpan('full')
                             ]),
+                        Forms\Components\Card::make()                                                                                              
+                            ->schema([
+                            Forms\Components\Hidden::make('tot_har'),
+                            Forms\Components\TextInput::make('out_har')
+                                ->label('Total Harga')                                    
+                                ->disabled()
+                                ->dehydrated()
+                                ->required(),
+                            Forms\Components\TextInput::make('ongkir')
+                                ->label('Ongkos Kirim')
+                                ->numeric()
+                                ->minValue(0)
+                                ->required(),
+                            Forms\Components\TextInput::make('tot_bayar')
+                                ->label('Total di Bayarkan')
+                                ->numeric()
+                                ->minValue(0)
+                                ->live()
+                                ->afterStateUpdated(function (Forms\Get $get, Forms\Set $set) {
+                                    self::updateSisaPembayaran($get, $set);
+                                })
+                                ->required(),
+                            Forms\Components\Hidden::make('sisa'),
+                            Forms\Components\Hidden::make('status'),
+                            Forms\Components\TextInput::make('out_sisa')
+                                ->label('Sisa Pembayaran')                                
+                                ->disabled()
+                                ->dehydrated(),
+                            ])->columns(2),
                     ])->columnSpan('full')
             ]);
     }
@@ -158,6 +219,41 @@ class PembelianResource extends Resource
             ]);
     }
 
+    public static function updateTotalHarga(Forms\Get $get, Forms\Set $set): void
+    {
+        // Retrieve all selected products and remove empty rows
+        $selectedProducts = collect($get('detailBeli'))->filter(fn($item) => !empty($item['qty']) && !empty($item['hbeli']) && !empty($item['jumlah']));
+
+        $total = 0;
+        foreach($selectedProducts as $item) {
+            $subtotal = $item['hbeli'] * $item['qty'];
+            $total+= $subtotal;
+        }      
+
+
+        // Update the state with the new values
+        $set('tot_har', $total);
+        $set('out_har', number_format($total, 0, '', '.'));
+        
+
+    }
+
+    public static function updateSisaPembayaran(Forms\Get $get, Forms\Set $set): void
+    {        
+        if (!empty($get('tot_har')) && !empty($get('ongkir')) && !empty($get('tot_bayar'))) {
+            $sisa = ($get('tot_har') + $get('ongkir')) - $get('tot_bayar');            
+            if ($sisa < 0) {
+                $set('status', 'Utang');        
+            } else {
+                $set('status', 'Cash');
+            }
+        } else {
+            $sisa = null;
+        }        
+        $set('out_sisa', number_format($sisa, 0, '', '.'));
+        $set('sisa', $sisa);
+    }
+    
     public static function getRelations(): array
     {
         return [

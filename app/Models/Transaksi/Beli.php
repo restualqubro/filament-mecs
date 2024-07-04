@@ -11,12 +11,15 @@ use App\Models\User;
 use App\Models\Connect\Supplier;
 use Spatie\Image\Enums\Fit;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
+use Spatie\MediaLibrary\HasMedia;
+use Spatie\MediaLibrary\InteractsWithMedia;
 
-class Beli extends Model
+class Beli extends Model implements HasMedia 
 {
+    use InteractsWithMedia;
     use HasFactory, HasUlids;
 
-    protected $table = 'beli';
+    protected $table = 'beli';    
     protected $fillable = [
         'code',
         'tanggal',
@@ -24,6 +27,9 @@ class Beli extends Model
         'supplier_id',
         'tot_har',
         'ongkir',
+        'tot_bayar',
+        'sisa',
+        'description',
         'status'
     ];
 
@@ -53,5 +59,16 @@ class Beli extends Model
             ->addMediaConversion('preview')
             ->fit(Fit::Contain, 300, 300)
             ->nonQueued();
+    }
+
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::creating(function ($project) {
+            if (empty($project->user_id)) {
+                $project->user_id = auth()->id();
+            }
+        });
     }
 }
