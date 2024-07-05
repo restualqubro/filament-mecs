@@ -27,7 +27,7 @@ class Beli extends Model implements HasMedia
         'supplier_id',
         'tot_har',
         'ongkir',
-        'tot_bayar',
+        'tot_bayar',        
         'sisa',
         'description',
         'status'

@@ -14,9 +14,8 @@ return new class extends Migration
         Schema::create('detail_beli', function (Blueprint $table) {
             $table->id();
             $table->foreignUlid('beli_id')->references('id')->on('beli');
-            $table->foreignUlid('product_id')->references('id')->on('products');
-            $table->tinyInteger('qty');
-            $table->string('name');
+            $table->foreignUlid('stock_id')->references('id')->on('stock');
+            $table->tinyInteger('qty');            
             $table->bigInteger('hbeli');
             $table->tinyInteger('supplier_warranty');
             $table->timestamps();

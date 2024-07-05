@@ -78,29 +78,13 @@ class StockinResource extends Resource
                                     ->label('Detail Items')                                                                    
                                     ->relationship()
                                     ->schema([                                        
-                                        // Forms\Components\Select::make('product_id')
-                                        //     ->label('Product')                                            
-                                        //     ->options(Products::all()->pluck('code', 'id'))
-                                        //     ->required()
-                                        //     ->searchable()
-                                        //     ->reactive()                                           
-                                        //     ->columnSpan([
-                                        //         'md' => 2
-                                        //     ]),
                                         Forms\Components\Select::make('stock_id')
                                             ->label('SKU')                                            
-                                            // ->options(fn(Forms\Get $get): Collection => Stock::query()
-                                            //                                 ->where('product_id', $get('product_id'))
-                                            //                                 ->pluck('code', 'id'))
                                             ->options(                                                
                                                 $stock->mapWithKeys(function (Stock $stock) {
                                                     return [$stock->id => sprintf('%s-%s', $stock->product->code, $stock->code)];
                                                 })
-                                                )
-                                                    // foreach($stock as $items)
-                                                    // {
-                                                    //     return items;
-                                                    // }                                            
+                                                )                                                                                    
                                             ->required()
                                             ->searchable()
                                             ->reactive()

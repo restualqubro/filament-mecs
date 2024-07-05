@@ -12,9 +12,9 @@ class DetailBeli extends Model
     protected $table ='detail_beli';
     protected $fillable = [
         'beli_id',
-        'product_id',        
+        'stock_id',        
         'hbeli',
-        'qty',
+        'qty',        
         'hbeli',
         'warranty',
     ];
