@@ -18,8 +18,7 @@ return new class extends Migration
             $table->foreignUlid('user_id')->references('id')->on('users');
             $table->foreignId('supplier_id')->references('id')->on('supplier');
             $table->bigInteger('tot_har');
-            $table->bigInteger('tot_bayar');
-            $table->bigInteger('ongkir');
+            $table->bigInteger('tot_bayar');            
             $table->bigInteger('sisa');
             $table->string('description')->nullable();
             $table->enum('status', ['Lunas', 'Cash', 'Utang']);

@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Filament\Resources\Transaksi\PembelianResource\Pages;
+namespace App\Filament\Clusters\Pembelian\Resources\PembelianResource\Pages;
 
-use App\Filament\Resources\Transaksi\PembelianResource;
+use App\Filament\Clusters\Pembelian\Resources\PembelianResource;
 use Filament\Actions;
 use Filament\Resources\Pages\EditRecord;
 

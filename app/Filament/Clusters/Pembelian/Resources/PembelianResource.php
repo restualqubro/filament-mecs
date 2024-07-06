@@ -1,11 +1,10 @@
 <?php
 
-namespace App\Filament\Resources\Transaksi;
+namespace App\Filament\Clusters\Pembelian\Resources;
 
-use App\Filament\Resources\Transaksi\PembelianResource\Pages;
-use Filament\Forms\Components\Repeater;
-use App\Models\Transaksi\Beli as Pembelian;
-use App\Models\Products\Products;
+use App\Filament\Clusters\Pembelian;
+use App\Filament\Clusters\Pembelian\Resources\PembelianResource\Pages;
+use App\Models\Transaksi\Beli;
 use App\Models\Products\Stock;
 use App\Models\Connect\Supplier;
 use Filament\Forms;
@@ -14,17 +13,19 @@ use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Support\Carbon;
-use Illuminate\Support\Number;
+use Filament\Forms\Components\Repeater;
+use Filament\Pages\SubNavigationPosition;
 
 class PembelianResource extends Resource
 {
-    protected static ?string $model = Pembelian::class;
+    protected static ?string $cluster = Pembelian::class;
 
-    protected static ?string $navigationGroup = 'Transaksi';
+    protected static ?string $model = Beli::class;
+
+    protected static SubNavigationPosition $subNavigationPosition = SubNavigationPosition::Top;    
 
     protected static ?string $pluralModelLabel = 'Pembelian';
-
-    protected static ?string $navigationIcon = 'heroicon-o-shopping-bag';
+    
 
     public static function form(Form $form): Form
     {
@@ -112,7 +113,7 @@ class PembelianResource extends Resource
                                                 'md' => 1
                                             ]),
                                         Forms\Components\TextInput::make('hbeli')                                            
-                                            ->label('Harga Beli')
+                                            ->label('Harga')
                                             ->numeric()    
                                             ->required()                                        
                                             ->columnSpan([
@@ -163,23 +164,7 @@ class PembelianResource extends Resource
                                 ->label('Subtotal')                                    
                                 ->disabled()
                                 ->dehydrated()
-                                ->required(),
-                            Forms\Components\TextInput::make('ongkir')
-                                ->label('Ongkos Kirim')
-                                ->numeric()
-                                ->minValue(0)
-                                ->required()
-                                ->live()
-                                ->afterStateUpdated(function (Forms\Get $get, Forms\Set $set) {
-                                    $subtotal = $get('tot_har');
-                                    $ongkir = $get('ongkir');
-                                    $total = $subtotal + $ongkir;        
-                                    $set('total', number_format($total, 0, '', '.'));
-                                }),                            
-                            Forms\Components\TextInput::make('total')
-                                ->label('Total')
-                                ->disabled()                                 
-                                ->required(),
+                                ->required(),                                                                                    
                             Forms\Components\TextInput::make('tot_bayar')
                                 ->label('Total di Bayarkan')
                                 ->numeric()
@@ -194,10 +179,7 @@ class PembelianResource extends Resource
                                 ->label('Sisa Pembayaran')                                
                                 ->disabled()
                                 ->dehydrated(),
-                            Forms\Components\TextInput::make('status')
-                                ->label('Status Pembayaran')
-                                ->disabled()
-                                ->dehydrated(),
+                            Forms\Components\Hidden::make('status')                                
                             ])->columns(3),
                     ])->columnSpan('full')
             ]);
@@ -214,8 +196,12 @@ class PembelianResource extends Resource
                 Tables\Columns\TextColumn::make('tanggal')
                     ->label('Tanggal')
                     ->date(),                
-                Tables\Columns\TextColumn::make('ongkir')        
-                    ->label('Ongkos Kirim')                    
+                Tables\Columns\TextColumn::make('supplier.name')        
+                    ->label('Supplier'),
+                Tables\Columns\TextColumn::make('tot_har')                    
+                    ->label('Total Harga'),
+                Tables\Columns\BadgeColumn::make('status')
+                    ->label('Status Pembayaran')
             ])
             ->filters([
                 //
@@ -287,4 +273,5 @@ class PembelianResource extends Resource
             'edit' => Pages\EditPembelian::route('/{record}/edit'),
         ];
     }
+
 }
