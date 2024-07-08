@@ -1,13 +1,13 @@
 <?php
 
-namespace App\Filament\Clusters\Pembelian\Resources;
+namespace App\Filament\Clusters\Penjualan\Resources;
 
-use App\Filament\Clusters\Pembelian;
-use App\Filament\Clusters\Pembelian\Resources\PembelianResource\Pages;
-use App\Models\Transaksi\Beli;
+use App\Filament\Clusters\Penjualan;
+use App\Filament\Clusters\Penjualan\Resources\PenjualanResource\Pages;
+use App\Filament\Clusters\Penjualan\Resources\PenjualanResource\RelationManagers;
+use App\Models\Transaksi\Jual;
 use App\Models\Products\Stock;
-use App\Models\Transaksi\UtangPembelian;
-use App\Models\Connect\Supplier;
+use App\Models\Connect\Customers;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
@@ -18,16 +18,14 @@ use Filament\Forms\Components\Repeater;
 use Filament\Pages\SubNavigationPosition;
 use Filament\Support\Enums\MaxWidth;
 
-class PembelianResource extends Resource
+class PenjualanResource extends Resource
 {
-    protected static ?string $cluster = Pembelian::class;
-
-    protected static ?string $model = Beli::class;
+    protected static ?string $model = Jual::class;    
 
     protected static SubNavigationPosition $subNavigationPosition = SubNavigationPosition::Top;    
 
-    protected static ?string $pluralModelLabel = 'Pembelian';
-    
+    protected static ?string $cluster = Penjualan::class;
+
     public static function form(Form $form): Form
     {
         $stock = Stock::get();
@@ -43,12 +41,12 @@ class PembelianResource extends Resource
                                             ->label('Faktur Pembelian')
                                             ->default(function() {
                                                 $date = Carbon::now()->format('my');
-                                                $last = Beli::whereRaw("MID(code, 5, 4) = $date")->max('code');                                        
+                                                $last = Jual::whereRaw("MID(code, 5, 4) = $date")->max('code');                                        
                                                 if ($last != null) {                                                                                            
                                                     $tmp = substr($last, 8, 4)+1;
-                                                    return "FKB-".$date.sprintf("%03s", $tmp);                                                                            
+                                                    return "FKJ-".$date.sprintf("%03s", $tmp);                                                                            
                                                 } else {
-                                                    return "FKB-".$date."001";
+                                                    return "FKJ-".$date."001";
                                                 }
                                             })
                                             ->readonly()
@@ -62,27 +60,31 @@ class PembelianResource extends Resource
                                             ->columnSpan([
                                                 'md' => 2
                                             ]),                                                               
-                                        Forms\Components\Select::make('supplier_id')
-                                            ->label('Supplier')
+                                        Forms\Components\Select::make('customer_id')
+                                            ->label('Custoler')
                                             ->required()
-                                            ->options(Supplier::all()->pluck('name','id'))
+                                            ->options(Customers::all()->pluck('name','id'))
+                                            ->columnSpan([
+                                                'md' => 2
+                                            ]),
+                                        Forms\Components\Select::make('customer_id')
+                                            ->label('Custoler')
+                                            ->required()
+                                            ->options(Customers::all()->pluck('name','id'))
                                             ->columnSpan([
                                                 'md' => 2
                                             ]), 
                                     ])->columns(6),                                
                                 Forms\Components\Group::make()
                                 ->schema([
-                                    Forms\Components\TextArea::make('description'),                                
-                                    Forms\Components\SpatieMediaLibraryFileUpload::make('media')
-                                        ->label('Dokumentasi Nota/Invoice')
-                                        ->collection('beli'),
+                                    Forms\Components\TextArea::make('description'),                                                                    
                                 ])
-                                ->columns(2)
+                                ->columns('full')
                             ]),
                         Forms\Components\Card::make()
                             ->schema([
                                 Forms\Components\Placeholder::make('Products'),
-                                Repeater::make('detailBeli')
+                                Repeater::make('detailJual')
                                     ->label('Detail Items')                                                                    
                                     ->relationship()
                                     ->collapsible()
@@ -102,24 +104,31 @@ class PembelianResource extends Resource
                                                     ->reject(fn($id) => $id == $state)
                                                     ->filter()
                                                     ->contains($value);
-                                            })                                            
+                                            }) 
+                                            ->afterStateUpdated(function($state, callable $set) {
+                                                $stock = Stock::find($state);
+                                                if ($stock) {                                                    
+                                                    $set('out_hjual', number_format($stock->product->hjual, 0, '', '.'));              
+                                                    $set('hjual', $stock->product->hjual);
+                                                }
+                                            })                                           
                                             ->columnSpan([
                                                 'md' => 5
-                                            ]),                                                 
-                                        Forms\Components\TextInput::make('supplier_warranty')                                            
-                                            ->label('Garansi')
+                                            ]),                                                                                         
+                                        Forms\Components\Hidden::make('hjual'),
+                                        Forms\Components\TextInput::make('out_hjual')                                            
+                                            ->label('Harga')
+                                            ->disabled()                                            
+                                            ->columnSpan([
+                                                'md' => 1
+                                            ]),                                        
+                                        Forms\Components\TextInput::make('disc')                                            
+                                            ->label('Discount')
                                             ->numeric()    
                                             ->required()                                        
                                             ->columnSpan([
                                                 'md' => 1
                                             ]),
-                                        Forms\Components\TextInput::make('hbeli')                                            
-                                            ->label('Harga')
-                                            ->numeric()    
-                                            ->required()                                        
-                                            ->columnSpan([
-                                                'md' => 1
-                                            ]),                                        
                                         Forms\Components\TextInput::make('qty') 
                                             ->label('Qty')   
                                             ->numeric()    
@@ -130,9 +139,10 @@ class PembelianResource extends Resource
                                             ->live()
                                             ->afterStateUpdated(
                                                 function (Forms\Get $get, Forms\Set $set) {
+                                                    $disc = $get('disc');
                                                     $qty = $get('qty');
-                                                    $hbeli = $get('hbeli');
-                                                    $jumlah = $qty * $hbeli;
+                                                    $hjual = $get('hjual');
+                                                    $jumlah = $qty * ($hjual - $disc);
                                                     $set('jumlah', number_format($jumlah, 0, '', '.'));
                                                 }
                                             ),                                        
@@ -159,13 +169,29 @@ class PembelianResource extends Resource
                                     ->columnSpan('full')
                             ]),
                         Forms\Components\Card::make()                                                                                              
-                            ->schema([
-                            Forms\Components\Hidden::make('tot_har'),
-                            Forms\Components\TextInput::make('out_har')
+                            ->schema([                            
+                            Forms\Components\TextInput::make('dp')
+                                ->label('Uang Muka / DP')                                    
+                                ->disabled()
+                                ->dehydrated()
+                                ->required(), 
+                            Forms\Components\TextInput::make('subtotal')
                                 ->label('Subtotal')                                    
                                 ->disabled()
                                 ->dehydrated()
-                                ->required(),                                                                                    
+                                ->required(), 
+                            Forms\Components\Hidden::make('tot_disc'),
+                            Forms\Components\TextInput::make('out_tot_disc')
+                                ->label('Total Discount')                                    
+                                ->disabled()
+                                ->dehydrated()
+                                ->required(),                               
+                            Forms\Components\Hidden::make('tot_har'),
+                            Forms\Components\TextInput::make('total')
+                                ->label('Total')                                    
+                                ->disabled()
+                                ->dehydrated()
+                                ->required(),                                                               
                             Forms\Components\TextInput::make('tot_bayar')
                                 ->label('Total di Bayarkan')
                                 ->numeric()
@@ -208,56 +234,7 @@ class PembelianResource extends Resource
                 //
             ])
             ->actions([
-                Tables\Actions\ViewAction::make()->hiddenLabel()->tooltip('Detail'),
-                Tables\Actions\Action::make('pelunasan')->hiddenLabel()->tooltip('Pelunasan')
-                    ->label('Pelunasan')
-                    ->color('warning')
-                    ->icon('heroicon-o-queue-list')                    
-                    ->form([  
-                        Forms\Components\Hidden::make('beli_id')                                                        
-                            ->default(fn(Beli $record): string => $record->id),                      
-                        Forms\Components\TextInput::make('code')
-                            ->label('Faktur Pembelian')
-                            ->disabled()
-                            ->dehydrated()
-                            ->default(fn(Beli $record): string => $record->code),
-                        Forms\Components\TextInput::make('out_sisa')
-                            ->label('Sisa Pembayaran')
-                            ->disabled()                        
-                            ->default(fn(Beli $record): string => number_format($record->sisa, '0', '', '.')),
-                        Forms\Components\Hidden::make('sisa')
-                            ->default(fn(Beli $record) => $record->sisa),
-                        Forms\Components\Hidden::make('tot_bayar')
-                            ->default(fn(Beli $record) => $record->tot_bayar),
-                        Forms\Components\DatePicker::make('tanggal')
-                            ->label('Tanggal Pelunasan')
-                            ->default(now())
-                            ->required(),
-                        Forms\Components\TextInput::make('bayar')
-                            ->label('Nominal Pembayaran')                            
-                            ->required(),
-                    ])
-                    ->action(function (array $data): void {                        
-                        $record[] = array();
-                        $record['user_id'] = auth()->user()->id;
-                        $record['beli_id'] = $data['beli_id'];
-                        $record['tanggal'] = $data['tanggal'];
-                        $record['bayar']   = $data['bayar'];                        
-                        $sisa = $data['sisa'] - $data['bayar'];
-                        $bayar = $data['tot_bayar'] + $data['bayar'];
-                        if ($sisa > 0) {
-                            $status = 'Utang';
-                        } else {
-                            $status = 'Lunas';
-                        }
-                        UtangPembelian::Create($record);
-                        Beli::where('id', $data['beli_id'])->update([
-                            'sisa'      => $sisa,
-                            'status'    => $status,
-                            'tot_bayar' => $bayar,
-                        ]);
-                    })->visible(fn (Beli $record): bool => $record->status === 'Utang')
-                    ->modalWidth(MaxWidth::Medium),
+                Tables\Actions\ViewAction::make()->hiddenLabel()->tooltip('Detail'),                
                 Tables\Actions\EditAction::make()->hiddenLabel()->tooltip('Edit'),
                 Tables\Actions\DeleteAction::make()->hiddenLabel()->tooltip('Delete')
             ])
@@ -271,12 +248,10 @@ class PembelianResource extends Resource
     public static function updateTotalHarga(Forms\Get $get, Forms\Set $set): void
     {
         // Retrieve all selected products and remove empty rows
-        $selectedProducts = collect($get('detailBeli'))->filter(fn($item) => !empty($item['qty']) && !empty($item['hbeli']) && !empty($item['jumlah']));        
-        $total = 0;
-        $totalqty = 0;
+        $selectedProducts = collect($get('detailJual'))->filter(fn($item) => !empty($item['qty']) && !empty($item['hjual']) && !empty($item['disc']));        
+        $total = 0;        
         foreach($selectedProducts as $item) {
-            $subtotal = $item['hbeli'] * $item['qty'];
-            $totalqty += $item['qty'];
+            $subtotal = ($item['hjual'] - $item['disc']) * $item['qty'];            
             $total+= $subtotal;
         }              
 
@@ -320,10 +295,9 @@ class PembelianResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListPembelians::route('/'),
-            'create' => Pages\CreatePembelian::route('/create'),
-            'edit' => Pages\EditPembelian::route('/{record}/edit'),
+            'index' => Pages\ListPenjualans::route('/'),
+            'create' => Pages\CreatePenjualan::route('/create'),
+            'edit' => Pages\EditPenjualan::route('/{record}/edit'),
         ];
     }
-
 }

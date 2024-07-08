@@ -7,23 +7,24 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-class DetailBeli extends Model
+class DetailJual extends Model
 {
     use HasFactory;
 
-    protected $table ='detail_beli';
+    protected $table ='detail_jual';
     protected $fillable = [
-        'beli_id',
+        'jual_id',
         'stock_id',        
-        'hbeli',
-        'qty',        
-        'hbeli',
-        'warranty',
+        'qty',
+        'hjual',        
+        'disc',
+        'profit',
+        'warranty'
     ];
 
-    public function beli(): BelongsTo
+    public function jual(): BelongsTo
     {
-        return $this->belongsTo(Beli::class);
+        return $this->belongsTo(Jual::class);
     }
 
     public function stock(): BelongsTo
