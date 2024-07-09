@@ -26,7 +26,9 @@ class Jual extends Model
         'sisa',
         'status',
         'is_pending',
-        'description'        
+        'description',
+        'preorder_id',
+        'tot_pr'
     ];
 
     public function user(): BelongsTo
@@ -42,6 +44,11 @@ class Jual extends Model
     public function detailJual(): HasMany
     {
         return $this->hasMany(DetailJual::class);
+    }
+
+    public function preorder(): BelongsTo
+    {
+        return $this->belongsTo(Preorder::class);
     }
 
     protected static function boot()

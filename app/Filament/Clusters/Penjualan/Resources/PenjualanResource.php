@@ -33,54 +33,71 @@ class PenjualanResource extends Resource
             ->schema([
                 Forms\Components\Group::make()
                     ->schema([
-                        Forms\Components\Card::make()
-                            ->schema([
-                                Forms\Components\Group::make()
+                        Forms\Components\Grid::make()                        
+                            ->schema([                            
+                                Forms\Components\Card::make()
                                     ->schema([
-                                        Forms\Components\TextInput::make('code')
-                                            ->label('Faktur Pembelian')
-                                            ->default(function() {
-                                                $date = Carbon::now()->format('my');
-                                                $last = Jual::whereRaw("MID(code, 5, 4) = $date")->max('code');                                        
-                                                if ($last != null) {                                                                                            
-                                                    $tmp = substr($last, 8, 4)+1;
-                                                    return "FKJ-".$date.sprintf("%03s", $tmp);                                                                            
-                                                } else {
-                                                    return "FKJ-".$date."001";
-                                                }
-                                            })
-                                            ->readonly()
-                                            ->required()
-                                            ->columnSpan([
-                                                'md' => 2
-                                            ]),                                
-                                        Forms\Components\DatePicker::make('tanggal')
-                                            ->default(now())
-                                            ->required()
-                                            ->columnSpan([
-                                                'md' => 2
-                                            ]),                                                               
-                                        Forms\Components\Select::make('customer_id')
-                                            ->label('Custoler')
-                                            ->required()
-                                            ->options(Customers::all()->pluck('name','id'))
-                                            ->columnSpan([
-                                                'md' => 2
-                                            ]),
-                                        Forms\Components\Select::make('customer_id')
-                                            ->label('Custoler')
-                                            ->required()
-                                            ->options(Customers::all()->pluck('name','id'))
+                                        Forms\Components\Group::make()
+                                            ->schema([
+                                                Forms\Components\TextInput::make('code')
+                                                    ->label('Faktur Pembelian')
+                                                    ->default(function() {
+                                                        $date = Carbon::now()->format('my');
+                                                        $last = Jual::whereRaw("MID(code, 5, 4) = $date")->max('code');                                        
+                                                        if ($last != null) {                                                                                            
+                                                            $tmp = substr($last, 8, 4)+1;
+                                                            return "FKJ-".$date.sprintf("%03s", $tmp);                                                                            
+                                                        } else {
+                                                            return "FKJ-".$date."001";
+                                                        }
+                                                    })
+                                                    ->readonly()
+                                                    ->required()
+                                                    ->columnSpan([
+                                                        'md' => 2
+                                                    ]),                                
+                                                Forms\Components\DatePicker::make('tanggal')
+                                                    ->default(now())
+                                                    ->required()
+                                                    ->columnSpan([
+                                                        'md' => 2
+                                                    ]),                                                               
+                                                Forms\Components\Select::make('customer_id')
+                                                    ->label('Customer')
+                                                    ->required()
+                                                    ->options(Customers::all()->pluck('name','id'))
+                                                    ->columnSpan([
+                                                        'md' => 2
+                                                    ]), 
+                                                Forms\Components\Toggle::make('is_pending')
+                                                    ->label('is pending ?')                                                    
+                                                    ->onColor('success')
+                                                    ->offColor('gray')   
+                                                    ->columnSpan(6)                                   
+                                            ])->columns(6),                                
+                                        Forms\Components\Group::make()
+                                        ->schema([
+                                            Forms\Components\TextArea::make('description')
+                                                ->rows(1)                                                                    
+                                        ])
+                                        ->columns('full')
+                                    ])->columnSpan(6),
+                                Forms\Components\Card::make()                                    
+                                    ->schema([                                          
+                                        Forms\Components\TextInput::make('preorder_id')
+                                            ->label('Kode Preorder')                                            
                                             ->columnSpan([
                                                 'md' => 2
                                             ]), 
-                                    ])->columns(6),                                
-                                Forms\Components\Group::make()
-                                ->schema([
-                                    Forms\Components\TextArea::make('description'),                                                                    
-                                ])
-                                ->columns('full')
-                            ]),
+                                        Forms\Components\TextInput::make('nominal_dp')
+                                            ->label('Nominal DP')                                            
+                                            ->disabled()                                                                                        
+                                            ->columnSpan([
+                                                'md' => 2
+                                            ]),                                        
+                                    ])->columnSpan(2),
+                            ])
+                            ->columns(8),                        
                         Forms\Components\Card::make()
                             ->schema([
                                 Forms\Components\Placeholder::make('Products'),

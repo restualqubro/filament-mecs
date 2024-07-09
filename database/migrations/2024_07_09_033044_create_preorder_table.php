@@ -11,19 +11,15 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('jual', function (Blueprint $table) {
-            $table->ulid('id')->primary();
+        Schema::create('preorder', function (Blueprint $table) {
+            $table->id();
             $table->string('code', 20);
-            $table->date('tanggal');
+            $table->foreignUlid('customer_id')->references('id')->on('customers');
             $table->foreignUlid('user_id')->references('id')->on('users');
-            $table->foreignUlid('customer_id')->references('id')->on('customers');            
-            $table->bigInteger('tot_har');
-            $table->bigInteger('tot_disc');
-            $table->bigInteger('tot_bayar');
-            $table->bigInteger('sisa');
-            $table->enum('status', ['Lunas', 'Cash', 'Piutang']);
-            $table->boolean('is_pending');
+            $table->bigInteger('nominal');
             $table->string('description');
+            $table->date('tanggal');
+            $table->string('estimasi', 50);
             $table->timestamps();
         });
     }
@@ -33,6 +29,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('jual');
+        Schema::dropIfExists('preorder');
     }
 };
