@@ -202,6 +202,11 @@ class PembelianResource extends Resource
                 Tables\Columns\TextColumn::make('tot_har')                    
                     ->label('Total Harga'),
                 Tables\Columns\BadgeColumn::make('status')
+                    ->color(fn (string $state): string => match ($state) {                        
+                        'Lunas' => 'warning',
+                        'Cash' => 'success',
+                        'Utang' => 'danger',
+                    })
                     ->label('Status Pembayaran')            
             ])
             ->filters([

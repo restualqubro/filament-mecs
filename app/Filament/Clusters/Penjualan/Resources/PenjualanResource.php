@@ -4,10 +4,11 @@ namespace App\Filament\Clusters\Penjualan\Resources;
 
 use App\Filament\Clusters\Penjualan;
 use App\Filament\Clusters\Penjualan\Resources\PenjualanResource\Pages;
-use App\Filament\Clusters\Penjualan\Resources\PenjualanResource\RelationManagers;
+use App\Models\Transaksi\PiutangPenjualan;
 use App\Models\Transaksi\Jual;
 use App\Models\Products\Stock;
 use App\Models\Connect\Customers;
+use App\Models\Transaksi\Preorder;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
@@ -21,6 +22,12 @@ use Filament\Support\Enums\MaxWidth;
 class PenjualanResource extends Resource
 {
     protected static ?string $model = Jual::class;    
+
+    protected static ?string $slug = 'sale';
+
+    protected static ?string $navigationIcon = 'heroicon-o-shopping-cart';
+    
+    protected static ?string $pluralModelLabel = 'Penjualan';
 
     protected static SubNavigationPosition $subNavigationPosition = SubNavigationPosition::Top;    
 
@@ -40,7 +47,7 @@ class PenjualanResource extends Resource
                                         Forms\Components\Group::make()
                                             ->schema([
                                                 Forms\Components\TextInput::make('code')
-                                                    ->label('Faktur Pembelian')
+                                                    ->label('Faktur Penjualan')
                                                     ->default(function() {
                                                         $date = Carbon::now()->format('my');
                                                         $last = Jual::whereRaw("MID(code, 5, 4) = $date")->max('code');                                        
@@ -84,11 +91,23 @@ class PenjualanResource extends Resource
                                     ])->columnSpan(6),
                                 Forms\Components\Card::make()                                    
                                     ->schema([                                          
-                                        Forms\Components\TextInput::make('preorder_id')
-                                            ->label('Kode Preorder')                                            
+                                        Forms\Components\Select::make('preorder_id')
+                                            ->label('Kode Preorder')        
+                                            ->reactive()
+                                            ->searchable()                                       
+                                            ->options(Preorder::all()->pluck('code','id'))                                                                                     
                                             ->columnSpan([
                                                 'md' => 2
-                                            ]), 
+                                            ])
+                                            ->afterStateUpdated(function($state, Forms\Set $set) {
+                                                $preorder = Preorder::find($state);
+                                                if ($preorder) {                                                    
+                                                    $set('nominal_dp', number_format($preorder->nominal, 0, '', '.'));    
+                                                    $set('out_tot_dp', number_format($preorder->nominal, 0, '', '.'));                                                
+                                                    $set('tot_dp', $preorder->nominal);
+                                                }
+                                                }
+                                            ), 
                                         Forms\Components\TextInput::make('nominal_dp')
                                             ->label('Nominal DP')                                            
                                             ->disabled()                                                                                        
@@ -127,11 +146,13 @@ class PenjualanResource extends Resource
                                                 if ($stock) {                                                    
                                                     $set('out_hjual', number_format($stock->product->hjual, 0, '', '.'));              
                                                     $set('hjual', $stock->product->hjual);
+                                                    $set('hbeli', $stock->hbeli);
                                                 }
                                             })                                           
                                             ->columnSpan([
                                                 'md' => 5
-                                            ]),                                                                                         
+                                            ]),                                  
+                                        Forms\Components\Hidden::make('hbeli'),
                                         Forms\Components\Hidden::make('hjual'),
                                         Forms\Components\TextInput::make('out_hjual')                                            
                                             ->label('Harga')
@@ -159,10 +180,14 @@ class PenjualanResource extends Resource
                                                     $disc = $get('disc');
                                                     $qty = $get('qty');
                                                     $hjual = $get('hjual');
+                                                    $hbeli = $get('hbeli');
                                                     $jumlah = $qty * ($hjual - $disc);
+                                                    $profit = (($hjual - $disc) - $hbeli) * $qty;
+                                                    $set('profit', $profit);
                                                     $set('jumlah', number_format($jumlah, 0, '', '.'));
                                                 }
-                                            ),                                        
+                                            ), 
+                                        Forms\Components\Hidden::make('profit'),                                       
                                         Forms\Components\TextInput::make('jumlah') 
                                             ->label('Jumlah')                                           
                                             ->disabled()                                                                                    
@@ -177,7 +202,7 @@ class PenjualanResource extends Resource
                                     })
                                     // After deleting a row, we need to update the totals
                                     ->deleteAction(
-                                        fn(Forms\Components\Actions\Action $action) => $action->after(fn(Forms\Get $get, Forms\Set $set) => self::updateTotals($get, $set)),
+                                        fn(Forms\Components\Actions\Action $action) => $action->after(fn(Forms\Get $get, Forms\Set $set) => self::updateTotalHarga($get, $set)),
                                     )
                                     ->defaultItems(1)
                                     ->columns([
@@ -187,11 +212,10 @@ class PenjualanResource extends Resource
                             ]),
                         Forms\Components\Card::make()                                                                                              
                             ->schema([                            
-                            Forms\Components\TextInput::make('dp')
-                                ->label('Uang Muka / DP')                                    
+                            Forms\Components\TextInput::make('tot_dp')
+                                ->label('Uang Muka / DP')                                                                    
                                 ->disabled()
-                                ->dehydrated()
-                                ->required(), 
+                                ->dehydrated(), 
                             Forms\Components\TextInput::make('subtotal')
                                 ->label('Subtotal')                                    
                                 ->disabled()
@@ -204,7 +228,7 @@ class PenjualanResource extends Resource
                                 ->dehydrated()
                                 ->required(),                               
                             Forms\Components\Hidden::make('tot_har'),
-                            Forms\Components\TextInput::make('total')
+                            Forms\Components\TextInput::make('out_tot_har')
                                 ->label('Total')                                    
                                 ->disabled()
                                 ->dehydrated()
@@ -234,24 +258,79 @@ class PenjualanResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('code')
-                    ->label('Faktur Pembelian')
+                    ->label('Faktur Penjualan')
                     ->searchable()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('tanggal')
                     ->label('Tanggal')
                     ->date(),                
-                Tables\Columns\TextColumn::make('supplier.name')        
+                Tables\Columns\TextColumn::make('customer.name')        
                     ->label('Supplier'),
                 Tables\Columns\TextColumn::make('tot_har')                    
-                    ->label('Total Harga'),
+                    ->label('Total Harga')
+                    ->money('IDR'),
                 Tables\Columns\BadgeColumn::make('status')
+                    ->color(fn (string $state): string => match ($state) {                        
+                        'Lunas' => 'warning',
+                        'Cash' => 'success',
+                        'Piutang' => 'danger',
+                    })
                     ->label('Status Pembayaran')            
             ])
             ->filters([
                 //
             ])
             ->actions([
-                Tables\Actions\ViewAction::make()->hiddenLabel()->tooltip('Detail'),                
+                Tables\Actions\ViewAction::make()->hiddenLabel()->tooltip('Detail'),   
+                Tables\Actions\Action::make('pelunasan')->hiddenLabel()->tooltip('Pelunasan')
+                    ->label('Pelunasan')
+                    ->color('warning')
+                    ->icon('heroicon-o-queue-list')                    
+                    ->form([  
+                        Forms\Components\Hidden::make('jual_id')                                                        
+                            ->default(fn(Jual $record): string => $record->id),                      
+                        Forms\Components\TextInput::make('code')
+                            ->label('Faktur Penjualan')
+                            ->disabled()
+                            ->dehydrated()
+                            ->default(fn(Jual $record): string => $record->code),
+                        Forms\Components\TextInput::make('out_sisa')
+                            ->label('Sisa Pembayaran')
+                            ->disabled()                        
+                            ->default(fn(Jual $record): string => number_format($record->sisa, '0', '', '.')),
+                        Forms\Components\Hidden::make('sisa')
+                            ->default(fn(Jual $record) => $record->sisa),
+                        Forms\Components\Hidden::make('tot_bayar')
+                            ->default(fn(Jual $record) => $record->tot_bayar),
+                        Forms\Components\DatePicker::make('tanggal')
+                            ->label('Tanggal Pelunasan')
+                            ->default(now())
+                            ->required(),
+                        Forms\Components\TextInput::make('bayar')
+                            ->label('Nominal Pembayaran')                            
+                            ->required(),
+                    ])
+                    ->action(function (array $data): void {                        
+                        $record[] = array();
+                        $record['user_id'] = auth()->user()->id;
+                        $record['jual_id'] = $data['jual_id'];
+                        $record['tanggal'] = $data['tanggal'];
+                        $record['bayar']   = $data['bayar'];                        
+                        $sisa = $data['sisa'] - $data['bayar'];
+                        $bayar = $data['tot_bayar'] + $data['bayar'];
+                        if ($sisa > 0) {
+                            $status = 'Piutang';
+                        } else {
+                            $status = 'Lunas';
+                        }
+                        PiutangPenjualan::Create($record);
+                        Jual::where('id', $data['jual_id'])->update([
+                            'sisa'      => $sisa,
+                            'status'    => $status,
+                            'tot_bayar' => $bayar,
+                        ]);
+                    })->visible(fn (Jual $record): bool => $record->status === 'Piutang')
+                    ->modalWidth(MaxWidth::Medium),             
                 Tables\Actions\EditAction::make()->hiddenLabel()->tooltip('Edit'),
                 Tables\Actions\DeleteAction::make()->hiddenLabel()->tooltip('Delete')
             ])
@@ -266,15 +345,22 @@ class PenjualanResource extends Resource
     {
         // Retrieve all selected products and remove empty rows
         $selectedProducts = collect($get('detailJual'))->filter(fn($item) => !empty($item['qty']) && !empty($item['hjual']) && !empty($item['disc']));        
+        $tot_dp = 0;
+        $subtotal = 0;
+        $totaldiscount = 0;
         $total = 0;        
         foreach($selectedProducts as $item) {
-            $subtotal = ($item['hjual'] - $item['disc']) * $item['qty'];            
-            $total+= $subtotal;
-        }              
-
+            $subtotal += $item['hjual'] * $item['qty'];
+            $totaldiscount += $item['disc'] * $item['qty'];            
+        }                      
+        $tot_dp = $get('tot_dp');        
+        $total = $subtotal - $totaldiscount - $tot_dp;
         // Update the state with the new values
+        $set('subtotal', number_format($subtotal, 0, '', '.'));
+        $set('tot_disc', $totaldiscount);
+        $set('out_tot_disc', number_format($totaldiscount, 0, '', '.'));
         $set('tot_har', $total);
-        $set('out_har', number_format($total, 0, '', '.'));                
+        $set('out_tot_har', number_format($total, 0, '', '.'));                
         
 
     }
@@ -284,7 +370,7 @@ class PenjualanResource extends Resource
         if (!empty($get('tot_har'))) {            
             $sisa = $get('tot_har') - $get('tot_bayar');                     
             if ($sisa > 0) {                
-                $status = 'Utang';        
+                $status = 'Piutang';        
                 $set('status', $status);
             } else {                
                 $status = 'Cash';

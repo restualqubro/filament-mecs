@@ -23,7 +23,7 @@ return new class extends Migration
             $table->bigInteger('sisa');
             $table->enum('status', ['Lunas', 'Cash', 'Piutang']);
             $table->boolean('is_pending');
-            $table->string('description');
+            $table->string('description')->nullable();
             $table->timestamps();
         });
     }

@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::table('jual', function (Blueprint $table) {
             $table->foreignId('preorder_id')->references('id')->on('preorder')->nullable();
-            $table->bigInteger('tot_pr');
+            $table->bigInteger('tot_pr')->nullable();
         });
     }
 

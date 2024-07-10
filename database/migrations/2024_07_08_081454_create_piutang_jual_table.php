@@ -13,6 +13,10 @@ return new class extends Migration
     {
         Schema::create('piutang_jual', function (Blueprint $table) {
             $table->id();
+            $table->foreignUlid('user_id')->references('id')->on('users');
+            $table->foreignUlid('jual_id')->references('id')->on('jual');
+            $table->date('tanggal');
+            $table->bigInteger('bayar');
             $table->timestamps();
         });
     }
