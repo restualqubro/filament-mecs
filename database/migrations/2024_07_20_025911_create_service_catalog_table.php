@@ -11,9 +11,13 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('service_categories', function (Blueprint $table) {
-            $table->id();
+        Schema::create('service_catalog', function (Blueprint $table) {
+            $table->ulid('id')->primary();
             $table->string('name');
+            $table->bigInteger('biaya_min');
+            $table->bigInteger('biaya_max');
+            $table->bigInteger('bonus');
+            $table->tinyInteger('warranty'); 
             $table->timestamps();
         });
     }
@@ -23,6 +27,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('service_categories');
+        Schema::dropIfExists('service_catalog');
     }
 };
