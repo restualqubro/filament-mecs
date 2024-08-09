@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Filament\Resources\ServiceDataResource\Pages;
+namespace App\Filament\Resources\Services\ServiceDataResource\Pages;
 
-use App\Filament\Resources\ServiceDataResource;
+use App\Filament\Resources\Services\ServiceDataResource;
 use Filament\Actions;
 use Filament\Resources\Pages\ListRecords;
 

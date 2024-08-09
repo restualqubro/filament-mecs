@@ -70,7 +70,11 @@ return [
     |
     */
 
-    'timezone' => 'UTC',
+    'timezone' => 'Asia/Makassar',
+    
+    'locale' => 'id',
+
+    'faker_locale' => 'id_ID',
 
     /*
     |--------------------------------------------------------------------------

@@ -17,6 +17,6 @@ class Customers extends Model
         'telp',
         'address',
         'type'
-    ];
+    ];    
 
 }
