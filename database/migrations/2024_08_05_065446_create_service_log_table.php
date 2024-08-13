@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('service_log', function (Blueprint $table) {
             $table->id();
             $table->foreignUlid('service_id')->references('id')->on('service_data');
-            $table->enum('status', ['Baru', 'Proses', 'Selesai', 'Cancel', 'Keluar']);
+            $table->enum('status', ['Baru', 'Proses', 'Selesai', 'Cancel', 'Keluar', 'Kembali']);
             $table->string('description');
             $table->timestamps(); 
         });

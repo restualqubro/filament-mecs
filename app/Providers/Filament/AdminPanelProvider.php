@@ -4,6 +4,7 @@ namespace App\Providers\Filament;
 
 use App\Filament\Pages\Auth\EmailVerification;
 use App\Filament\Pages\Auth\Login;
+use App\Filament\Pages\Auth\Register;
 use App\Filament\Pages\Auth\RequestPasswordReset;
 use App\Livewire\MyProfileExtended;
 use App\Settings\GeneralSettings;
@@ -31,8 +32,9 @@ class AdminPanelProvider extends PanelProvider
         return $panel
             ->default()            
             ->id('admin')
-            ->path('admin') 
+            ->path('') 
             ->login(Login::class)
+            ->registration(Register::class)            
             ->passwordReset(RequestPasswordReset::class)
             ->emailVerification(EmailVerification::class)
             ->favicon(fn (GeneralSettings $settings) => Storage::url($settings->site_favicon))

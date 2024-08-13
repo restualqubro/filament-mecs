@@ -139,6 +139,17 @@ class ServiceDataResource extends Resource
                     ->color('success')
                     ->icon('heroicon-o-chat-bubble-bottom-center-text')
                     ->openUrlInNewTab(),
+                Tables\Actions\Action::make('print')
+                    ->hiddenLabel()
+                    ->tooltip('Print')
+                    ->url(function($record) {
+                        
+                        // return dd($record);
+                        return 'https://wa.me/+62'.$record->customer->telp."?text=Assalamu'alaikum,%20Salam%20Kami%20dari%20Mecs%20Komputer%20Ingin%20Mengupdate%20Unit%20dengan%20kode%20".$record->code."%20atas%20nama%20".$record->customer->name;
+                    })
+                    ->color('warning')
+                    ->icon('heroicon-o-printer')                    
+                    ->openUrlInNewTab(),
                 Tables\Actions\ViewAction::make()->hiddenLabel()->tooltip('Details'),
                 Tables\Actions\EditAction::make()->hiddenLabel()->tooltip('Edit'),
                 Tables\Actions\Action::make('status_edit')
@@ -187,14 +198,11 @@ class ServiceDataResource extends Resource
                         $record['status'] = 'Cancel';                        
                         LogService::create($record);
                         Cancel::create($record);
-                        Data::where('id', $row->id)->update(['status' => 'Cancel ']);
+                        Data::where('id', $row->id)->update(['status' => 'Cancel']);
                     })
-                // Tables\Actions\DeleteAction::make()->hiddenLabel()->tooltip('Delete')
             ])
             ->bulkActions([
-                // Tables\Actions\BulkActionGroup::make([
-                //     Tables\Actions\DeleteBulkAction::make(),
-                // ]),
+                
             ]);
     }
 
@@ -226,6 +234,7 @@ class ServiceDataResource extends Resource
                         'Selesai' => 'success',
                         'Cancel' => 'danger',
                         'Keluar' => 'gray',
+                        
                     }),
                 TextEntry::make('penawaran')
                     ->label('Penawaran')
@@ -249,7 +258,7 @@ class ServiceDataResource extends Resource
                 RepeatableEntry::make('logservice')
                     ->schema([
                         TextEntry::make('status')
-                            ->label('status')
+                            ->label('Status')
                             ->badge()
                             ->color(fn (string $state): string => match ($state) {
                                 'Baru' => 'gray',
@@ -257,6 +266,7 @@ class ServiceDataResource extends Resource
                                 'Selesai' => 'success',
                                 'Cancel' => 'danger',
                                 'Keluar' => 'gray',
+                                'Kembali' => 'warning'
                             }),     
                         TextEntry::make('created_at')
                             ->label('DateTime')

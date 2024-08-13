@@ -16,11 +16,10 @@ return new class extends Migration
             $table->foreignUlid('service_id')->references('id')->on('service_data');
             $table->foreignId('partner_id')->references('id')->on('partners');
             $table->date('date_send');
-            $table->enum('status', ['Kirim', 'Proses', 'Cancel', 'Selesai', 'Kembali']);
-            $table->date('date_update')->nullable();
+            $table->enum('status', ['Kirim', 'Proses', 'Cancel', 'Selesai', 'Kembali']);            
             $table->string('update')->nullable();
             $table->unsignedBigInteger('biaya')->nullable();
-            $table->boolean('is_Lunas')->nullable();
+            $table->enum('status_pembayaran', ['Lunas', 'Belum Lunas']);
             $table->timestamps();
         });
     }

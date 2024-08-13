@@ -18,11 +18,10 @@ class ToPartner extends Model
         'service_id',
         'partner_id',
         'date_send',
-        'status',
-        'date_update',
+        'status',        
         'update',
         'biaya',
-        'is_Lunas'
+        'status_pembayaran'
     ];
 
     public function service(): BelongsTo

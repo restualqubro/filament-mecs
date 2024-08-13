@@ -7,11 +7,16 @@ use App\Filament\Resources\Services\ServiceTopartnerResource\RelationManagers;
 use App\Models\Service\ToPartner;
 use App\Models\Service\Data;
 use App\Models\Connect\Partner;
+use App\Models\Service\LogService;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
+use Filament\Infolists\Infolist;
+use Filament\Infolists\Components\TextEntry;
+use Carbon\Carbon;
+use Filament\Support\Enums\FontWeight;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 
@@ -60,12 +65,145 @@ class ServiceTopartnerResource extends Resource
                     ->label('Seri / Tipe'),
                 Tables\Columns\TextColumn::make('partner.name'),
                 Tables\Columns\TextColumn::make('status')
+                    ->label('Status')
+                    ->badge()
+                    ->color(fn (string $state): string => match ($state) {
+                        'Kirim' => 'gray',
+                        'Proses' => 'warning',
+                        'Selesai' => 'success',
+                        'Cancel' => 'danger',
+                        'Kembali' => 'gray',
+                    })
             ])
             ->filters([
                 //
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
+                Tables\Actions\ViewAction::make()->hiddenLabel()->tooltip('Details'),
+                Tables\Actions\EditAction::make()->hiddenLabel()->tooltip('Edit')
+                    ->visible(fn($record): string => ($record->status === 'BARU' || $record->status === 'Proses')),
+                Tables\Actions\Action::make('status_edit')
+                    ->hiddenLabel()
+                    ->tooltip('Edit Status')
+                    ->color('secondary')
+                    ->icon('heroicon-o-document-check')
+                    ->form([
+                        Forms\Components\TextArea::make('description')                                                                     
+                            ->label('Update Details')
+                                                        
+                    ])
+                    ->action(function (array $data, ToPartner $row): void {
+                        $record[] = array();
+                        $record['service_id'] = $row->service_id;
+                        $record['user_id'] = auth()->user()->id;
+                        $record['description'] = $data['description'];                                  
+                        LogService::create($record);
+                        ToPartner::where('id', $row->id)->update([
+                            'update'   => 'inPartner : '.$data['description'],
+                            'status'   => 'Proses'              
+
+                        ]);
+                    })
+                    ->modalWidth('md')
+                    ->visible(fn($record): string => ($record->status === 'BARU' || $record->status === 'Proses')),
+                Tables\Actions\Action::make('selesai')
+                    ->hiddenLabel()
+                    ->tooltip('Edit Status')
+                    ->color('success')
+                    ->icon('heroicon-o-check')
+                    ->form([
+                        Forms\Components\TextArea::make('description')                                                                     
+                            ->label('Update Details'),
+                        Forms\Components\TextInput::make('biaya')                                                        
+                            ->label('Biaya')
+                            ->numeric()
+                    ])
+                    ->action(function (array $data, ToPartner $row): void {
+                        $record[] = array();
+                        $record['service_id'] = $row->service_id;
+                        $record['user_id'] = auth()->user()->id;
+                        $record['description'] = $data['description']; 
+                        $record['status'] = 'Selesai';
+                        LogService::create($record);
+                        ToPartner::where('id', $row->id)->update([
+                            'update'   => 'inPartner : '.$data['description'],
+                            'biaya'     => $data['biaya'],
+                            'status'   => 'Selesai'              
+
+                        ]);
+                    })
+                    ->modalWidth('md')
+                    ->visible(fn($record): string => ($record->status === 'BARU' || $record->status === 'Proses')),
+                Tables\Actions\Action::make('cancel')
+                    ->hiddenLabel()
+                    ->tooltip('Cancel Service')
+                    ->color('danger')
+                    ->icon('heroicon-o-no-symbol')
+                    ->form([
+                        Forms\Components\TextArea::make('description')                                                                     
+                            ->label('Update Details'),                        
+                    ])
+                    ->action(function (array $data, ToPartner $row): void {
+                        $record[] = array();
+                        $record['service_id'] = $row->service_id;
+                        $record['user_id'] = auth()->user()->id;
+                        $record['description'] = $data['description']; 
+                        $record['status'] = 'Cancel';
+                        LogService::create($record);
+                        ToPartner::where('id', $row->id)->update([
+                            'update'   => 'inPartner : '.$data['description'],
+                            'status'   => 'Cancel'              
+
+                        ]);
+                    })
+                    ->modalWidth('md')
+                    ->visible(fn($record): string => ($record->status === 'BARU' || $record->status === 'Proses')),
+                Tables\Actions\Action::make('ambil')
+                    ->hiddenLabel()
+                    ->tooltip('Pengambilan Service')
+                    ->color('info')
+                    ->icon('heroicon-o-truck')
+                    ->form([
+                        Forms\Components\TextArea::make('description')                                                                     
+                            ->label('Update Details'),                        
+                        Forms\Components\TextInput::make('biaya')
+                            ->label('Biaya') 
+                            ->default(fn($record): string => ($record->biaya))                           
+                            ->disabled(),
+                        Forms\Components\TextInput::make('bayar')
+                            ->label('Bayar')
+                            ->afterStateUpdated(function(Forms\Get $get, Forms\Set $set) {
+                                $biaya = $get('biaya');
+                                $bayar = $get('bayar');
+                                $sisa = $biaya - $bayar;
+                                $set('sisa', $sisa);
+                                if ($sisa > 0) {
+                                    $set('status_pembayaran', 'Belum Lunas');
+                                } else {
+                                    $set('status_pembayaran', 'Lunas');
+                                }
+                            })
+                            ->live(),
+                        Forms\Components\TextInput::make('sisa')
+                            ->label('Sisa Pembayaran'),
+                        Forms\Components\Hidden::make('status_pembayaran')
+                    ])
+                    ->action(function (array $data, ToPartner $row): void {
+                        $record[] = array();
+                        $record['service_id'] = $row->service_id;
+                        $record['user_id'] = auth()->user()->id;
+                        $record['description'] = $data['description']; 
+                        $record['status'] = 'Cancel';
+                        LogService::create($record);
+                        ToPartner::where('id', $row->id)->update([
+                            'update'   => 'inPartner : '.$data['description'],
+                            'status_pembayaran' => $data['status_pembayaran'],
+                            'status'   => 'Diambil'              
+
+                        ]);
+                    })
+                    ->modalWidth('md')
+                    ->hidden(fn($record): string => ($record->status === 'BARU' || $record->status === 'Proses' || $record->status === 'Kembali')),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
@@ -74,11 +212,41 @@ class ServiceTopartnerResource extends Resource
             ]);
     }
 
-    public static function getRelations(): array
+    public static function infolist(Infolist $infolist): Infolist
     {
-        return [
-            //
-        ];
+        return $infolist
+            ->schema([                
+                TextEntry::make('service.code')
+                    ->label('Kode Service')
+                    ->weight(FontWeight::Bold),
+                TextEntry::make('service.customer.name')
+                    ->label('Nama Customer'),
+                TextEntry::make('service.merk')
+                    ->label('Merk/Brand'),
+                TextEntry::make('service.seri')
+                    ->label('Seti/Tipe'),      
+                TextEntry::make('date_send')
+                    ->label('Tanggal Dikirim'),                
+                TextEntry::make('status')
+                    ->badge()
+                    ->color(fn (string $state): string => match ($state) {
+                        'Baru' => 'gray',
+                        'Proses' => 'warning',
+                        'Selesai' => 'success',
+                        'Cancel' => 'danger',
+                        'Kembali' => 'gray',
+                    }),
+                TextEntry::make('biaya')
+                    ->label('Biaya')
+                    ->money('IDR'),
+                TextEntry::make('status_pembayaran')
+                    ->label('Status Pembayaran')                    
+                    ->badge()
+                    ->color(fn (string $state): string => match ($state) {                    
+                        'Lunas' => 'success',
+                        'Belum Lunas' => 'warning',                        
+                    }),                          
+            ])->columns(2);
     }
 
     public static function getPages(): array
