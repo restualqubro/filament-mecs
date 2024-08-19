@@ -11,8 +11,9 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('service_selesai', function (Blueprint $table) {
-            $table->string('code', 20)->unique();
+        Schema::table('detail_service_jual', function (Blueprint $table) {
+            $table->renameColumn('qty', 'products_qty');
+            $table->renameColumn('disc', 'products_disc');
         });
     }
 
@@ -21,7 +22,7 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('service_selesai', function (Blueprint $table) {
+        Schema::table('detail_service_jual', function (Blueprint $table) {
             //
         });
     }

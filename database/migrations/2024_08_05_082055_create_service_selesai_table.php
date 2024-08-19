@@ -13,10 +13,15 @@ return new class extends Migration
     {
         Schema::create('service_selesai', function (Blueprint $table) {
             $table->ulid('id')->primary();
+            $table->string('code', 12)->unique();            
             $table->foreignUlid('service_id')->references('id')->on('service_data');
             $table->foreignUlid('teknisi_id')->references('id')->on('users');
-            $table->unsignedBigInteger('tot_biaya');
-            $table->unsignedBigInteger('tot_disc');
+            $table->unsignedBigInteger('subtotal_products');
+            $table->unsignedBigInteger('totaldiscount_products');
+            $table->unsignedBigInteger('subtotal_service');
+            $table->unsignedBigInteger('totaldiscount_service');            
+            $table->unsignedBigInteger('subtotal_component');
+            $table->unsignedBigInteger('total');
             $table->timestamps();
         });
     }

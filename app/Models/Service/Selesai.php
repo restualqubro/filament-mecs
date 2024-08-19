@@ -20,8 +20,12 @@ class Selesai extends Model
         'code',
         'service_id',
         'teknisi_id',
-        'tot_biaya',
-        'tot_disc'
+        'subtotal_products',
+        'totaldiscount_products',
+        'subtotal_service',
+        'totaldiscount_service',
+        'subtotal_component',
+        'total'
     ];
 
     public function user(): BelongsTo
@@ -29,9 +33,9 @@ class Selesai extends Model
         return $this->belongsTo(User::class);
     }
 
-    public function customer(): BelongsTo
+    public function service(): BelongsTo
     {
-        return $this->belongsTo(Customers::class);
+        return $this->belongsTo(Data::class, 'service_id', 'id');
     }
 
     public function detailJual(): HasMany
@@ -41,13 +45,13 @@ class Selesai extends Model
 
     public function detailComponent(): HasMany
     {
-        return $this->hasMany(DetailJual::class);
+        return $this->hasMany(DetailComponent::class);
     }
 
     public function detailService(): HasMany
     {
         return $this->HasMany(DetailService::class);
-    }
+    }  
     
 
 }

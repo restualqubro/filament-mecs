@@ -15,9 +15,9 @@ class DetailJual extends Model
     protected $fillable = [
         'selesai_id',
         'stock_id',
-        'qty',
+        'products_qty',
         'hjual',
-        'disc',
+        'products_disc',
         'profit'
     ];
 

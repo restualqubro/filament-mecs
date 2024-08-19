@@ -5,7 +5,9 @@ namespace App\Models\Products;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use App\Models\products\ProductCategories;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Spatie\Image\Enums\Fit;
 use Spatie\MediaLibrary\HasMedia;
@@ -46,6 +48,11 @@ class Products extends Model implements HasMedia
     {
         return $this->belongsToMany(Stock::class);
     }  
+
+    public function category(): BelongsTo
+    {
+        return $this->belongsTo(ProductCategories::class, 'category_id', 'id');
+    }
     
     public function getSumAttribute()
     {

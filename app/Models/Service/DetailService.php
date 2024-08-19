@@ -14,9 +14,9 @@ class DetailService extends Model
     protected $fillable = [
         'selesai_id',
         'servicecatalog_id',        
-        'qty',
+        'service_qty',
         'biaya',        
-        'disc',                
+        'service_disc',                
     ];
 
     public function catalog(): BelongsTo
