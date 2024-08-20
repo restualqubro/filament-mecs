@@ -142,11 +142,7 @@ class ServiceDataResource extends Resource
                 Tables\Actions\Action::make('print')
                     ->hiddenLabel()
                     ->tooltip('Print')
-                    ->url(function($record) {
-                        
-                        // return dd($record);
-                        return 'https://wa.me/+62'.$record->customer->telp."?text=Assalamu'alaikum,%20Salam%20Kami%20dari%20Mecs%20Komputer%20Ingin%20Mengupdate%20Unit%20dengan%20kode%20".$record->code."%20atas%20nama%20".$record->customer->name;
-                    })
+                    ->url(fn ($record) => 'print/servicereceipt/'.$record->id)
                     ->color('warning')
                     ->icon('heroicon-o-printer')                    
                     ->openUrlInNewTab(),

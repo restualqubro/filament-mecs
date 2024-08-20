@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('detail_service_jual', function (Blueprint $table) {
             $table->id();
-            $table->foreignUlid('selesai_id')->references('id')->on('service_selesai');
+            $table->foreignUlid('selesai_id')->references('id')->on('service_selesai')->cascadeOnDelete();
             $table->foreignUlid('stock_id')->references('id')->on('stock');
             $table->tinyInteger('qty');
             $table->bigInteger('hjual');

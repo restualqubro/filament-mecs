@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('detail_service_catalog', function (Blueprint $table) {
             $table->id();
-            $table->foreignUlid('selesai_id')->references('id')->on('service_selesai');
+            $table->foreignUlid('selesai_id')->references('id')->on('service_selesai')->cascadeOnDelete();
             $table->foreignUlid('servicecatalog_id')->references('id')->on('service_catalog');
             $table->tinyInteger('qty');
             $table->unsignedBigInteger('biaya');

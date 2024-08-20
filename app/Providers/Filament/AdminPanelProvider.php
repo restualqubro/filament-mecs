@@ -24,6 +24,7 @@ use Illuminate\Session\Middleware\StartSession;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Print\ServiceReceipt;
 
 class AdminPanelProvider extends PanelProvider
 {
@@ -50,7 +51,8 @@ class AdminPanelProvider extends PanelProvider
                 //  add to /portal/*
                 Route::post('/whatsapp', function () {
                     return redirect()->away('wa.me');
-                });                    
+                });     
+                Route::get('/print/servicereceipt/{id}', [ServiceReceipt::class, 'print']);
             })
             ->discoverResources(in: app_path('Filament/Resources'), for: 'App\\Filament\\Resources')
             ->resources([   

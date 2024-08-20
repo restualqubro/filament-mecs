@@ -28,9 +28,9 @@ class Selesai extends Model
         'total'
     ];
 
-    public function user(): BelongsTo
+    public function teknisi(): BelongsTo
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(User::class, 'teknisi_id', 'id');
     }
 
     public function service(): BelongsTo
