@@ -410,7 +410,7 @@ class ServiceSelesaiResource extends Resource
         }                                              
         $set('subtotal_products', number_format($subtotal, 0, '', '.'));
         $set('totaldiscount_products', number_format($totaldiscount, 0, '', '.'));
-        $set('total', number_format($total));
+        $set('total', number_format($total, 0, '', '.'));
         
 
     }

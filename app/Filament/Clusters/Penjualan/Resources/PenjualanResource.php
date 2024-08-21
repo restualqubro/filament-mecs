@@ -143,8 +143,7 @@ class PenjualanResource extends Resource
                                             }) 
                                             ->afterStateUpdated(function($state, callable $set) {
                                                 $stock = Stock::find($state);
-                                                if ($stock) {                                                    
-                                                    $set('out_hjual', number_format($stock->product->hjual, 0, '', '.'));              
+                                                if ($stock) {                                                                                                        
                                                     $set('hjual', $stock->product->hjual);
                                                     $set('hbeli', $stock->hbeli);
                                                 }
@@ -152,9 +151,8 @@ class PenjualanResource extends Resource
                                             ->columnSpan([
                                                 'md' => 5
                                             ]),                                  
-                                        Forms\Components\Hidden::make('hbeli'),
-                                        Forms\Components\Hidden::make('hjual'),
-                                        Forms\Components\TextInput::make('out_hjual')                                            
+                                        Forms\Components\Hidden::make('hbeli'),                                        
+                                        Forms\Components\TextInput::make('hjual')                                            
                                             ->label('Harga')
                                             ->disabled()                                            
                                             ->columnSpan([
@@ -212,7 +210,7 @@ class PenjualanResource extends Resource
                             ]),
                         Forms\Components\Card::make()                                                                                              
                             ->schema([                            
-                            Forms\Components\TextInput::make('tot_dp')
+                            Forms\Components\TextInput::make('tot_pr')
                                 ->label('Uang Muka / DP')                                                                    
                                 ->disabled()
                                 ->dehydrated(), 
@@ -220,15 +218,13 @@ class PenjualanResource extends Resource
                                 ->label('Subtotal')                                    
                                 ->disabled()
                                 ->dehydrated()
-                                ->required(), 
-                            Forms\Components\Hidden::make('tot_disc'),
-                            Forms\Components\TextInput::make('out_tot_disc')
+                                ->required(),                             
+                            Forms\Components\TextInput::make('tot_disc')
                                 ->label('Total Discount')                                    
                                 ->disabled()
                                 ->dehydrated()
-                                ->required(),                               
-                            Forms\Components\Hidden::make('tot_har'),
-                            Forms\Components\TextInput::make('out_tot_har')
+                                ->required(),                                                           
+                            Forms\Components\TextInput::make('tot_har')
                                 ->label('Total')                                    
                                 ->disabled()
                                 ->dehydrated()
@@ -241,9 +237,8 @@ class PenjualanResource extends Resource
                                 ->afterStateUpdated(function (Forms\Get $get, Forms\Set $set) {
                                     self::updateSisaPembayaran($get, $set);
                                 })
-                                ->required(),
-                            Forms\Components\Hidden::make('sisa'),                                                                                  
-                            Forms\Components\TextInput::make('out_sisa')
+                                ->required(),                            
+                            Forms\Components\TextInput::make('sisa')
                                 ->label('Sisa Pembayaran')                                
                                 ->disabled()
                                 ->dehydrated(),

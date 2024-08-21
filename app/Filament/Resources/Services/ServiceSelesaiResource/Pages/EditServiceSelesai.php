@@ -28,11 +28,24 @@ class EditServiceSelesai extends EditRecord
     {        
         $service = Data::where('id', $data['service_id'])->first();
         $teknisi = User::where('id', $data['teknisi_id'])->first();
+        $data['service_id'] = $data['service_id'];
         $data['teknisi'] = $teknisi->name;
         $data['name'] = $service->customer->name;
         $data['merk'] = $service->merk;
         $data['seri'] = $service->seri;
         
+        return $data;
+    }
+
+    protected function mutateFormDataBeforeSave(array $data): array
+    {        
+        $data['subtotal_products'] = (int)str_replace('.', '', $data['subtotal_products']);
+        $data['totaldiscount_products'] = (int)str_replace('.', '', $data['totaldiscount_products']);
+        $data['subtotal_service'] = (int)str_replace('.', '', $data['subtotal_service']);
+        $data['totaldiscount_service'] = (int)str_replace('.', '', $data['totaldiscount_service']);
+        $data['subtotal_component'] = (int)str_replace('.', '', $data['subtotal_component']);
+        $data['total'] = (int)str_replace('.', '', $data['total']);                
+
         return $data;
     }
 }
