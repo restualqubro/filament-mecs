@@ -16,4 +16,11 @@ class EditInvoice extends EditRecord
             Actions\DeleteAction::make(),
         ];
     }
+
+    public function mutateFormDataBeforeFill(array $data): array
+    {
+        $data['sisa'] = (int)str_replace('.', '', $data['sisa']);
+        $data['service_id'] = $data['id'];
+        return dd($data);
+    }
 }

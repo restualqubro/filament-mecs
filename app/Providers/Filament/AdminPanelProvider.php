@@ -25,6 +25,7 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Print\ServiceReceipt;
+use App\Http\Controllers\Print\FakturJual;
 
 class AdminPanelProvider extends PanelProvider
 {
@@ -53,6 +54,7 @@ class AdminPanelProvider extends PanelProvider
                     return redirect()->away('wa.me');
                 });     
                 Route::get('/print/servicereceipt/{id}', [ServiceReceipt::class, 'print']);
+                Route::get('/print/fakturjual/{id}', [FakturJual::class, 'print']);
             })
             ->discoverResources(in: app_path('Filament/Resources'), for: 'App\\Filament\\Resources')
             ->resources([   

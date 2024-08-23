@@ -276,7 +276,14 @@ class PenjualanResource extends Resource
                 //
             ])
             ->actions([
-                Tables\Actions\ViewAction::make()->hiddenLabel()->tooltip('Detail'),   
+                Tables\Actions\ViewAction::make()->hiddenLabel()->tooltip('Detail'),  
+                Tables\Actions\Action::make('print')
+                    ->hiddenLabel()
+                    ->tooltip('Print')
+                    ->url(fn ($record) => '/print/fakturjual/'.$record->id)
+                    ->color('warning')
+                    ->icon('heroicon-o-printer')                    
+                    ->openUrlInNewTab(), 
                 Tables\Actions\Action::make('pelunasan')->hiddenLabel()->tooltip('Pelunasan')
                     ->label('Pelunasan')
                     ->color('warning')

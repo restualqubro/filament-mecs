@@ -95,9 +95,8 @@ class ServiceDataResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('index')
-                    ->label('#')
-                    ->rowIndex(),
+                Tables\Columns\TextColumn::make('code')
+                    ->label('KODE SERVICE'),
                 Tables\Columns\TextColumn::make('customer.name')
                     ->label('Customer')
                     ->searchable(),
@@ -124,6 +123,7 @@ class ServiceDataResource extends Resource
                     })
                     ->sortable(),
             ])
+            ->defaultSort('code', 'DESC')
             ->filters([
                 //
             ])

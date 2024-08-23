@@ -25,6 +25,8 @@ class ServiceSelesaiResource extends Resource
 
     protected static ?string $navigationGroup = 'Service';
 
+    protected static ?int $navigationSort = 5;
+
     protected static ?string $pluralModelLabel = 'Service Selesai';
 
     protected static ?string $slug = 'service-selesai';
