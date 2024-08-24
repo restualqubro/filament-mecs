@@ -26,84 +26,92 @@ class InvoiceResource extends Resource
 
     public static function form(Form $form): Form
     {
+        $selesai = Selesai::all()->where('service.status', 'Selesai');
         return $form
             ->schema([
-                Forms\Components\Select::make('selesai_id')
-                    ->label('Kode Service')
-                    ->searchable()                
-                    ->options(Selesai::all()->pluck('service.code', 'id'))
-                    ->reactive()
-                    ->afterStateUpdated(function($state, callable $set) {
-                        $selesai = Selesai::find($state);                         
-                        if ($selesai) {
-                            $set('customer_name', $selesai->service->customer->name);                        
-                        } else {
-                            $set('customer_name', 'oraono');
-                        }
-                        // $set('customer_name', $selesai->service->customer->name);                        
-                    })
-                    ->columnSpan(3),
-                Forms\Components\TextInput::make('customer_name')
-                    ->label('Nama Customer')
-                    ->disabled()
-                    ->columnSpan(3),    
-                Forms\Components\Actions::make([
-                    Forms\Components\Actions\Action::make('Generate')
-                        ->action(function (Forms\Get $get, Forms\Set $set) { 
-                            $selesai = Selesai::find($get('selesai_id'));                                                                                                                                  
-                            if ($selesai) {
-                                $set('subtotal_products', number_format($selesai->subtotal_products, 0, '', '.'));
-                                $set('totaldiscount_products', number_format($selesai->totaldiscount_products, 0, '', '.'));
-                                $set('subtotal_service', number_format($selesai->subtotal_service, 0, '', '.'));
-                                $set('totaldiscount_service', number_format($selesai->totaldiscount_service, 0, '', '.'));                                
-                                $set('total', number_format($selesai->total, 0, '', '.'));
-                            } 
-                            else {  
-                                $set('subtotal_products', 'Generate Kode gagal!!');
-                                $set('totaldiscount_products', 'Generate Kode gagal!!');
-                                $set('subtotal_service', 'Generate Kode gagal!!');
-                                $set('totaldiscount_service', 'Generate Kode gagal!!');                                
-                                $set('total', 'Generate Kode gagal!!');              
-                            }
-                        }),
-                    ])->columnSpan(6),    
-                Forms\Components\TextInput::make('subtotal_products')
-                    ->label('Subtotal Products')
-                    ->disabled()
-                    ->columnSpan(3),                    
-                Forms\Components\TextInput::make('totaldiscount_products')
-                    ->label('Total Discount Products')
-                    ->disabled()
-                    ->columnSpan(3),                           
-                Forms\Components\TextInput::make('subtotal_service')
-                    ->label('Subtotal Service')
-                    ->disabled()
-                    ->columnSpan(3),                                
-                Forms\Components\TextInput::make('totaldiscount_service')
-                    ->label('Total Discount Service')
-                    ->disabled()
-                    ->columnSpan(3),    
-                Forms\Components\TextInput::make('total')
-                    ->label('Total Invoice')
-                    ->disabled()
-                    ->columnSpan(2),
-                Forms\Components\TextInput::make('totalbayar')
-                    ->label('Total Pembayaran')
-                    ->numeric()
-                    ->required()                    
-                    ->columnSpan(2)
-                    ->reactive()
-                    ->afterStateUpdated(function (Forms\Get $get, Forms\Set $set) {
-                        self::updateSisaPembayaran($get, $set);
-                    }),                                                                                     
-                Forms\Components\TextInput::make('sisa')
-                    ->label('Sisa Pembayaran')
-                    ->numeric()
-                    ->required()
-                    ->columnSpan(2),        
-                Forms\Components\Textarea::make('description')             
-                    ->label('Keterangan')
-                    ->columnSpan(6)
+                Forms\Components\Card::make()
+                    ->schema([
+                        Forms\Components\Select::make('selesai_id')
+                            ->label('Kode Service')
+                            ->searchable()                
+                            ->options($selesai->mapWithKeys(function (Selesai $selesai) {
+                                return [$selesai->id => sprintf($selesai->service->code)];
+                            }))
+                            ->reactive()
+                            ->afterStateUpdated(function($state, callable $set) {
+                                $selesai = Selesai::find($state);                         
+                                if ($selesai) {
+                                    $set('customer_name', $selesai->service->customer->name);                        
+                                } else {
+                                    $set('customer_name', 'oraono');
+                                }
+                                // $set('customer_name', $selesai->service->customer->name);                        
+                            })
+                            ->columnSpan(3),
+                        Forms\Components\TextInput::make('customer_name')
+                            ->label('Nama Customer')
+                            ->disabled()
+                            ->columnSpan(3),    
+                        Forms\Components\Actions::make([
+                            Forms\Components\Actions\Action::make('Generate')
+                                ->action(function (Forms\Get $get, Forms\Set $set) { 
+                                    $selesai = Selesai::find($get('selesai_id'));                                                                                                                                  
+                                    if ($selesai) {
+                                        $set('subtotal_products', number_format($selesai->subtotal_products, 0, '', '.'));
+                                        $set('totaldiscount_products', number_format($selesai->totaldiscount_products, 0, '', '.'));
+                                        $set('subtotal_service', number_format($selesai->subtotal_service, 0, '', '.'));
+                                        $set('totaldiscount_service', number_format($selesai->totaldiscount_service, 0, '', '.'));                                
+                                        $set('total', number_format($selesai->total, 0, '', '.'));
+                                    } 
+                                    else {  
+                                        $set('subtotal_products', 'Generate Kode gagal!!');
+                                        $set('totaldiscount_products', 'Generate Kode gagal!!');
+                                        $set('subtotal_service', 'Generate Kode gagal!!');
+                                        $set('totaldiscount_service', 'Generate Kode gagal!!');                                
+                                        $set('total', 'Generate Kode gagal!!');              
+                                    }
+                                }),
+                            ])->columnSpan(6),    
+                        Forms\Components\TextInput::make('subtotal_products')
+                            ->label('Subtotal Products')
+                            ->disabled()
+                            ->columnSpan(3),                    
+                        Forms\Components\TextInput::make('totaldiscount_products')
+                            ->label('Total Discount Products')
+                            ->disabled()
+                            ->columnSpan(3),                           
+                        Forms\Components\TextInput::make('subtotal_service')
+                            ->label('Subtotal Service')
+                            ->disabled()
+                            ->columnSpan(3),                                
+                        Forms\Components\TextInput::make('totaldiscount_service')
+                            ->label('Total Discount Service')
+                            ->disabled()
+                            ->columnSpan(3),    
+                        Forms\Components\TextInput::make('total')
+                            ->label('Total Invoice')
+                            ->disabled()
+                            ->columnSpan(2),
+                        Forms\Components\TextInput::make('totalbayar')
+                            ->label('Total Pembayaran')
+                            ->numeric()
+                            ->required()     
+                            ->default(0)               
+                            ->columnSpan(2)
+                            ->reactive()
+                            ->afterStateUpdated(function (Forms\Get $get, Forms\Set $set) {
+                                self::updateSisaPembayaran($get, $set);
+                            }),                                                                                     
+                        Forms\Components\TextInput::make('sisa')
+                            ->label('Sisa Pembayaran')                            
+                            ->disabled()
+                            ->dehydrated()
+                            ->required()
+                            ->columnSpan(2),        
+                        Forms\Components\Textarea::make('description')             
+                            ->label('Keterangan')
+                            ->columnSpan(6)
+                    ])                
             ])
             ->columns(6);
     }
@@ -119,6 +127,9 @@ class InvoiceResource extends Resource
                 Tables\Columns\TextColumn::make('created_at')
                     ->label('Tanggal')
                     ->date(),
+                Tables\Columns\TextColumn::make('sisa')
+                    ->label('Sisa')
+                    ->money('IDR'),
                 Tables\Columns\TextColumn::make('status')
                     ->label('Status')
                     ->badge()
@@ -126,7 +137,56 @@ class InvoiceResource extends Resource
                         'Lunas' => 'warning',
                         'Cash' => 'success',
                         'Piutang' => 'danger',                        
-                    })
+                    }),
+                // Tables\Actions\Action::make('pelunasan')->hiddenLabel()->tooltip('Pelunasan')
+                //     ->label('Pelunasan')
+                //     ->color('warning')
+                //     ->icon('heroicon-o-queue-list')                    
+                //     ->form([  
+                //         Forms\Components\Hidden::make('jual_id')                                                        
+                //             ->default(fn(Jual $record): string => $record->id),                      
+                //         Forms\Components\TextInput::make('code')
+                //             ->label('Faktur Penjualan')
+                //             ->disabled()
+                //             ->dehydrated()
+                //             ->default(fn(Jual $record): string => $record->code),
+                //         Forms\Components\TextInput::make('out_sisa')
+                //             ->label('Sisa Pembayaran')
+                //             ->disabled()                        
+                //             ->default(fn(Jual $record): string => number_format($record->sisa, '0', '', '.')),
+                //         Forms\Components\Hidden::make('sisa')
+                //             ->default(fn(Jual $record) => $record->sisa),
+                //         Forms\Components\Hidden::make('tot_bayar')
+                //             ->default(fn(Jual $record) => $record->tot_bayar),
+                //         Forms\Components\DatePicker::make('tanggal')
+                //             ->label('Tanggal Pelunasan')
+                //             ->default(now())
+                //             ->required(),
+                //         Forms\Components\TextInput::make('bayar')
+                //             ->label('Nominal Pembayaran')                            
+                //             ->required(),
+                //     ])
+                //     ->action(function (array $data): void {                        
+                //         $record[] = array();
+                //         $record['user_id'] = auth()->user()->id;
+                //         $record['jual_id'] = $data['jual_id'];
+                //         $record['tanggal'] = $data['tanggal'];
+                //         $record['bayar']   = $data['bayar'];                        
+                //         $sisa = $data['sisa'] - $data['bayar'];
+                //         $bayar = $data['tot_bayar'] + $data['bayar'];
+                //         if ($sisa > 0) {
+                //             $status = 'Piutang';
+                //         } else {
+                //             $status = 'Lunas';
+                //         }
+                //         PiutangPenjualan::Create($record);
+                //         Jual::where('id', $data['jual_id'])->update([
+                //             'sisa'      => $sisa,
+                //             'status'    => $status,
+                //             'tot_bayar' => $bayar,
+                //         ]);
+                //     })->visible(fn (Jual $record): bool => $record->status === 'Piutang')
+                //     ->modalWidth(MaxWidth::Medium),
             ])
             ->filters([
                 //
@@ -134,6 +194,7 @@ class InvoiceResource extends Resource
             ->actions([
                 Tables\Actions\ViewAction::make()->hiddenLabel()->tooltip('Details'),
                 Tables\Actions\EditAction::make()->hiddenLabel()->tooltip('Edit'),
+                Tables\Actions\DeleteAction::make()->hiddenLabel()->tooltip('Delete')
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
@@ -162,7 +223,7 @@ class InvoiceResource extends Resource
     {
         return [
             'index' => Pages\ListInvoices::route('/'),
-            // 'create' => Pages\CreateInvoice::route('/create'),
+            'create' => Pages\CreateInvoice::route('/create'),
             'edit' => Pages\EditInvoice::route('/{record}/edit'),
         ];
     }

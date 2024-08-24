@@ -136,8 +136,8 @@ class ServiceSelesaiResource extends Resource
                                             ]),                                                                                    
                                         Forms\Components\TextInput::make('service_disc')                                            
                                             ->label('Discount')
-                                            ->numeric() 
-                                            ->minValue(0)   
+                                            ->numeric()                                             
+                                            ->default(0)  
                                             ->required()                                        
                                             ->columnSpan([
                                                 'md' => 1
@@ -413,13 +413,11 @@ class ServiceSelesaiResource extends Resource
         $set('subtotal_products', number_format($subtotal, 0, '', '.'));
         $set('totaldiscount_products', number_format($totaldiscount, 0, '', '.'));
         $set('total', number_format($total, 0, '', '.'));
-        
-
     }
 
     public static function updateTotalService(Forms\Get $get, Forms\Set $set): void
     {        
-        $selectedCatalog = collect($get('detailService'))->filter(fn($item) => !empty($item['service_qty']) && !empty($item['biaya']) && !empty($item['service_disc']));                
+        $selectedCatalog = collect($get('detailService'))->filter(fn($item) => !empty($item['service_qty']) && !empty($item['biaya']));                
         $subtotal = 0;
         $totaldiscount = 0;
         $total = 0;        
@@ -431,8 +429,6 @@ class ServiceSelesaiResource extends Resource
         $set('subtotal_service', number_format($subtotal, 0, '', '.'));
         $set('totaldiscount_service', number_format($totaldiscount, 0, '', '.'));      
         $set('total', number_format($total, 0, '', '.'));            
-        
-
     }
 
     public static function updateTotalComponent(Forms\Get $get, Forms\Set $set): void
