@@ -13,6 +13,7 @@ class Invoice extends Model
 
     protected $table = 'service_invoice';
     protected $fillable = [
+        'code',
         'selesai_id',
         'totalbayar',
         'sisa',

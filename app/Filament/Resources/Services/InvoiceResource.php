@@ -3,16 +3,17 @@
 namespace App\Filament\Resources\Services;
 
 use App\Filament\Resources\Services\InvoiceResource\Pages;
-use App\Filament\Resources\Services\InvoiceResource\RelationManagers;
 use App\Models\Service\Invoice;
 use App\Models\Service\Selesai;
+use App\Models\Service\PiutangService;
+use App\Models\Service\LogService;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Filament\Support\Enums\MaxWidth;
+use Carbon\Carbon;
 
 class InvoiceResource extends Resource
 {
@@ -31,6 +32,21 @@ class InvoiceResource extends Resource
             ->schema([
                 Forms\Components\Card::make()
                     ->schema([
+                        Forms\Components\TextInput::make('code')
+                            ->label('Faktur Penjualan')
+                            ->default(function() {
+                                $date = Carbon::now()->format('my');
+                                $last = Invoice::whereRaw("MID(code, 5, 4) = $date")->max('code');                                        
+                                if ($last != null) {                                                                                            
+                                    $tmp = substr($last, 8, 4)+1;
+                                    return "FKS-".$date.sprintf("%03s", $tmp);                                                                            
+                                } else {
+                                    return "FKS-".$date."001";
+                                }
+                            })
+                            ->readonly()
+                            ->required()
+                            ->columnSpan(2),   
                         Forms\Components\Select::make('selesai_id')
                             ->label('Kode Service')
                             ->searchable()                
@@ -47,11 +63,11 @@ class InvoiceResource extends Resource
                                 }
                                 // $set('customer_name', $selesai->service->customer->name);                        
                             })
-                            ->columnSpan(3),
+                            ->columnSpan(2),
                         Forms\Components\TextInput::make('customer_name')
                             ->label('Nama Customer')
                             ->disabled()
-                            ->columnSpan(3),    
+                            ->columnSpan(2),    
                         Forms\Components\Actions::make([
                             Forms\Components\Actions\Action::make('Generate')
                                 ->action(function (Forms\Get $get, Forms\Set $set) { 
@@ -111,19 +127,22 @@ class InvoiceResource extends Resource
                         Forms\Components\Textarea::make('description')             
                             ->label('Keterangan')
                             ->columnSpan(6)
-                    ])                
-            ])
-            ->columns(6);
+                    ])->columns(6),
+            ]);             
     }
 
     public static function table(Table $table): Table
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('selesai.service.code')
+                Tables\Columns\TextColumn::make('code')
                     ->label('Kode Faktur'),
                 Tables\Columns\TextColumn::make('selesai.service.customer.name')
                     ->label('Customer'),
+                Tables\Columns\TextColumn::make('selesai.service.merk')
+                    ->label('Merk'),
+                Tables\Columns\TextColumn::make('selesai.service.seri')
+                    ->label('Seri/Tipe'),
                 Tables\Columns\TextColumn::make('created_at')
                     ->label('Tanggal')
                     ->date(),
@@ -137,62 +156,58 @@ class InvoiceResource extends Resource
                         'Lunas' => 'warning',
                         'Cash' => 'success',
                         'Piutang' => 'danger',                        
-                    }),
-                // Tables\Actions\Action::make('pelunasan')->hiddenLabel()->tooltip('Pelunasan')
-                //     ->label('Pelunasan')
-                //     ->color('warning')
-                //     ->icon('heroicon-o-queue-list')                    
-                //     ->form([  
-                //         Forms\Components\Hidden::make('jual_id')                                                        
-                //             ->default(fn(Jual $record): string => $record->id),                      
-                //         Forms\Components\TextInput::make('code')
-                //             ->label('Faktur Penjualan')
-                //             ->disabled()
-                //             ->dehydrated()
-                //             ->default(fn(Jual $record): string => $record->code),
-                //         Forms\Components\TextInput::make('out_sisa')
-                //             ->label('Sisa Pembayaran')
-                //             ->disabled()                        
-                //             ->default(fn(Jual $record): string => number_format($record->sisa, '0', '', '.')),
-                //         Forms\Components\Hidden::make('sisa')
-                //             ->default(fn(Jual $record) => $record->sisa),
-                //         Forms\Components\Hidden::make('tot_bayar')
-                //             ->default(fn(Jual $record) => $record->tot_bayar),
-                //         Forms\Components\DatePicker::make('tanggal')
-                //             ->label('Tanggal Pelunasan')
-                //             ->default(now())
-                //             ->required(),
-                //         Forms\Components\TextInput::make('bayar')
-                //             ->label('Nominal Pembayaran')                            
-                //             ->required(),
-                //     ])
-                //     ->action(function (array $data): void {                        
-                //         $record[] = array();
-                //         $record['user_id'] = auth()->user()->id;
-                //         $record['jual_id'] = $data['jual_id'];
-                //         $record['tanggal'] = $data['tanggal'];
-                //         $record['bayar']   = $data['bayar'];                        
-                //         $sisa = $data['sisa'] - $data['bayar'];
-                //         $bayar = $data['tot_bayar'] + $data['bayar'];
-                //         if ($sisa > 0) {
-                //             $status = 'Piutang';
-                //         } else {
-                //             $status = 'Lunas';
-                //         }
-                //         PiutangPenjualan::Create($record);
-                //         Jual::where('id', $data['jual_id'])->update([
-                //             'sisa'      => $sisa,
-                //             'status'    => $status,
-                //             'tot_bayar' => $bayar,
-                //         ]);
-                //     })->visible(fn (Jual $record): bool => $record->status === 'Piutang')
-                //     ->modalWidth(MaxWidth::Medium),
+                    }),                
             ])
             ->filters([
                 //
             ])
-            ->actions([
+            ->actions([                
                 Tables\Actions\ViewAction::make()->hiddenLabel()->tooltip('Details'),
+                Tables\Actions\Action::make('pelunasan')->hiddenLabel()->tooltip('Pelunasan')
+                    ->label('Pelunasan')
+                    ->color('warning')
+                    ->icon('heroicon-o-queue-list')                    
+                    ->form([                                  
+                        Forms\Components\TextInput::make('code')
+                            ->label('Faktur Penjualan')
+                            ->disabled()
+                            ->dehydrated()
+                            ->default(fn(Invoice $record): string => $record->code),
+                        Forms\Components\TextInput::make('sisa')
+                            ->label('Sisa Pembayaran')
+                            ->disabled()                        
+                            ->default(fn(Invoice $record): string => number_format($record->sisa, '0', '', '.')),                        
+                        // Forms\Components\Hidden::make('tot_bayar')
+                        //     ->default(fn(Jual $record) => $record->tot_bayar),
+                        Forms\Components\DatePicker::make('tanggal')
+                            ->label('Tanggal Pelunasan')
+                            ->default(now())
+                            ->required(),
+                        Forms\Components\TextInput::make('bayar')
+                            ->label('Nominal Pembayaran')                            
+                            ->required(),
+                    ])
+                    ->action(function (array $data, Invoice $invoice): void {                        
+                        $record[] = array();
+                        $record['user_id'] = auth()->user()->id;
+                        $record['invoice_id'] = $invoice->id;                        
+                        $record['bayar']   = $data['bayar'];                        
+                        $sisa = $invoice->sisa - $data['bayar'];
+                        $totalbayar = $invoice->totalbayar + $data['bayar'];
+                        if ($sisa > 0) {
+                            $status = 'Piutang';
+                        } else {
+                            $status = 'Lunas';
+                        }
+                        PiutangService::Create($record);
+                        Invoice::where('id', $invoice->id)->update([
+                            'sisa'      => $sisa,
+                            'status'    => $status,
+                            'totalbayar' => $totalbayar,
+                        ]);                        
+                    })
+                    ->visible(fn (Invoice $record): bool => $record->status === 'Piutang')
+                    ->modalWidth(MaxWidth::Medium),
                 Tables\Actions\EditAction::make()->hiddenLabel()->tooltip('Edit'),
                 Tables\Actions\DeleteAction::make()->hiddenLabel()->tooltip('Delete')
             ])

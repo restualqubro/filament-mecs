@@ -16,8 +16,7 @@ class Selesai extends Model
 
     protected $table = 'service_selesai';
 
-    protected $fillable = [
-        'code',
+    protected $fillable = [        
         'service_id',
         'teknisi_id',
         'subtotal_products',

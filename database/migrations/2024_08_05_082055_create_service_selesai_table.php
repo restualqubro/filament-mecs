@@ -12,8 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('service_selesai', function (Blueprint $table) {
-            $table->ulid('id')->primary();
-            $table->string('code', 12)->unique();            
+            $table->ulid('id')->primary();                     
             $table->foreignUlid('service_id')->references('id')->on('service_data');
             $table->foreignUlid('teknisi_id')->references('id')->on('users');
             $table->unsignedBigInteger('subtotal_products');

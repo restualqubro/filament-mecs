@@ -44,31 +44,19 @@ class ServiceSelesaiResource extends Resource
                             Forms\Components\Card::make()
                                 ->schema([
                                     Forms\Components\Group::make()
-                                        ->schema([
-                                            Forms\Components\TextInput::make('code')
-                                                ->label('Faktur Penjualan')
-                                                ->default(function() {
-                                                    $date = Carbon::now()->format('my');
-                                                    $last = Selesai::whereRaw("MID(code, 5, 4) = $date")->max('code');                                        
-                                                    if ($last != null) {                                                                                            
-                                                        $tmp = substr($last, 8, 4)+1;
-                                                        return "FKS-".$date.sprintf("%03s", $tmp);                                                                            
-                                                    } else {
-                                                        return "FKS-".$date."001";
-                                                    }
-                                                })
-                                                ->readonly()
-                                                ->required()
-                                                ->columnSpan([
-                                                    'md' => 2
-                                                ]),                                
+                                        ->schema([                                                                         
                                             Forms\Components\TextInput::make('teknisi')                                                
                                                 ->required()
                                                 ->default(fn() => auth()->user()->name)
                                                 ->disabled()
                                                 ->columnSpan([
                                                     'md' => 2
-                                                ]),                                                               
+                                                ]),                                                                                                            
+                                            Forms\Components\TextInput::make('datein')
+                                                ->label('Tanggal')
+                                                ->disabled()
+                                                ->default(Carbon::now()->format('d M Y'))                                                
+                                                ->columnSpan(2),                                                  
                                             Forms\Components\Select::make('service_id')
                                                 ->label('Kode Service')
                                                 ->options(
@@ -84,7 +72,7 @@ class ServiceSelesaiResource extends Resource
                                                         $set('seri', $service->seri);
                                                     }
                                                 })
-                                                ->columnSpan(2),                                                                   
+                                                ->columnSpan(2),                 
                                         ])->columns(6),                                
                                     Forms\Components\Group::make()
                                     ->schema([                                        
@@ -460,7 +448,8 @@ class ServiceSelesaiResource extends Resource
                     ->money('IDR'),
                 Tables\Columns\TextColumn::make('total')
                     ->label('TOTAL')
-                    ->money('IDR')
+                    ->money('IDR'),
+                
             ])
             ->filters([
                 //
