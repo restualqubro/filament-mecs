@@ -15,9 +15,7 @@ class CreateServiceSelesai extends CreateRecord
 
     protected function mutateFormDataBeforeCreate(array $data): array
     {
-        $data['teknisi_id'] = auth()->user()->id;
-        $data['subtotal_products'] = (int)str_replace('.', '', $data['subtotal_products']);
-        $data['totaldiscount_products'] = (int)str_replace('.', '', $data['totaldiscount_products']);
+        $data['teknisi_id'] = auth()->user()->id;        
         $data['subtotal_service'] = (int)str_replace('.', '', $data['subtotal_service']);
         $data['totaldiscount_service'] = (int)str_replace('.', '', $data['totaldiscount_service']);
         $data['subtotal_component'] = (int)str_replace('.', '', $data['subtotal_component']);

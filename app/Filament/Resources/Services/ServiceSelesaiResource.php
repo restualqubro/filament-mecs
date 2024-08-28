@@ -172,97 +172,7 @@ class ServiceSelesaiResource extends Resource
                                         'md' => 10
                                     ])
                                     ->columnSpan('full')
-                            ]),                   
-                        Forms\Components\Card::make()
-                            ->schema([
-                                Forms\Components\Placeholder::make('Products'),
-                                Repeater::make('detailJual')
-                                    ->label('Detail Items')                                                                    
-                                    ->relationship()
-                                    ->collapsible()
-                                    ->schema([                                        
-                                        Forms\Components\Select::make('stock_id')
-                                            ->label('Kode Stock')                                                                                        
-                                            ->options(                                                
-                                                $stock->mapWithKeys(function (Stock $stock) {
-                                                    return [$stock->id => sprintf('%s-%s | %s', $stock->product->code, $stock->code, $stock->product->name)];
-                                                })
-                                                )                                                                                                                                        
-                                            ->searchable()
-                                            ->reactive()
-                                            ->disableOptionWhen(function ($value, $state, Forms\Get $get) {
-                                                return collect($get('../*.stock_id'))
-                                                    ->reject(fn($id) => $id == $state)
-                                                    ->filter()
-                                                    ->contains($value);
-                                            }) 
-                                            ->afterStateUpdated(function($state, callable $set) {
-                                                $stock = Stock::find($state);
-                                                if ($stock) {                                                                                                        
-                                                    $set('hjual', $stock->product->hjual);                                                    
-                                                }
-                                            })                                           
-                                            ->columnSpan([
-                                                'md' => 5
-                                            ]),                                                                     
-                                        Forms\Components\TextInput::make('hjual')                                            
-                                            ->label('Harga')
-                                            ->disabled()     
-                                            ->dehydrated()                                       
-                                            ->columnSpan([
-                                                'md' => 1
-                                            ]),                                        
-                                        Forms\Components\TextInput::make('products_disc')                                            
-                                            ->label('Discount')
-                                            ->numeric()  
-                                            ->minValue(0)                                            
-                                            ->default(0)                                                                              
-                                            ->columnSpan([
-                                                'md' => 1
-                                            ]),
-                                        Forms\Components\TextInput::make('products_qty') 
-                                            ->label('Qty')   
-                                            ->numeric()                                                                                                                                                                                                                                                                          
-                                            ->columnSpan([
-                                                'md' => 1
-                                            ])
-                                            ->live()
-                                            ->afterStateUpdated(
-                                                function (Forms\Get $get, Forms\Set $set) {
-                                                    $disc = str_replace(',', '', $get('products_disc'));
-                                                    $qty = $get('products_qty');
-                                                    $hjual = $get('hjual');
-                                                    $hbeli = $get('products_hbeli');
-                                                    $jumlah = $qty * ($hjual - $disc);
-                                                    $profit = (($hjual - $disc) - $hbeli) * $qty;
-                                                    $set('profit', $profit);
-                                                    $set('products_jumlah', number_format($jumlah, 0, '', '.'));
-                                                }
-                                            ), 
-                                        Forms\Components\Hidden::make('profit'),                                    
-                                        Forms\Components\TextInput::make('products_jumlah') 
-                                            ->label('Jumlah')                                           
-                                            ->disabled()                                                                                    
-                                            ->columnSpan([
-                                                'md' => 2
-                                            ]),
-                                    ])
-                                    ->live()
-                                    // After adding a new row, we need to update the totals
-                                    ->afterStateUpdated(function (Forms\Get $get, Forms\Set $set) {
-                                        self::updateTotalProducts($get, $set);
-                                    })
-                                    // After deleting a row, we need to update the totals
-                                    ->deleteAction(
-                                        fn(Forms\Components\Actions\Action $action) => $action->after(fn(Forms\Get $get, Forms\Set $set) => self::updateTotalProducts($get, $set)),
-                                    )
-                                    ->defaultItems(1)
-                                    ->columns([
-                                        'md' => 10
-                                    ])
-                                    ->columnSpan('full')
-                                    ->defaultItems(0)
-                            ]),                        
+                            ]),                                                               
                             Forms\Components\Card::make()
                             ->schema([
                                 Forms\Components\Placeholder::make('Service Component'),
@@ -344,19 +254,7 @@ class ServiceSelesaiResource extends Resource
                     Forms\Components\Card::make()                                                                                              
                         ->schema([  
                             Forms\Components\Group::make()
-                                ->schema([
-                                    Forms\Components\TextInput::make('subtotal_products')
-                                        ->label('Subtotal Products')                                    
-                                        ->default(0)
-                                        ->disabled()
-                                        ->dehydrated()
-                                        ->required(),                                              
-                                    Forms\Components\TextInput::make('totaldiscount_products')
-                                        ->label('Total Discount Products')                                    
-                                        ->disabled()
-                                        ->default(0)
-                                        ->dehydrated()
-                                        ->required(),     
+                                ->schema([                                       
                                     Forms\Components\TextInput::make('subtotal_service')
                                         ->label('Subtotal Service')                                    
                                         ->disabled()
@@ -386,22 +284,7 @@ class ServiceSelesaiResource extends Resource
                 ])->columnSpan('full')            
         ]);
     }
-
-    public static function updateTotalProducts(Forms\Get $get, Forms\Set $set): void
-    {        
-        $selectedProducts = collect($get('detailJual'))->filter(fn($item) => !empty($item['products_qty']) && !empty($item['hjual']));                
-        $subtotal = 0;
-        $totaldiscount = 0;
-        $total = 0;        
-        foreach($selectedProducts as $item) {
-            $subtotal += ($item['hjual'] - $item['products_disc']) * $item['products_qty'] ;
-            $totaldiscount += str_replace(',', '', $item['products_disc']) * $item['products_qty'];           
-            $total = $subtotal + (int)str_replace('.', '', $get('subtotal_service')) + (int)str_replace('.', '', $get('subtotal_component')) ;
-        }                                              
-        $set('subtotal_products', number_format($subtotal, 0, '', '.'));
-        $set('totaldiscount_products', number_format($totaldiscount, 0, '', '.'));
-        $set('total', number_format($total, 0, '', '.'));
-    }
+  
 
     public static function updateTotalService(Forms\Get $get, Forms\Set $set): void
     {        
@@ -412,7 +295,7 @@ class ServiceSelesaiResource extends Resource
         foreach($selectedCatalog as $item) {
             $subtotal += ($item['biaya'] - $item['service_disc']) * $item['service_qty'] ;
             $totaldiscount += $item['service_disc'] * $item['service_qty'];      
-            $total = $subtotal + (int)str_replace('.', '', $get('subtotal_products')) + (int)str_replace('.', '', $get('subtotal_component')) ;
+            $total += $subtotal;
         }                                          
         $set('subtotal_service', number_format($subtotal, 0, '', '.'));
         $set('totaldiscount_service', number_format($totaldiscount, 0, '', '.'));      
@@ -424,8 +307,7 @@ class ServiceSelesaiResource extends Resource
         $selectedProducts = collect($get('detailComponent'))->filter(fn($item) => !empty($item['component_qty']) && !empty($item['component_hbeli']));                
         $subtotal = 0;                     
         foreach($selectedProducts as $item) {
-            $subtotal += $item['component_hbeli'] * $item['component_qty'];  
-            $total = $subtotal + (int)str_replace('.', '', $get('subtotal_service')) + (int)str_replace('.', '', $get('subtotal_products')) ;          
+            $subtotal += $item['component_hbeli'] * $item['component_qty'];              
         }                                      
         $set('subtotal_component', number_format($subtotal, 0, '', '.'));                   
     }
