@@ -36,6 +36,6 @@ class ReturJual extends Model
 
     public function detailRetur(): HasMany
     {
-        return $this->hasMany(DetailReturJual::class);
+        return $this->hasMany(DetailReturJual::class, 'retur_jual_id', 'id');
     }
 }

@@ -3,6 +3,7 @@
 namespace App\Models\Transaksi;
 
 use App\Models\Connect\Customers;
+use App\Models\Retur\DetailReturJual;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -44,6 +45,11 @@ class Jual extends Model
     public function detailJual(): HasMany
     {
         return $this->hasMany(DetailJual::class);
+    }
+
+    public function detailRetur(): HasMany
+    {
+        return $this->hasMany(DetailReturJual::class);
     }
 
     public function preorder(): BelongsTo

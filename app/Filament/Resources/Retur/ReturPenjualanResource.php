@@ -16,6 +16,7 @@ use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Carbon\Carbon;
+use Livewire\Component;
 
 class ReturPenjualanResource extends Resource
 {
@@ -33,158 +34,67 @@ class ReturPenjualanResource extends Resource
     public static function form(Form $form): Form
     {        
         return $form
-            ->schema([
-                Forms\Components\Card::make()
-                    ->schema([
-                        Forms\Components\Group::make()
-                            ->schema([
-                                Forms\Components\TextInput::make('code')
-                                    ->label('Faktur Penjualan')
-                                    ->default(function() {
-                                        $date = Carbon::now()->format('my');
-                                        $last = ReturJual::whereRaw("MID(code, 5, 4) = $date")->max('code');                                        
-                                        if ($last != null) {                                                                                            
-                                            $tmp = substr($last, 8, 4)+1;
-                                            return "RTJ-".$date.sprintf("%03s", $tmp);                                                                            
-                                        } else {
-                                            return "RTJ-".$date."001";
-                                        }
-                                    })
-                                    ->readonly()
-                                    ->required()
-                                    ->columnSpan([
-                                        'md' => 2
-                                    ]),                                
-                                Forms\Components\DatePicker::make('tanggal')
-                                    ->default(now())
-                                    ->required()
-                                    ->columnSpan([
-                                        'md' => 2
-                                    ]),                                     
-                                Forms\Components\Select::make('jual_id')                                                                                                                                                
-                                    ->label('Kode Faktur Jual')
-                                    ->required()
-                                    ->options(Jual::all()->pluck('code', 'id'))
-                                    ->searchable()
-                                    ->columnSpan([
-                                        'md' => 2
-                                    ])
-                            ])->columns(6),                                
-                                Forms\Components\Group::make()
-                                    ->schema([
-                                        Forms\Components\TextArea::make('description')
-                                            ->rows(1)                                                                    
-                                ])->columns('full'),  
-                        ]),                                                                                 
-                        Forms\Components\Card::make()
-                            ->schema([
-                                Forms\Components\Placeholder::make('Products'),
-                                Forms\Components\Repeater::make('detailRetur')
-                                    ->label('Detail Items')                                                                    
-                                    ->relationship()
-                                    ->collapsible()
-                                    ->schema([                                        
-                                        Forms\Components\Select::make('stock_id')
-                                            ->label('Kode Stock')                                                                                        
-                                            ->options(function (Forms\Get $get) {
-                                                $detail = DetailJual::where('jual_id', $get('jual_id'))->has('stock')->get();
-                                                // return dd($detail);
-                                            })                                                                                            
-                                            ->required()
-                                            ->searchable()
-                                            ->reactive()
-                                            ->disableOptionWhen(function ($value, $state, Forms\Get $get) {
-                                                return collect($get('../*.stock_id'))
-                                                    ->reject(fn($id) => $id == $state)
-                                                    ->filter()
-                                                    ->contains($value);
-                                            }) 
-                                            ->afterStateUpdated(function($state, callable $set) {
-                                                $stock = Stock::find($state);
-                                                if ($stock) {                                                                                                        
-                                                    $set('hjual', $stock->product->hjual);
-                                                    $set('hbeli', $stock->hbeli);
-                                                }
-                                            })                                           
-                                            ->columnSpan([
-                                                'md' => 5
-                                            ]),                                  
-                                        Forms\Components\Hidden::make('hbeli'),                                        
-                                        Forms\Components\TextInput::make('hjual')                                            
-                                            ->label('Harga')
-                                            ->disabled()                                            
-                                            ->columnSpan([
-                                                'md' => 1
-                                            ]),                                        
-                                        Forms\Components\TextInput::make('disc')                                            
-                                            ->label('Discount')
-                                            ->numeric()    
-                                            ->required()                                        
-                                            ->columnSpan([
-                                                'md' => 1
-                                            ]),
-                                        Forms\Components\TextInput::make('qty') 
-                                            ->label('Qty')   
-                                            ->numeric()    
-                                            ->required()                                                                                                                                                                                                                            
-                                            ->columnSpan([
-                                                'md' => 1
-                                            ])
-                                            ->live()
-                                            ->afterStateUpdated(
-                                                function (Forms\Get $get, Forms\Set $set) {
-                                                    $disc = $get('disc');
-                                                    $qty = $get('qty');
-                                                    $hjual = $get('hjual');
-                                                    $hbeli = $get('hbeli');
-                                                    $jumlah = $qty * ($hjual - $disc);
-                                                    $profit = (($hjual - $disc) - $hbeli) * $qty;
-                                                    $set('profit', $profit);
-                                                    $set('jumlah', number_format($jumlah, 0, '', '.'));
-                                                }
-                                            ), 
-                                        Forms\Components\Hidden::make('profit'),                                       
-                                        Forms\Components\TextInput::make('jumlah') 
-                                            ->label('Jumlah')                                           
-                                            ->disabled()                                                                                    
-                                            ->columnSpan([
-                                                'md' => 2
-                                            ]),
-                                    ])
-                                    ->live()
-                                    // After adding a new row, we need to update the totals
-                                    ->afterStateUpdated(function (Forms\Get $get, Forms\Set $set) {
-                                        self::updateTotalHarga($get, $set);
-                                    })
-                                    // After deleting a row, we need to update the totals
-                                    ->deleteAction(
-                                        fn(Forms\Components\Actions\Action $action) => $action->after(fn(Forms\Get $get, Forms\Set $set) => self::updateTotalHarga($get, $set)),
-                                    )
-                                    ->defaultItems(1)
-                                    ->columns([
-                                        'md' => 10
-                                    ])
-                                    ->columnSpan('full')
-                            ]),
-                        Forms\Components\Card::make()                                                                                              
-                            ->schema([                                  
-                            Forms\Components\TextInput::make('subtotal')
-                                ->label('Subtotal')                                    
-                                ->disabled()
-                                ->dehydrated()
-                                ->required(),                                                                                                           
-                            Forms\Components\TextInput::make('totaldiscount')
-                                ->label('Total Discount')                                    
-                                ->disabled()
-                                ->dehydrated()
-                                ->required(),                                                           
-                            Forms\Components\TextInput::make('totalharga')
-                                ->label('Total')                                    
-                                ->disabled()
-                                ->dehydrated()
+            ->schema([       
+                Forms\Components\Wizard::make([
+                    Forms\Components\Wizard\Step::make('Confirm')
+                        ->schema([
+                            Forms\Components\Select::make('jual_id')
+                                ->label('Kode Faktur Jual')
                                 ->required()
-                            ])                                                                                           
-                    ]);
+                                ->searchable()
+                                ->relationship(name: 'returJual')
+                                ->options(Jual::all()->pluck('code', 'id'))                                
+                        ]),
+                        // ->afterValidation(function (Component $livewire) {
+                        //     $data = $livewire->form->getState();
+                        // }),
+                    Forms\Components\Wizard\Step::make('Items')
+                        ->schema([
+                            Forms\Components\Repeater::make('detailRetur')
+                                ->label('detail Items')                                
+                                ->collapsible()
+                                ->relationship()
+                                ->schema([
+                                    Forms\Components\Select::make('stock_id')
+                                        ->label('Kode Stok')
+                                        ->options(
+                                            function (Forms\Get $get) {
+                                                $jualid = $get('../../jual_id');                                                
+                                                if ($jualid)
+                                                {                                                    
+                                                    return DetailJual::join('stock', 'detail_jual.stock_id', '=', 'stock.id')
+                                                                        ->where('detail_jual.jual_id', $jualid)
+                                                                        ->get()
+                                                                        ->pluck('stock.product.name', 'stock.id');
+                                                }
+                                            }
+                                        )
+                                        ->required()
+                                        ->searchable()                                        
+                                        ->disableOptionWhen(function ($value, $state, Forms\Get $get) {
+                                            return collect($get('../*.stock_id'))
+                                                ->reject(fn($id) => $id == $state)
+                                                ->filter()
+                                                ->contains($value);
+                                        }) 
+                                        ->afterStateUpdated(function($state, callable $set) {
+                                            $stock = Stock::find($state);
+                                            if ($stock) {                                                                                                        
+                                                $set('hjual', $stock->product->hjual);
+                                                $set('hbeli', $stock->hbeli);
+                                            }
+                                        })                                           
+                                        ->columnSpan([
+                                            'md' => 5
+                                        ]),
+                                ])
+                        ]),
+                    Forms\Components\Wizard\Step::make('Billing')
+                        ->schema([
+                            // ...
+                        ]),
+                ])->columnSpan('full')                                                                                                  
+            ]);
     }
 
     public static function table(Table $table): Table

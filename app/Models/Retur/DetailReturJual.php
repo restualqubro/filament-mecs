@@ -22,7 +22,7 @@ class DetailReturJual extends Model
 
     public function returjual(): BelongsTo
     {
-        return $this->belongsTo(ReturJual::class);
+        return $this->belongsTo(ReturJual::class, 'retur_jual_id', 'id');
     }
 
     public function stock(): BelongsTo
