@@ -2,11 +2,11 @@
 
 namespace App\Policies;
 
+use App\Models\transaksi\Pengeluaran;
 use App\Models\User;
-use App\Models\Banner;
 use Illuminate\Auth\Access\HandlesAuthorization;
 
-class BannerPolicy
+class PengeluaranPolicy
 {
     use HandlesAuthorization;
 
@@ -15,15 +15,15 @@ class BannerPolicy
      */
     public function viewAny(User $user): bool
     {
-        return $user->can('view_any_banner');
+        return $user->can('view_any_pengeluaran');
     }
 
     /**
      * Determine whether the user can view the model.
      */
-    public function view(User $user, Banner $banner): bool
+    public function view(User $user, Pengeluaran $Pengeluaran): bool
     {
-        return $user->can('view_banner');
+        return $user->can('view_pengeluaran');
     }
 
     /**
@@ -31,23 +31,23 @@ class BannerPolicy
      */
     public function create(User $user): bool
     {
-        return $user->can('create_banner');
+        return $user->can('create_pengeluaran');
     }
 
     /**
      * Determine whether the user can update the model.
      */
-    public function update(User $user, Banner $banner): bool
+    public function update(User $user, Pengeluaran $Pengeluaran): bool
     {
-        return $user->can('update_banner');
+        return $user->can('update_pengeluaran');
     }
 
     /**
      * Determine whether the user can delete the model.
      */
-    public function delete(User $user, Banner $banner): bool
+    public function delete(User $user, Pengeluaran $Pengeluaran): bool
     {
-        return $user->can('delete_banner');
+        return $user->can('delete_pengeluaran');
     }
 
     /**
@@ -55,15 +55,15 @@ class BannerPolicy
      */
     public function deleteAny(User $user): bool
     {
-        return $user->can('delete_any_banner');
+        return $user->can('delete_any_pengeluaran');
     }
 
     /**
      * Determine whether the user can permanently delete.
      */
-    public function forceDelete(User $user, Banner $banner): bool
+    public function forceDelete(User $user, Pengeluaran $Pengeluaran): bool
     {
-        return $user->can('force_delete_banner');
+        return $user->can('force_delete_pengeluaran');
     }
 
     /**
@@ -71,15 +71,15 @@ class BannerPolicy
      */
     public function forceDeleteAny(User $user): bool
     {
-        return $user->can('force_delete_any_banner');
+        return $user->can('force_delete_any_pengeluaran');
     }
 
     /**
      * Determine whether the user can restore.
      */
-    public function restore(User $user, Banner $banner): bool
+    public function restore(User $user, Pengeluaran $Pengeluaran): bool
     {
-        return $user->can('restore_banner');
+        return $user->can('restore_pengeluaran');
     }
 
     /**
@@ -87,15 +87,15 @@ class BannerPolicy
      */
     public function restoreAny(User $user): bool
     {
-        return $user->can('restore_any_banner');
+        return $user->can('restore_any_pengeluaran');
     }
 
     /**
      * Determine whether the user can replicate.
      */
-    public function replicate(User $user, Banner $banner): bool
+    public function replicate(User $user, Pengeluaran $Pengeluaran): bool
     {
-        return $user->can('replicate_banner');
+        return $user->can('replicate_pengeluaran');
     }
 
     /**
@@ -103,6 +103,6 @@ class BannerPolicy
      */
     public function reorder(User $user): bool
     {
-        return $user->can('reorder_banner');
+        return $user->can('reorder_pengeluaran');
     }
 }

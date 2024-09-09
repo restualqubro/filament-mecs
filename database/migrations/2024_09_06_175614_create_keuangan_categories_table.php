@@ -13,6 +13,8 @@ return new class extends Migration
     {
         Schema::create('keuangan_categories', function (Blueprint $table) {
             $table->id();
+            $table->string('name');
+            $table->enum('jenis', ['Pengeluaran', 'Pemasukan']);
             $table->timestamps();
         });
     }

@@ -53,6 +53,11 @@ class Products extends Model implements HasMedia
     {
         return $this->belongsTo(ProductCategories::class, 'category_id', 'id');
     }
+
+    public function brand(): BelongsTo
+    {
+        return $this->belongsTo(ProductBrands::class, 'brand_id', 'id');
+    }
     
     public function getSumAttribute()
     {

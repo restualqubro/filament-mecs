@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('stock', function (Blueprint $table) {
             $table->ulid('id')->primary();
             $table->foreignUlid('product_id')->references('id')->on('products');                    
-            $table->string('code', 6);
+            $table->string('code', 3);
             $table->bigInteger('hbeli');
             $table->tinyInteger('stok');
             $table->tinyInteger('supplier_warranty');

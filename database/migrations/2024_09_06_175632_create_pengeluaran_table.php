@@ -13,6 +13,12 @@ return new class extends Migration
     {
         Schema::create('pengeluaran', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('category_id')->references('id')->on('keuangan_categories');
+            $table->bigInteger('nominal');
+            $table->string('description')->nullable();
+            $table->enum('status', ['Baru', 'Approve', 'Reject']);
+            $table->string('submitted_id');
+            $table->string('approval_id')->nullable();
             $table->timestamps();
         });
     }

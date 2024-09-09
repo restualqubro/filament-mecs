@@ -12,6 +12,11 @@ use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
+use Filament\Infolists\Infolist;
+use Filament\Infolists\Components\TextEntry;
+use Filament\Infolists\Components\SpatieMediaLibraryImageEntry;
+use Filament\Infolists\Components\RepeatableEntry;
+use Filament\Support\Enums\FontWeight;
 use Filament\Pages\SubNavigationPosition;
 
 class ProductResource extends Resource
@@ -117,23 +122,36 @@ class ProductResource extends Resource
                     ->searchable(),
                 Tables\Columns\TextColumn::make('name')
                     ->label('Nama Item')
-                    ->searchable(),
+                    ->searchable()
+                    ->limit(50),
+                Tables\Columns\TextColumn::make('category.name')
+                    ->label('Categories')
+                    ->sortable(),
+                Tables\Columns\TextColumn::make('brand.name')
+                    ->label('Brands')
+                    ->sortable(),
                 Tables\Columns\TextColumn::make('sum')
-                    ->label('Stok'),                                    
-                Tables\Columns\TextColumn::make('hress')
-                    ->label('Harga Resell')
-                    ->money('IDR'),
+                    ->label('Stok'),                                                    
                 Tables\Columns\TextColumn::make('hjual')
                     ->label('Harga Umum')  
                     ->money('IDR')
             ])
             ->filters([
-                //
+                Tables\Filters\SelectFilter::make('category_id')
+                    ->label('Categories')
+                    ->options(ProductCategories::all()->pluck('name', 'id')),
+                Tables\Filters\SelectFilter::make('brand_id')
+                    ->label('Brands')
+                    ->options(ProductBrands::all()->pluck('name', 'id')),
             ])
             ->actions([
-                Tables\Actions\ViewAction::make()->hiddenlabel()->tooltip('Detail'),
-                Tables\Actions\EditAction::make()->hiddenlabel()->tooltip('Edit'),
-                Tables\Actions\DeleteAction::make()->hiddenlabel()->tooltip('Delete'),
+                Tables\Actions\ActionGroup::make([
+                    Tables\Actions\ViewAction::make(),
+                    Tables\Actions\EditAction::make()
+                        ->hidden(fn()=> auth()->user()->roles->pluck('name')[0] != 'super_admin'),
+                    Tables\Actions\DeleteAction::make()
+                        ->hidden(fn()=> auth()->user()->roles->pluck('name')[0] != 'super_admin'),
+                ])                
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
@@ -141,13 +159,36 @@ class ProductResource extends Resource
                 ]),
             ]);
     }
-
-    public static function getRelations(): array
+    
+    public static function infolist(Infolist $infolist): Infolist
     {
-        return [
-            //
-        ];
-    }    
+        return $infolist
+            ->schema([                
+                TextEntry::make('code')
+                    ->label('Kode Service')
+                    ->weight(FontWeight::Bold),
+                TextEntry::make('name')
+                    ->label('Name'),
+                TextEntry::make('sum')                   
+                    ->label('Stok'),
+                TextEntry::make('category.name')
+                    ->label('Categories'),
+                TextEntry::make('brand.name')
+                    ->label('Brands'),
+                TextEntry::make('kondisi')
+                    ->label('Kondisi'),
+                TextEntry::make('hjual')
+                    ->label('Harga Jual Umum')
+                    ->money('IDR'),
+                TextEntry::make('hress')
+                    ->label('Harga Jual Reseller')
+                    ->money('IDR'),     
+                TextEntry::make('description')
+                    ->label('Description / Specification')
+                    ->columnSpan(2),                                   
+                                    
+            ])->columns(2);
+    }
 
     public static function getPages(): array
     {

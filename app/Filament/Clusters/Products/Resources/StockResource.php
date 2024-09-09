@@ -31,20 +31,16 @@ class StockResource extends Resource
             ->schema([
                 Forms\Components\Section::make('Code Generator')
                     ->schema(                        
-                        [          
-                        Forms\Components\Hidden::make('code')
-                            ->default(function() {                                
-                                $date = Carbon::now()->format('my');
-                                return $date."01";
-                            }),         
+                        [                                      
                         Forms\Components\Select::make('product_id')
                             ->label('Kode Items')
                             ->required()
-                            ->options(function() {
-                                $stok = Stock::select('product_id')->get();
-                                $items = Items::query()->whereNotIn('id', $stok)->pluck('code', 'id');
-                                return $items;
-                            })
+                            ->options(Items::all()->pluck('code', 'id'))
+                            // ->options(function() {
+                            //     $stok = Stock::select('product_id')->get();
+                            //     $items = Items::query()->whereNotIn('id', $stok)->pluck('code', 'id');
+                            //     return $items;
+                            // })
                             ->searchable(),                                                           
                         Forms\Components\TextInput::make('hbeli')
                             ->label('Harga Beli')
@@ -57,7 +53,7 @@ class StockResource extends Resource
                         Forms\Components\TextInput::make('supplier_warranty')
                             ->label('Garansi Supplier')
                             ->required()
-                            ->numeric(),                                               
+                            ->numeric(),                                                                       
                     ])->columns('2')
             ]);
     }
@@ -103,8 +99,8 @@ class StockResource extends Resource
     {
         return [
             'index' => Pages\ListStocks::route('/'),
-            // 'create' => Pages\CreateStock::route('/create'),
-            // 'edit' => Pages\EditStock::route('/{record}/edit'),
+            'create' => Pages\CreateStock::route('/create'),
+            'edit' => Pages\EditStock::route('/{record}/edit'),
         ];
     }
 }

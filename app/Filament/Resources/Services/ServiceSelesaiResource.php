@@ -338,6 +338,13 @@ class ServiceSelesaiResource extends Resource
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
+                Tables\Actions\Action::make('print')
+                    ->hiddenLabel()
+                    ->tooltip('Print')
+                    ->url(fn ($record) => 'print/selesaireceipt/'.$record->id)
+                    ->color('warning')
+                    ->icon('heroicon-o-printer')                    
+                    ->openUrlInNewTab(),
                 Tables\Actions\DeleteAction::make(),
             ])
             ->bulkActions([

@@ -13,6 +13,10 @@ return new class extends Migration
     {
         Schema::create('pemasukan', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('category_id')->references('id')->on('keuangan_categories');
+            $table->bigInteger('nominal');
+            $table->string('submitted_id'); 
+            $table->string('description')->nullable();
             $table->timestamps();
         });
     }

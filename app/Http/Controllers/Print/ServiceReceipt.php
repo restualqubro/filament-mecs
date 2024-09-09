@@ -13,7 +13,7 @@ class ServiceReceipt extends Controller
     public function print($id, GeneralSettings $settings) 
     {
         $data = [
-            'title'     => 'PDF View',
+            'title'     => 'Tanda Terima Service',
             'items'     => Data::where('id', $id)->get(),
             'logo'      => Storage::url($settings->brand_logo)
         //     // 'items'     => LayananCuti::where('surat_id', $id)->get(),
