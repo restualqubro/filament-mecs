@@ -13,7 +13,12 @@ use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Filament\Support\Enums\MaxWidth;
+use Filament\Infolists\Infolist;
+use Filament\Infolists\Components\TextEntry;
+use Filament\Infolists\Components\Section;
+use Filament\Infolists\Components\RepeatableEntry;
 use Carbon\Carbon;
+use Filament\Support\Enums\FontWeight;
 
 class InvoiceResource extends Resource
 {
@@ -227,11 +232,66 @@ class InvoiceResource extends Resource
 
     }
 
-    public static function getRelations(): array
+    public static function infolist(Infolist $infolist): Infolist
     {
-        return [
-            //
-        ];
+        return $infolist
+            ->schema([     
+                Section::make('Service Details')
+                    ->schema([
+                        TextEntry::make('code')
+                            ->label('Kode Service')
+                            ->weight(FontWeight::Bold), 
+                        TextEntry::make('updated_at')
+                            ->label('Last Updated'), 
+                        TextEntry::make('selesai.service.customer.name')
+                            ->label('Nama Customer'), 
+                        TextEntry::make('selesai.service.merk')
+                            ->label('Merk/Brand'),
+                        TextEntry::make('selesai.service.seri')
+                            ->label('Seti/Tipe'),                        
+                        TextEntry::make('selesai.service.keluhan')
+                            ->label('Keluhan'), 
+                        TextEntry::make('selesai.subtotal_service')
+                            ->label('Subtotal Service')
+                            ->money('IDR')
+                            ->weight(FontWeight::Bold),                                                                                                 
+                        TextEntry::make('selesai.totaldiscount_service')
+                            ->label('Total Discount')
+                            ->money('IDR')
+                            ->weight(FontWeight::Bold),    
+                        TextEntry::make('selesai.total')
+                            ->label('Total')
+                            ->money('IDR')
+                            ->weight(FontWeight::Bold),                         
+                        TextEntry::make('status')
+                            ->label('Status')
+                            ->badge()
+                            ->colors([
+                                'success'   => 'Cash',
+                                'warning'   => 'Lunas',
+                                'danger'    => 'Piutang'
+                            ]), 
+                        TextEntry::make('totalbayar')
+                            ->label('Total Dibayarkan')
+                            ->money('IDR')
+                            ->weight(FontWeight::Bold),        
+                        TextEntry::make('sisa') 
+                            ->label('Sisa Pembayaran')
+                            ->money('IDR')
+                            ->weight(FontWeight::Bold),        
+                ])->columns(2),                                                             
+                RepeatableEntry::make('detailPiutang')
+                    ->label('Riwayat Pelunasan Piutang')
+                    ->schema([                                                                                                                                                                                                  
+                        TextEntry::make('created_at'),
+                        TextEntry::make('bayar')                            
+                            ->label('Nomimal')
+                            ->money('IDR')
+                    ])      
+                    ->columns(2) 
+                    ->columnSpan('full')                                 
+                    ->grid(2),                   
+            ]);
     }
 
     public static function getPages(): array
@@ -239,6 +299,7 @@ class InvoiceResource extends Resource
         return [
             'index' => Pages\ListInvoices::route('/'),
             'create' => Pages\CreateInvoice::route('/create'),
+            'view' => Pages\ViewDetails::route('/{record}/view'),
             'edit' => Pages\EditInvoice::route('/{record}/edit'),
         ];
     }

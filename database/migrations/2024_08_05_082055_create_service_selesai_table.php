@@ -14,9 +14,7 @@ return new class extends Migration
         Schema::create('service_selesai', function (Blueprint $table) {
             $table->ulid('id')->primary();                     
             $table->foreignUlid('service_id')->references('id')->on('service_data');
-            $table->foreignUlid('teknisi_id')->references('id')->on('users');
-            $table->unsignedBigInteger('subtotal_products');
-            $table->unsignedBigInteger('totaldiscount_products');
+            $table->foreignUlid('teknisi_id')->references('id')->on('users');            
             $table->unsignedBigInteger('subtotal_service');
             $table->unsignedBigInteger('totaldiscount_service');            
             $table->unsignedBigInteger('subtotal_component');

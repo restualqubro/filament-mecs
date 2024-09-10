@@ -16,6 +16,7 @@ use Filament\Tables;
 use Filament\Tables\Table;
 use Filament\Infolists\Infolist;
 use Filament\Infolists\Components\TextEntry;
+use Filament\Infolists\Components\Section;
 use Filament\Infolists\Components\RepeatableEntry;
 use Carbon\Carbon;
 use Filament\Support\Enums\FontWeight;
@@ -124,78 +125,87 @@ class ServiceDataResource extends Resource
                     ->sortable(),
             ])
             ->defaultSort('code', 'DESC')
-            ->filters([
-                //
+            ->filters([                
+                Tables\Filters\SelectFilter::make('status')
+                    ->label('Categories')
+                    ->options([
+                        'Baru'      => 'Baru',
+                        'Proses'    => 'Proses',
+                        'Selesai'   => 'Selesai',
+                        'Cancel'    => 'Cancel',
+                        'Keluar'    => 'Keluar'
+                    ]),
             ])
             ->actions([
-                Tables\Actions\Action::make('contact')
-                    ->hiddenLabel()
-                    ->tooltip('Contact')
-                    ->url(function($record) {
-                        
-                        // return dd($record);
-                        return 'https://wa.me/+62'.$record->customer->telp."?text=Assalamu'alaikum,%20Salam%20Kami%20dari%20Mecs%20Komputer%20Ingin%20Mengupdate%20Unit%20dengan%20kode%20".$record->code."%20atas%20nama%20".$record->customer->name;
-                    })
-                    ->color('success')
-                    ->icon('heroicon-o-chat-bubble-bottom-center-text')
-                    ->openUrlInNewTab(),
-                Tables\Actions\Action::make('print')
-                    ->hiddenLabel()
-                    ->tooltip('Print')
-                    ->url(fn ($record) => 'print/servicereceipt/'.$record->id)
-                    ->color('warning')
-                    ->icon('heroicon-o-printer')                    
-                    ->openUrlInNewTab(),
-                Tables\Actions\ViewAction::make()->hiddenLabel()->tooltip('Details'),
-                Tables\Actions\EditAction::make()->hiddenLabel()->tooltip('Edit'),
-                Tables\Actions\Action::make('status_edit')
-                    ->hiddenLabel()
-                    ->tooltip('Edit Status')
-                    ->color('success')
-                    ->icon('heroicon-o-document-check')
-                    ->form([
-                        Forms\Components\TextArea::make('description')                                                                     
-                            ->label('Update Details')
-                                                        
-                    ])
-                    ->action(function (array $data, Data $row): void {
-                        $record[] = array();
-                        $record['service_id'] = $row->id;
-                        $record['user_id'] = auth()->user()->id;
-                        $record['description'] = $data['description'];
-                        $record['status'] = 'Proses';                        
-                        LogService::create($record);
-                        Data::where('id', $row->id)->update(['status' => 'Proses']);
-                    }),
-                Tables\Actions\Action::make('cancel')
-                    ->hiddenLabel()
-                    ->tooltip('Cancel Service')
-                    ->color('danger')
-                    ->icon('heroicon-o-no-symbol')
-                    ->form([
-                        Forms\Components\TextArea::make('description')                                                                     
-                            ->label('Cancel Details'),
-                        Forms\Components\Select::make('teknisi_id')
-                            ->label('Teknisi Bersangkutan')
-                            ->options(                                                
-                                User::get()->mapWithKeys(function (User $user) {
-                                    return [$user->id => sprintf('%s %s', $user->firstname, $user->lastname)];
-                                })
-                                )
-                                                        
-                    ])
-                    ->action(function (array $data, Data $row): void {
-                        $record[] = array();
-                        $record['service_id'] = $row->id;
-                        $record['user_id'] = auth()->user()->id;
-                        $record['teknisi_id'] = auth()->user()->id;
-                        $record['alasan'] = $data['description'];
-                        $record['description'] = $data['description'];
-                        $record['status'] = 'Cancel';                        
-                        LogService::create($record);
-                        Cancel::create($record);
-                        Data::where('id', $row->id)->update(['status' => 'Cancel']);
-                    })
+                Tables\Actions\ActionGroup::make([
+                    Tables\Actions\Action::make('contact')
+                        ->label('Contact')
+                        ->url(function($record) {
+                            
+                            // return dd($record);
+                            return 'https://wa.me/+62'.$record->customer->telp."?text=Assalamu'alaikum,%20Salam%20Kami%20dari%20Mecs%20Komputer%20Ingin%20Mengupdate%20Unit%20dengan%20kode%20".$record->code."%20atas%20nama%20".$record->customer->name;
+                        })
+                        ->color('success')
+                        ->icon('heroicon-o-chat-bubble-bottom-center-text')
+                        ->openUrlInNewTab()
+                        ->hidden(fn() => auth()->user()->roles->pluck('name')[0] === 'Teknisi'),
+                    Tables\Actions\Action::make('print')
+                        ->label('Print')
+                        ->url(fn ($record) => 'print/servicereceipt/'.$record->id)
+                        ->color('warning')
+                        ->icon('heroicon-o-printer')                    
+                        ->openUrlInNewTab()
+                        ->hidden(fn() => auth()->user()->roles->pluck('name')[0] === 'Teknisi'),
+                    Tables\Actions\ViewAction::make(),
+                    Tables\Actions\EditAction::make()
+                    ->hidden(fn() => auth()->user()->roles->pluck('name')[0] === 'Teknisi'),
+                    Tables\Actions\Action::make('status_edit')
+                        ->label('Update')
+                        ->color('success')
+                        ->icon('heroicon-o-document-check')
+                        ->form([
+                            Forms\Components\TextArea::make('description')                                                                     
+                                ->label('Update Details')
+                                                            
+                        ])
+                        ->action(function (array $data, Data $row): void {
+                            $record[] = array();
+                            $record['service_id'] = $row->id;
+                            $record['user_id'] = auth()->user()->id;
+                            $record['description'] = $data['description'];
+                            $record['status'] = 'Proses';                        
+                            LogService::create($record);
+                            Data::where('id', $row->id)->update(['status' => 'Proses']);
+                        })->hidden(fn(Data $record) => $record->status != 'Baru' || $record->status != 'Proses' || auth()->user()->roles->pluck('name')[0] === 'CSR'),
+                    Tables\Actions\Action::make('cancel')
+                        ->label('Cancel')
+                        ->color('danger')
+                        ->icon('heroicon-o-no-symbol')
+                        ->form([
+                            Forms\Components\TextArea::make('description')                                                                     
+                                ->label('Cancel Details'),
+                            Forms\Components\Select::make('teknisi_id')
+                                ->label('Teknisi Bersangkutan')
+                                ->options(                                                
+                                    User::get()->mapWithKeys(function (User $user) {
+                                        return [$user->id => sprintf('%s %s', $user->firstname, $user->lastname)];
+                                    })
+                                    )
+                                                            
+                        ])
+                        ->action(function (array $data, Data $row): void {
+                            $record[] = array();
+                            $record['service_id'] = $row->id;
+                            $record['user_id'] = auth()->user()->id;
+                            $record['teknisi_id'] = auth()->user()->id;
+                            $record['alasan'] = $data['description'];
+                            $record['description'] = $data['description'];
+                            $record['status'] = 'Cancel';                        
+                            LogService::create($record);
+                            Cancel::create($record);
+                            Data::where('id', $row->id)->update(['status' => 'Cancel']);
+                        })->hidden(fn(Data $record) => $record->status != 'Baru' || $record->status != 'Proses' || auth()->user()->roles->pluck('name')[0] === 'CSR')        
+            ])
             ])
             ->bulkActions([
                 
@@ -212,46 +222,50 @@ class ServiceDataResource extends Resource
     public static function infolist(Infolist $infolist): Infolist
     {
         return $infolist
-            ->schema([                
-                TextEntry::make('code')
-                    ->label('Kode Service')
-                    ->weight(FontWeight::Bold),
-                TextEntry::make('customer.name')
-                    ->label('Nama Customer'),
-                TextEntry::make('date_in')
-                    ->label('Tanggal Masuk'),
-                TextEntry::make('category.name')
-                    ->label('Kategori'),
-                TextEntry::make('status')
-                    ->badge()
-                    ->color(fn (string $state): string => match ($state) {
-                        'Baru' => 'gray',
-                        'Proses' => 'warning',
-                        'Selesai' => 'success',
-                        'Cancel' => 'danger',
-                        'Keluar' => 'gray',
-                        
-                    }),
-                TextEntry::make('penawaran')
-                    ->label('Penawaran')
-                    ->badge()
-                    ->color(fn (string $state): string => match ($state) {
-                        'Setuju' => 'success',
-                        'Tidak' => 'warning',                        
-                    }),
-                TextEntry::make('merk')
-                    ->label('Merk/Brand'),
-                TextEntry::make('seri')
-                    ->label('Seti/Tipe'),
-                TextEntry::make('sn')
-                    ->label('Serial Number/Model'),                                
-                TextEntry::make('kelengkapan')
-                    ->label('Kelengkapan'),
-                TextEntry::make('keluhan')
-                    ->label('Keluhan'),
-                TextEntry::make('description')
-                    ->label('Keterangan/Update'),                                    
+            ->schema([     
+                Section::make('Service Details')
+                    ->schema([
+                        TextEntry::make('code')
+                            ->label('Kode Service')
+                            ->weight(FontWeight::Bold),
+                        TextEntry::make('customer.name')
+                            ->label('Nama Customer'),
+                        TextEntry::make('date_in')
+                            ->label('Tanggal Masuk'),
+                        TextEntry::make('category.name')
+                            ->label('Kategori'),
+                        TextEntry::make('status')
+                            ->badge()
+                            ->color(fn (string $state): string => match ($state) {
+                                'Baru' => 'gray',
+                                'Proses' => 'warning',
+                                'Selesai' => 'success',
+                                'Cancel' => 'danger',
+                                'Keluar' => 'gray',
+                                
+                            }),
+                        TextEntry::make('penawaran')
+                            ->label('Penawaran')
+                            ->badge()
+                            ->color(fn (string $state): string => match ($state) {
+                                'Setuju' => 'success',
+                                'Tidak' => 'warning',                        
+                            }),
+                        TextEntry::make('merk')
+                            ->label('Merk/Brand'),
+                        TextEntry::make('seri')
+                            ->label('Seti/Tipe'),
+                        TextEntry::make('sn')
+                            ->label('Serial Number/Model'),                                
+                        TextEntry::make('kelengkapan')
+                            ->label('Kelengkapan'),
+                        TextEntry::make('keluhan')
+                            ->label('Keluhan'),
+                        TextEntry::make('description')
+                            ->label('Keterangan/Update'),
+                ])->columns(2),                                                             
                 RepeatableEntry::make('logservice')
+                    ->label('History')
                     ->schema([
                         TextEntry::make('status')
                             ->label('Status')
@@ -269,7 +283,7 @@ class ServiceDataResource extends Resource
                             ->dateTime(),                                                                                                   
                         TextEntry::make('description')
                             ->label('Details'),
-                        TextEntry::make('user.name')                        
+                        TextEntry::make('user.name')
                             ->label('Petugas')
                     ])->columns(2)
                     ->columnSpan(2)                                                                        
@@ -281,7 +295,7 @@ class ServiceDataResource extends Resource
     {
         return [
             'index' => Pages\ListServiceData::route('/'),            
-            // 'view'  => Pages\ViewServiceData::route('/{record}')
+            'view'  => Pages\ViewServiceData::route('/{record}/view'),
             // 'create' => Pages\CreateServiceData::route('/create'),
             // 'edit' => Pages\EditServiceData::route('/{record}/edit'),
         ];

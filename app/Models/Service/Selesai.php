@@ -19,8 +19,6 @@ class Selesai extends Model
     protected $fillable = [        
         'service_id',
         'teknisi_id',
-        'subtotal_products',
-        'totaldiscount_products',
         'subtotal_service',
         'totaldiscount_service',
         'subtotal_component',

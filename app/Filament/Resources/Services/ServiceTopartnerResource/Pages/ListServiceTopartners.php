@@ -14,7 +14,8 @@ class ListServiceTopartners extends ListRecords
     {
         return [
             Actions\CreateAction::make()
-                ->modalWidth('md'),
+                ->modalWidth('md')
+                ->hidden(fn() => auth()->user()->roles->pluck('name')[0] === 'Teknisi'),
         ];
     }
 }

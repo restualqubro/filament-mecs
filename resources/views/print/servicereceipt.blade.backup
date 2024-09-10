@@ -1,327 +1,153 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>App | {{ $title; }} </title>
+  <!-- Tell the browser to be responsive to screen width -->
+  <meta name="viewport" content="width=device-width, initial-scale=1">    
+  
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css" integrity="sha384-xOolHFLEh07PJGoPkLv1IbcEPTNtaed2xpHsD9ESMhqIYd0nLMwNLD69Npy4HI+N" crossorigin="anonymous">
+  <!-- Google Font: Source Sans Pro -->
+  <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700" rel="stylesheet">
 
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<title> Order confirmation </title>
-<meta name="robots" content="noindex,nofollow" />
-<meta name="viewport" content="width=device-width; initial-scale=1.0;" />
-<style type="text/css">
-  @import url(https://fonts.googleapis.com/css?family=Open+Sans:400,700);
-  body { margin: 0; padding: 0; background: #e1e1e1; }
-  div, p, a, li, td { -webkit-text-size-adjust: none; }
-  .ReadMsgBody { width: 100%; background-color: #ffffff; }
-  .ExternalClass { width: 100%; background-color: #ffffff; }
-  body { width: 100%; height: 100%; background-color: #e1e1e1; margin: 0; padding: 0; -webkit-font-smoothing: antialiased; }
-  html { width: 100%; }
-  p { padding: 0 !important; margin-top: 0 !important; margin-right: 0 !important; margin-bottom: 0 !important; margin-left: 0 !important; }
-  .visibleMobile { display: none; }
-  .hiddenMobile { display: block; }
-  .text-main {
-  color: #5c6ac4;
-    }
-
-    /* Border color */
-    .border-main {
-      border-color: #5c6ac4;
-    }
-
-    /* Background color */
-    .bg-main {
-      background-color: #5c6ac4;
-    }
-
-  @media only screen and (max-width: 600px) {
-  body { width: auto !important; }
-  table[class=fullTable] { width: 96% !important; clear: both; }
-  table[class=fullPadding] { width: 85% !important; clear: both; }
-  table[class=col] { width: 45% !important; }
-  .erase { display: none; }
-  }
-
-  @media only screen and (max-width: 420px) {
-  table[class=fullTable] { width: 100% !important; clear: both; }
-  table[class=fullPadding] { width: 85% !important; clear: both; }
-  table[class=col] { width: 100% !important; clear: both; }
-  table[class=col] td { text-align: left !important; }
-  .erase { display: none; font-size: 0; max-height: 0; line-height: 0; padding: 0; }
-  .visibleMobile { display: block !important; }
-  .hiddenMobile { display: none !important; }
-  }
+<style>
+table {
+  min-height:300px;
+}
+.card-header {
+  border: 1px solid black;
+}
 </style>
+  
+</head>
+<body>
 
-{{-- @foreach($item) --}}
-<!-- Header -->
-<table width="100%" border="0" cellpadding="0" cellspacing="0" align="center" class="fullTable" bgcolor="#e1e1e1">
-  <tr>
-    <td height="20"></td>
-  </tr>
-  <tr>
-    <td>
-      <table width="500" border="0" cellpadding="0" cellspacing="0" align="center" class="fullTable" bgcolor="#ffffff" style="border-radius: 10px 10px 0 0;">
-        <tr class="hiddenMobile">
-          <td height="10"></td>
-        </tr>
-        <tr class="visibleMobile">
-          <td height="10"></td>
-        </tr>
-
-        <tr>
-          <td>
-            <table width="480" border="0" cellpadding="0" cellspacing="0" align="center" class="fullPadding">
-              <tbody>
-                <tr>
-                  <td>
-                    <table width="220" border="0" cellpadding="0" cellspacing="0" align="left" class="col">
-                      <tbody>
-                        <tr>
-                          <td align="left"> <img src="{{$logo}}" width="100" alt="Logo" class="h-10"></td>
-                        </tr>
-                        <tr class="hiddenMobile">
-                          <td height="40"></td>
-                        </tr>
-                        <tr class="visibleMobile">
-                          <td height="20"></td>
-                        </tr>
-                        
-                      </tbody>
-                    </table>
-                    <table width="220" border="0" cellpadding="0" cellspacing="0" align="right" class="col">
-                      <tbody>
-                        <tr class="visibleMobile">
-                          <td height="20"></td>
-                        </tr>
-                        <tr>
-                          <td height="5"></td>
-                        </tr>
-                        <tr>
-                          <td style="font-size: 15px; color: #5b5b5b; letter-spacing: -1px; font-family: 'Open Sans', sans-serif; line-height: 1; vertical-align: top; text-align: right;">
-                            TANDA TERIMA<br/>                          
-                          </td>
-                        </tr>
-                        <tr>
-                        <tr class="hiddenMobile">
-                          <td height="20"></td>
-                        </tr>
-                        <tr class="visibleMobile">
-                          <td height="10"></td>
-                        </tr>
-                        <tr>
-                          <td style="font-size: 20px; color: #ff0000; font-family: 'Open Sans', sans-serif; line-height: 18px; vertical-align: top; text-align: right;">
-                            <b>{{$items[0]['code']}}</b>
-                          </td>
-                        </tr>
-                        <tr>
-                          <td style="font-size: 10px; color: #5b5b5b; font-family: 'Open Sans', sans-serif; line-height: 18px; vertical-align: top; text-align: right;">                            
-                            {{$items[0]['created_at']}}
-                          </td>
-                        </tr>
-                      </tbody>
-                    </table>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-          </td>
-        </tr>
-      </table>
-    </td>
-  </tr>
-</table>
-<!-- /Header -->
-<!-- Order Details -->
-
-<table width="100%" border="0" cellpadding="0" cellspacing="0" align="center" class="fullTable" bgcolor="#e1e1e1">
-  <tbody>
-    <tr>
-      <td>
-        <table width="500" border="0" cellpadding="0" cellspacing="0" align="center" class="fullTable" bgcolor="#ffffff">
+    <div class="wrapper">
+        <div class="row">
+        
+          <div class="col-4">
+            <div class="row">
+              <div class="col-12">
+                <img src="{{$logo}}" style="max-width:100px"/>
+                <br/>Jl. Manggis No 47, Banjarmasin<br/>
+                0851 0042 2583
+              </div>              
+            </div>
+          </div>
+          <div class="col-4">
+            <h4><b><u>{{$title}}</u></b></h4>
+          </div>
+          <div class="col-4">
+            <div class="row">
+              <div class="col-3">
+                Tanggal<br/>
+                Customer<br/>
+                Contact<br/>
+              </div>
+              <div class="col-0">
+              :<br/>
+              :<br/>
+              :<br/>
+              </div>
+              <div class="col-7">              
+              {{date('d M Y', strtotime($items[0]['created_at']))}}<br/>
+              {{$items[0]['service']['customer']['name']}}<br/>
+              {{$items[0]['service']['customer']['telp']}}
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <br/><br/>
+        <table class="table table-condensed table-responsive w-full">
+          <thead>
+            <tr>
+              <th width="5%">#</th>
+              <th width="5%">Kode</th>
+              <th width="10%">Unit</th>
+              <th width="35%">Nama Barang</th>
+              <th width="5%">Qty</th>
+              <th width="10%">Harga</th>
+              <th width="10%">Potongan</th>
+              <th width="10%">Jumlah</th>
+            </tr>
+          </thead>
           <tbody>
-            <tr>
-            <tr class="hiddenMobile">
-              <td height="20"></td>
-            </tr>
-            <tr class="visibleMobile">
-              <td height="10"></td>
-            </tr>
-            <tr>
-              <td>
-                <table width="480" border="0" cellpadding="0" cellspacing="0" align="center" class="fullPadding">
-                  <tbody>
-                    <tr>
-                      <td>
-                        <table width="230" border="0" cellpadding="0" cellspacing="0" align="left" class="col">
-
-                          <tbody>
-                            <tr>
-                              <td style="font-size: 11px; font-family: 'Open Sans', sans-serif; color: #5b5b5b; line-height: 1; vertical-align: top; ">
-                                <strong>INFORMASI CUSTOMER</strong>
-                              </td>
-                            </tr>
-                            <tr>
-                              <td width="100%" height="10"></td>
-                            </tr>
-                            <tr>
-                              <td style="font-size: 12px; font-family: 'Open Sans', sans-serif; color: #5b5b5b; line-height: 20px; vertical-align: top; ">
-                                {{$items[0]['customer']['name']}}<br> {{$items[0]['customer']['telp']}}<br>
-                              </td>
-                            </tr>
-                          </tbody>
-                        </table>
-
-
-                        <table width="230" border="0" cellpadding="0" cellspacing="0" align="right" class="col">
-                          <tbody>
-                            <tr class="visibleMobile">
-                              <td height="20"></td>
-                            </tr>
-                            <tr>
-                              <td style="font-size: 11px; font-family: 'Open Sans', sans-serif; color: #5b5b5b; line-height: 1; vertical-align: top; ">
-                                <strong>INFORMASI UNIT</strong>
-                              </td>
-                            </tr>
-                            <tr>
-                              <td width="100%" height="10"></td>
-                            </tr>
-                            <tr>
-                              <td style="font-size: 12px; font-family: 'Open Sans', sans-serif; color: #5b5b5b; line-height: 20px; vertical-align: top; ">
-                                {{$items[0]['merk']}} {{$items[0]['seri']}}<br> {{$items[0]['kelengkapan']}}<br>                                
-                              </td>
-                            </tr>
-                          </tbody>
-                        </table>
-                      </td>
-                    </tr>
-                  </tbody>
-                </table>
-              </td>
-            </tr>
-            <tr>
-              <td>
-                <table width="480" border="0" cellpadding="0" cellspacing="0" align="center" class="fullPadding">
-                  <tbody>
-                    <tr>
-                      <td>
-                        <table width="480" border="0" cellpadding="0" cellspacing="0" align="left" class="col">
-                          <tbody>
-                            <tr class="hiddenMobile">
-                              <td height="15"></td>
-                            </tr>
-                            <tr class="visibleMobile">
-                              <td height="10"></td>
-                            </tr>
-                            <tr>
-                              <td style="font-size: 11px; font-family: 'Open Sans', sans-serif; color: #5b5b5b; line-height: 1; vertical-align: top; ">
-                                <strong>INFORMASI KELUHAN</strong>
-                              </td>
-                            </tr>
-                            <tr>
-                              <td width="100%" height="10"></td>
-                            </tr>
-                            <tr>
-                              <td style="font-size: 12px; font-family: 'Open Sans', sans-serif; color: #5b5b5b; line-height: 20px; vertical-align: top; ">
-                                KELUHAN : {{$items[0]['keluhan']}}<br> 
-                                KETERANGAN : {{$items[0]['description']}}
-                              </td>
-                            </tr>
-                          </tbody>
-                        </table>
-
-
-                        {{-- <table width="220" border="0" cellpadding="0" cellspacing="0" align="right" class="col">
-                          <tbody>
-                            <tr class="hiddenMobile">
-                              <td height="35"></td>
-                            </tr>
-                            <tr class="visibleMobile">
-                              <td height="20"></td>
-                            </tr>
-                            <tr>
-                              <td style="font-size: 11px; font-family: 'Open Sans', sans-serif; color: #5b5b5b; line-height: 1; vertical-align: top; ">
-                                <strong>NOTES</strong>
-                              </td>
-                            </tr>
-                            <tr>
-                              <td width="100%" height="10"></td>
-                            </tr>
-                            <tr>
-                              <td style="font-size: 10px; font-family: 'Open Sans', sans-serif; color: #5b5b5b; line-height: 20px; vertical-align: top; ">
-                                Informasi akan di update melalui whatsapp customer, unit yang tidak diambil selama kurang lebih 30 hari pasca di informasikan selesai bukan tanggung jawab Mecs Komputer
-                              </td>
-                            </tr>
-                          </tbody>
-                        </table> --}}
-                      </td>
-                    </tr>
-                  </tbody>
-                </table>
-              </td>
-            </tr>
-            
+            <?php
+            $no = 1;
+            $sub = 0;
+            $totpot = 0;
+            $total = 0;
+            foreach ($data as $i) {
+              $sub += $i['biaya'] * $i['service_qty'];
+              $totpot += $i['service_disc'] * $i['service_qty'];              
+              $total += $i['service_qty'] * ($i['biaya'] - $i['service_disc']);              
+            ?>
+              <tr>
+                <td>{{ $no++ }}</td>
+                <td>{{ $i['selesai']['service']['code']}}</td>
+                <td>{{ $i['selesai']['service']['merk'] }} {{ $i['selesai']['service']['seri'] }}</td>
+                <td>{{ $i['catalog']['name'] }}</td>
+                <td>{{ $i['service_qty'] }}</td>
+                <td>Rp. {{ number_format($i['biaya'], 0, ".", ".") }}</td>
+                <td>Rp. {{ number_format($i['service_disc'], 0, ".", ".") }}</td>
+                <td>Rp. {{ number_format($i['service_qty'] * ($i['biaya'] - $i['service_disc']), 0, ".", ".") }}</td>
+              </tr>
+            <?php
+            }
+            ?>
+    
           </tbody>
         </table>
-      </td>
-    </tr>
-  </tbody>
-</table>
-<!-- /Information -->
-<table width="100%" border="0" cellpadding="0" cellspacing="0" align="center" class="fullTable" bgcolor="#e1e1e1">
+        <hr width="100%" size="10px">
+        <div class="row">
+          <div class="col-8">
+          </div>
+          <div class="col-2">
+            <b>Sub Total<br />
+              Total Potongan<br />
+              Total</b>
+          </div>
+          <div class="col-2">
+            <b>Rp. {{ number_format($sub, 0, ".", ".") }}<br />
+              Rp. {{ number_format($totpot, 0, ".", ".") }}<br />
+              Rp. {{ number_format($total, 0, ".", ".") }}</b>
+          </div>
+          <hr width="100%" size="10px">
+          <br />
+          <br />
+        </div>
+        <br/><br/>
+        <div class="row">        
+          <div class="col-4">          
+            <span>Harap lakukan pengecekan terhadap Unit yang anda titipkan sebelum meninggalkan toko <b>MECS KOMPUTER</b></span>            
+          </div>
+          <div class="col-2">
+          </div>
+          <div class="col-3">
+            <div class="text-center">
+              Hormat Kami<br/><br/><br/><br/>(Mecs Komputer)
+            </div>
+          </div>
+          <div class="col-3">
+            <div class="text-center">
+              Customer<br/><br/><br/><br/>(..........................)
+            </div>
+          </div>
+        </div>
 
-  <tr>
-    <td>
-      <table width="500" border="0" cellpadding="0" cellspacing="0" align="center" class="fullTable" bgcolor="#ffffff" style="border-radius: 0 0 10px 10px;">
-        <tr>
-          <td>
-            <table width="480" border="0" cellpadding="0" cellspacing="0" align="center" class="fullPadding">
-              <tbody>
-                <tr>
-                  <td>
-                    <table width="200" border="0" cellpadding="0" cellspacing="0" align="left" class="col">
-                      <tbody>
-                        <tr class="hiddenMobile">
-                          <td height="15"></td>
-                        </tr>
-                        <tr class="visibleMobile">
-                          <td height="10"></td>
-                        </tr>
-                        <tr>
-                          <td style="font-size: 11px; font-family: 'Open Sans', sans-serif; color: #5b5b5b; border-radius:4px; padding:10px; line-height: 1; vertical-align: top; background-color:#dfdfdf; ">
-                            <small>Informasi akan di update melalui whatsapp customer, unit yang tidak diambil selama kurang lebih 30 hari pasca di informasikan selesai bukan tanggung jawab Mecs Komputer</small>
-                          </td>
-                        </tr>                        
-                      </tbody>
-                    </table>
-                    <table width="250" border="0" cellpadding="0" cellspacing="0" align="right" class="col">
-                      <tbody>
-                        <tr class="hiddenMobile">
-                          <td height="15"></td>
-                        </tr>
-                        <tr class="visibleMobile">
-                          <td height="10"></td>
-                        </tr>
-                        <tr>
-                          <td align="center" style="font-size: 11px; font-family: 'Open Sans', sans-serif; color: #5b5b5b; line-height: 1; vertical-align: top; ">
-                            <strong>MECS KOMPUTER</strong><br/><br/><br/><br/><br/><br/><br/>
-                            (........................)
-                          </td>                        
-                          <td align="center" style="font-size: 11px; font-family: 'Open Sans', sans-serif; color: #5b5b5b; line-height: 1; vertical-align: top; ">
-                            <strong>PELANGGAN</strong><br/><br/><br/><br/><br/><br/><br/>
-                            (........................)
-                          </td>
-                        </tr>                       
-                      </tbody>
-                    </table>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-          </td>
-        </tr>
-        <tr class="spacer">
-          <td height="20"></td>
-        </tr>
+          
+    </div>
 
-      </table>
-    </td>
-  </tr>
-  <tr>
-    <td height="20"></td>
-  </tr>
-</table>
+
+<!-- Bootstrap 4 -->
+<script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-Fy6S3B9q64WdZWQUiU+q4/2Lc9npb8tCaSX9FK7E8HnRr0Jz8D6OP9dO5Vg3Q9ct" crossorigin="anonymous"></script>
+<!-- AdminLTE App -->
+
+
+
+
+</body>
+</html>

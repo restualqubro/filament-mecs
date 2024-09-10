@@ -15,7 +15,12 @@ use Filament\Forms\Components\Repeater;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
+use Filament\Infolists\Infolist;
+use Filament\Infolists\Components\TextEntry;
+use Filament\Infolists\Components\Section;
+use Filament\Infolists\Components\RepeatableEntry;
 use Carbon\Carbon;
+use Filament\Support\Enums\FontWeight;
 
 class ServiceSelesaiResource extends Resource
 {    
@@ -144,9 +149,8 @@ class ServiceSelesaiResource extends Resource
                                                     $catalog = Catalog::find($servicecatalog_id);
                                                     if($catalog)
                                                     {                                                        
-                                                        $disc = $get('service_disc');
-                                                        $qty = $get('service_qty');                                                        
-                                                        $jumlah = $qty * ($catalog->biaya_max - $disc);
+                                                        $disc = $get('service_disc');                                                                                                               
+                                                        $jumlah = $get('service_qty') * ($catalog->biaya_max - $disc) ;
                                                         $set('service_jumlah', number_format($jumlah, 0, '', '.'));
                                                     }                                                                                                        
                                                 }
@@ -293,9 +297,9 @@ class ServiceSelesaiResource extends Resource
         $totaldiscount = 0;
         $total = 0;        
         foreach($selectedCatalog as $item) {
-            $subtotal += ($item['biaya'] - $item['service_disc']) * $item['service_qty'] ;
+            $subtotal = $subtotal +  $item['service_qty'] * $item['biaya'] ;
             $totaldiscount += $item['service_disc'] * $item['service_qty'];      
-            $total += $subtotal;
+            $total = $subtotal - $totaldiscount;
         }                                          
         $set('subtotal_service', number_format($subtotal, 0, '', '.'));
         $set('totaldiscount_service', number_format($totaldiscount, 0, '', '.'));      
@@ -325,8 +329,8 @@ class ServiceSelesaiResource extends Resource
                 Tables\Columns\TextColumn::make('subtotal_service')
                     ->label('SUBTOTAL SERVICE')
                     ->money('IDR'),
-                Tables\Columns\TextColumn::make('subtotal_products')
-                    ->label('SUBTOTAL PRODUCTS')
+                Tables\Columns\TextColumn::make('totaldiscount_service')
+                    ->label('TOTAL DISCOUNT SERVICE')
                     ->money('IDR'),
                 Tables\Columns\TextColumn::make('total')
                     ->label('TOTAL')
@@ -334,18 +338,19 @@ class ServiceSelesaiResource extends Resource
                 
             ])
             ->filters([
-                //
+                
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
-                Tables\Actions\Action::make('print')
-                    ->hiddenLabel()
-                    ->tooltip('Print')
-                    ->url(fn ($record) => 'print/selesaireceipt/'.$record->id)
-                    ->color('warning')
-                    ->icon('heroicon-o-printer')                    
-                    ->openUrlInNewTab(),
-                Tables\Actions\DeleteAction::make(),
+                Tables\Actions\ActionGroup::make([
+                    Tables\Actions\ViewAction::make(),                        
+                    Tables\Actions\EditAction::make()
+                        ->hidden(fn() => auth()->user()->roles->pluck('name')[0] === 'customer_service'),
+                    Tables\Actions\Action::make('print')                    
+                        ->url(fn ($record) => 'print/selesaireceipt/'.$record->id)
+                        ->color('warning')
+                        ->icon('heroicon-o-printer')                    
+                        ->openUrlInNewTab(),                
+                ])                
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
@@ -354,11 +359,76 @@ class ServiceSelesaiResource extends Resource
             ]);
     }    
 
-    public static function getRelations(): array
+    public static function infolist(Infolist $infolist): Infolist
     {
-        return [
-            //
-        ];
+        return $infolist
+            ->schema([     
+                Section::make('Service Details')
+                    ->schema([
+                        TextEntry::make('service.code')
+                            ->label('Kode Service')
+                            ->weight(FontWeight::Bold), 
+                        TextEntry::make('updated_at')
+                            ->label('Last Updated'), 
+                        TextEntry::make('service.customer.name')
+                            ->label('Nama Customer'), 
+                        TextEntry::make('service.merk')
+                            ->label('Merk/Brand'),
+                        TextEntry::make('service.seri')
+                            ->label('Seti/Tipe'),                        
+                        TextEntry::make('service.keluhan')
+                            ->label('Keluhan'), 
+                        TextEntry::make('subtotal_service')
+                            ->label('Subtotal Service')
+                            ->money('IDR')
+                            ->weight(FontWeight::Bold),                                                                                                 
+                        TextEntry::make('totaldiscount_service')
+                            ->label('Total Discount')
+                            ->money('IDR')
+                            ->weight(FontWeight::Bold),    
+                        TextEntry::make('total')
+                            ->label('Total')
+                            ->money('IDR')
+                            ->weight(FontWeight::Bold), 
+                        TextEntry::make('subtotal_component')
+                            ->label('Total Component')
+                            ->money('IDR')
+                            ->weight(FontWeight::Bold),    
+                ])->columns(2),                                                             
+                RepeatableEntry::make('detailService')
+                    ->label('Detail Catalog Service')
+                    ->schema([                                                                                                                                                                          
+                        TextEntry::make('catalog.name')                        
+                            ->label('Detail Perbaikan'),
+                        TextEntry::make('biaya')
+                            ->money('IDR')
+                            ->label('Biaya'),
+                        TextEntry::make('service_qty')
+                            ->label('Qty'),
+                        TextEntry::make('service_disc')
+                            ->money('IDR')
+                            ->label('Discount')
+                    ])      
+                    ->columns(2) 
+                    ->columnSpan('full')                                 
+                    ->grid(2),
+                RepeatableEntry::make('detailComponent')
+                    ->label('Detail Component Service')
+                    ->schema([
+                        TextEntry::make('stock.product.code')                        
+                            ->label('Detail Perbaikan'),                                                                                                                                                                                                 
+                        TextEntry::make('stock.product.name')                        
+                            ->label('Detail Perbaikan'),                       
+                        TextEntry::make('component_qty')                        
+                            ->label('Qty'),
+                        TextEntry::make('stock.product.hjual')                        
+                            ->money('IDR')
+                            ->label('Harga'),
+                    ])      
+                    ->columns(2) 
+                    ->columnSpan('full')                                 
+                    ->grid(2)        
+            ]);
     }
 
     public static function getPages(): array
@@ -366,6 +436,7 @@ class ServiceSelesaiResource extends Resource
         return [
             'index' => Pages\ListServiceSelesais::route('/'),
             'create' => Pages\CreateServiceSelesai::route('/create'),
+            'view' => Pages\ViewDetails::route('/{record}/view'),
             'edit' => Pages\EditServiceSelesai::route('/{record}/edit'),
         ];
     }

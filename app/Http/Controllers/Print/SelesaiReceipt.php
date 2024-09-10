@@ -16,7 +16,7 @@ class SelesaiReceipt extends Controller
     {
         $items = Selesai::where('id', $id)->get();
         $data = [
-            'title'     => 'Faktur Invoice Service',
+            'title'     => 'Selesai Service Receipt',
             'items'     => $items,
             'data'      => DetailService::where('selesai_id', $id)->get(),
             'logo'      => Storage::url($settings->brand_logo),            

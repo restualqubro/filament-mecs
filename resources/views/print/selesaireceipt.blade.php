@@ -13,7 +13,8 @@
 
 <style>
 table {
-  min-height:300px;
+  min-height:200px;
+  font-size:0.8rem;
 }
 .card-header {
   border: 1px solid black;
@@ -44,8 +45,12 @@ table {
                 Tanggal<br/>
                 Customer<br/>
                 Contact<br/>
+                Kode<br/>
+                Unit<br/>
               </div>
               <div class="col-0">
+              :<br/>
+              :<br/>
               :<br/>
               :<br/>
               :<br/>
@@ -53,24 +58,24 @@ table {
               <div class="col-7">              
               {{date('d M Y', strtotime($items[0]['created_at']))}}<br/>
               {{$items[0]['service']['customer']['name']}}<br/>
-              {{$items[0]['service']['customer']['telp']}}
+              {{$items[0]['service']['customer']['telp']}}<br/>
+              {{$items[0]['service']['code']}}<br/>
+              {{$items[0]['service']['merk']}}  {{$items[0]['service']['seri']}}<br/>
               </div>
             </div>
           </div>
         </div>
         
         <br/><br/>
-        <table class="table table-condensed table-responsive w-full">
+        <table class="table table-condensed">
           <thead>
             <tr>
-              <th width="5%">#</th>
-              <th width="5%">Kode</th>
-              <th width="10%">Unit</th>
-              <th width="35%">Nama Barang</th>
-              <th width="5%">Qty</th>
-              <th width="10%">Harga</th>
-              <th width="10%">Potongan</th>
-              <th width="10%">Jumlah</th>
+              <th width="5%">#</th>              
+              <th width="40%">Keterangan Perbaikan</th>
+              <th width="10%">Qty</th>
+              <th width="15%">Harga</th>
+              <th width="15%">Potongan</th>
+              <th width="15%">Jumlah</th>
             </tr>
           </thead>
           <tbody>
@@ -85,9 +90,7 @@ table {
               $total += $i['service_qty'] * ($i['biaya'] - $i['service_disc']);              
             ?>
               <tr>
-                <td>{{ $no++ }}</td>
-                <td>{{ $i['selesai']['service']['code']}}</td>
-                <td>{{ $i['selesai']['service']['merk'] }} {{ $i['selesai']['service']['seri'] }}</td>
+                <td>{{ $no++ }}</td>                
                 <td>{{ $i['catalog']['name'] }}</td>
                 <td>{{ $i['service_qty'] }}</td>
                 <td>Rp. {{ number_format($i['biaya'], 0, ".", ".") }}</td>
@@ -97,7 +100,6 @@ table {
             <?php
             }
             ?>
-    
           </tbody>
         </table>
         <hr width="100%" size="10px">
@@ -114,29 +116,10 @@ table {
               Rp. {{ number_format($totpot, 0, ".", ".") }}<br />
               Rp. {{ number_format($total, 0, ".", ".") }}</b>
           </div>
-          <hr width="100%" size="10px">
+          <hr width="100%" size="10px">          
           <br />
-          <br />
-        </div>
-        <br/><br/>
-        <div class="row">        
-          <div class="col-4">          
-            <span>Harap lakukan pengecekan terhadap Unit yang anda titipkan sebelum meninggalkan toko <b>MECS KOMPUTER</b></span>            
-          </div>
-          <div class="col-2">
-          </div>
-          <div class="col-3">
-            <div class="text-center">
-              Hormat Kami<br/><br/><br/><br/>(Mecs Komputer)
-            </div>
-          </div>
-          <div class="col-3">
-            <div class="text-center">
-              Customer<br/><br/><br/><br/>(..........................)
-            </div>
-          </div>
-        </div>
-
+        </div>                        
+          <small class="text-danger">*<span>  Lampiran ini hanya sebagai catatan tim, bukan sebagai pengganti Nota / Faktur Service</span>                    </small>
           
     </div>
 
