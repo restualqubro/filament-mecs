@@ -6,7 +6,7 @@ use App\Models\Service\ToPartner;
 use App\Models\User;
 use Illuminate\Auth\Access\HandlesAuthorization;
 
-class ServiceTopartnerPolicy
+class ToPartnerPolicy
 {
     use HandlesAuthorization;
 
@@ -21,7 +21,7 @@ class ServiceTopartnerPolicy
     /**
      * Determine whether the user can view the model.
      */
-    public function view(User $user, ToPartner $ToPartner): bool
+    public function view(User $user, ToPartner $topartner): bool
     {
         return $user->can('view_services::service::topartner');
     }
@@ -37,7 +37,7 @@ class ServiceTopartnerPolicy
     /**
      * Determine whether the user can update the model.
      */
-    public function update(User $user, ToPartner $ToPartner): bool
+    public function update(User $user, ToPartner $topartner): bool
     {
         return $user->can('update_services::service::topartner');
     }
@@ -45,7 +45,7 @@ class ServiceTopartnerPolicy
     /**
      * Determine whether the user can delete the model.
      */
-    public function delete(User $user, ToPartner $ToPartner): bool
+    public function delete(User $user, ToPartner $topartner): bool
     {
         return $user->can('delete_services::service::topartner');
     }
@@ -61,7 +61,7 @@ class ServiceTopartnerPolicy
     /**
      * Determine whether the user can permanently delete.
      */
-    public function forceDelete(User $user, ToPartner $ToPartner): bool
+    public function forceDelete(User $user, ToPartner $topartner): bool
     {
         return $user->can('force_delete_services::service::topartner');
     }
@@ -77,7 +77,7 @@ class ServiceTopartnerPolicy
     /**
      * Determine whether the user can restore.
      */
-    public function restore(User $user, ToPartner $ToPartner): bool
+    public function restore(User $user, ToPartner $topartner): bool
     {
         return $user->can('restore_services::service::topartner');
     }
@@ -93,7 +93,7 @@ class ServiceTopartnerPolicy
     /**
      * Determine whether the user can replicate.
      */
-    public function replicate(User $user, ToPartner $ToPartner): bool
+    public function replicate(User $user, ToPartner $topartner): bool
     {
         return $user->can('replicate_services::service::topartner');
     }

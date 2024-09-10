@@ -57,13 +57,13 @@ class ServiceTopartnerResource extends Resource
             ->columns([
                 Tables\Columns\TextColumn::make('service.code')
                     ->label('Kode Service'),
-                Tables\Columns\TextColumn::make('service.customer.name')[0][0][0]
+                Tables\Columns\TextColumn::make('service.customer.name')
                     ->label('Customer'),
                 Tables\Columns\TextColumn::make('service.merk') 
                     ->label('Merk / Brand'),
                 Tables\Columns\TextColumn::make('service.seri')
                     ->label('Seri / Tipe'),
-                Tables\Columns\TextColumn::make('partner.name')[0][0][0],
+                Tables\Columns\TextColumn::make('partner.name'),
                 Tables\Columns\TextColumn::make('status')
                     ->label('Status')
                     ->badge()
@@ -217,7 +217,7 @@ class ServiceTopartnerResource extends Resource
                 TextEntry::make('service.code')
                     ->label('Kode Service')
                     ->weight(FontWeight::Bold),
-                TextEntry::make('service.customer.name')[0][0][0]
+                TextEntry::make('service.customer.name')
                     ->label('Nama Customer'),
                 TextEntry::make('service.merk')
                     ->label('Merk/Brand'),

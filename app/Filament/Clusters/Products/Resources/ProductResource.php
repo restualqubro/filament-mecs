@@ -147,10 +147,8 @@ class ProductResource extends Resource
             ->actions([
                 Tables\Actions\ActionGroup::make([
                     Tables\Actions\ViewAction::make(),
-                    Tables\Actions\EditAction::make()
-                        ->hidden(fn()=> auth()->user()->roles->pluck('name')[0] != 'super_admin'),
-                    Tables\Actions\DeleteAction::make()
-                        ->hidden(fn()=> auth()->user()->roles->pluck('name')[0] != 'super_admin'),
+                    Tables\Actions\EditAction::make(),
+                    Tables\Actions\DeleteAction::make(),                        
                 ])                
             ])
             ->bulkActions([

@@ -157,8 +157,7 @@ class ServiceDataResource extends Resource
                         ->openUrlInNewTab()
                         ->hidden(fn() => auth()->user()->roles->pluck('name')[0] === 'Teknisi'),
                     Tables\Actions\ViewAction::make(),
-                    Tables\Actions\EditAction::make()
-                    ->hidden(fn() => auth()->user()->roles->pluck('name')[0] === 'Teknisi'),
+                    Tables\Actions\EditAction::make(),                    
                     Tables\Actions\Action::make('status_edit')
                         ->label('Update')
                         ->color('success')
@@ -175,8 +174,8 @@ class ServiceDataResource extends Resource
                             $record['description'] = $data['description'];
                             $record['status'] = 'Proses';                        
                             LogService::create($record);
-                            Data::where('id', $row->id)->update(['status' => 'Proses']);
-                        })->hidden(fn(Data $record) => $record->status != 'Baru' || $record->status != 'Proses' || auth()->user()->roles->pluck('name')[0] === 'CSR'),
+                            Data::where('id', $row->id)->update(['status' => 'Proses']);                        
+                        })->hidden(fn(Data $record) => $record->status != 'Baru' || $record->status != 'Proses' || auth()->user()->roles->pluck('name')[0] === 'customer_support'),
                     Tables\Actions\Action::make('cancel')
                         ->label('Cancel')
                         ->color('danger')
@@ -204,7 +203,8 @@ class ServiceDataResource extends Resource
                             LogService::create($record);
                             Cancel::create($record);
                             Data::where('id', $row->id)->update(['status' => 'Cancel']);
-                        })->hidden(fn(Data $record) => $record->status != 'Baru' || $record->status != 'Proses' || auth()->user()->roles->pluck('name')[0] === 'CSR')        
+                        })
+                        ->hidden(fn(Data $record) => $record->status != 'Proses' || auth()->user()->roles->pluck('name')[0] === 'customer_support'),
             ])
             ])
             ->bulkActions([

@@ -13,8 +13,7 @@ class ListServiceSelesais extends ListRecords
     protected function getHeaderActions(): array
     {
         return [
-            Actions\CreateAction::make()
-                ->hidden(fn() => auth()->user()->roles->pluck('name')[0] === 'customer_service'),
+            Actions\CreateAction::make(),
         ];
     }
 }
