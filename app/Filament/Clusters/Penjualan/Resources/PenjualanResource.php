@@ -6,6 +6,7 @@ use App\Filament\Clusters\Penjualan;
 use App\Filament\Clusters\Penjualan\Resources\PenjualanResource\Pages;
 use App\Models\Transaksi\PiutangPenjualan;
 use App\Models\Transaksi\Jual;
+use App\Models\Transaksi\DetailJual;
 use App\Models\Products\Stock;
 use App\Models\Connect\Customers;
 use App\Models\Transaksi\Preorder;
@@ -14,6 +15,7 @@ use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
+use Filament\Notifications\Notification;
 use Illuminate\Support\Carbon;
 use Filament\Forms\Components\Repeater;
 use Filament\Pages\SubNavigationPosition;
@@ -153,21 +155,37 @@ class PenjualanResource extends Resource
                                         Forms\Components\Hidden::make('hbeli'),                                        
                                         Forms\Components\TextInput::make('hjual')                                            
                                             ->label('Harga')
-                                            ->disabled()                                            
+                                            ->disabled() 
+                                            ->dehydrated()                                           
                                             ->columnSpan([
                                                 'md' => 1
                                             ]),                                        
                                         Forms\Components\TextInput::make('disc')                                            
                                             ->label('Discount')
                                             ->numeric()    
-                                            ->required()                                        
+                                            ->required() 
+                                            ->default(0)                                       
                                             ->columnSpan([
                                                 'md' => 1
                                             ]),
                                         Forms\Components\TextInput::make('qty') 
                                             ->label('Qty')   
                                             ->numeric()    
-                                            ->required()                                                                                                                                                                                                                            
+                                            ->required()
+                                            ->minValue(1)
+                                            ->maxValue(function (Stock $item, Forms\Get $get, $state, $record): int 
+                                                {                                                
+                                                    if ($record) {    
+                                                        $items = $item->find($record->stock_id);                                                    
+                                                        $max = $items->stok + $record->qty;
+                                                        return $max;
+                                                    }  else {
+                                                        $items = $item->where('id', $get('stock_id'))->first();
+                                                        $max =  $items->stok;
+                                                        return $max;
+                                                    }                                                    
+                                                                                          
+                                                })                                                                                                                                                                                                                           
                                             ->columnSpan([
                                                 'md' => 1
                                             ])
@@ -200,7 +218,12 @@ class PenjualanResource extends Resource
                                     // After deleting a row, we need to update the totals
                                     ->deleteAction(
                                         fn(Forms\Components\Actions\Action $action) => $action->after(fn(Forms\Get $get, Forms\Set $set) => self::updateTotalHarga($get, $set)),
-                                    )
+                                    )                                                                      
+                                    ->mutateRelationshipDataBeforeFillUsing(function (array $data): array {
+                                        $data['jumlah'] = number_format($data['qty'] * ($data['hjual'] - $data['disc']), 0, '', '.');
+                                 
+                                        return $data;
+                                    })                                    
                                     ->defaultItems(1)
                                     ->columns([
                                         'md' => 10
@@ -212,7 +235,8 @@ class PenjualanResource extends Resource
                             Forms\Components\TextInput::make('totaldp')
                                 ->label('Uang Muka / DP')                                                                    
                                 ->disabled()
-                                ->dehydrated(), 
+                                ->dehydrated()
+                                ->default(0), 
                             Forms\Components\TextInput::make('subtotal')
                                 ->label('Subtotal')                                    
                                 ->disabled()
@@ -263,7 +287,20 @@ class PenjualanResource extends Resource
                 Tables\Columns\TextColumn::make('tot_har')                    
                     ->label('Total Harga')
                     ->money('IDR'),
-                Tables\Columns\BadgeColumn::make('status')
+                Tables\Columns\IconColumn::make('is_pending')
+                // Tables\Columns\BadgeColumn::make('is_pending ?')
+                    ->icon(fn (string $state): string => match ($state) {
+                        '1'   => 'heroicon-o-check-circle',
+                        '0'   => 'heroicon-o-x-circle'
+                    })
+                    ->boolean(),                    
+                    // ->color(fn (string $state): string => match ($state) {                        
+                    //     'True' => 'warning',
+                    //     'False'=> 'info',                        
+                    // })
+                    // ->label('Pending ?'),
+                Tables\Columns\TextColumn::make('status')
+                    ->badge()
                     ->color(fn (string $state): string => match ($state) {                        
                         'Lunas' => 'warning',
                         'Cash' => 'success',
@@ -345,7 +382,7 @@ class PenjualanResource extends Resource
     public static function updateTotalHarga(Forms\Get $get, Forms\Set $set): void
     {
         // Retrieve all selected products and remove empty rows
-        $selectedProducts = collect($get('detailJual'))->filter(fn($item) => !empty($item['qty']) && !empty($item['hjual']) && !empty($item['disc']));        
+        $selectedProducts = collect($get('detailJual'))->filter(fn($item) => !empty($item['qty']) && !empty($item['hjual']));        
         $tot_dp = 0;
         $subtotal = 0;
         $totaldiscount = 0;
@@ -358,10 +395,8 @@ class PenjualanResource extends Resource
         $total = $subtotal - $totaldiscount - $tot_dp;
         // Update the state with the new values
         $set('subtotal', number_format($subtotal, 0, '', '.'));
-        $set('tot_disc', $totaldiscount);
-        $set('out_tot_disc', number_format($totaldiscount, 0, '', '.'));
-        $set('tot_har', $total);
-        $set('out_tot_har', number_format($total, 0, '', '.'));                
+        $set('tot_disc', number_format($totaldiscount, 0, '', '.'));        
+        $set('tot_har', number_format($total, 0, '', '.'));        
         
 
     }
@@ -369,7 +404,7 @@ class PenjualanResource extends Resource
     public static function updateSisaPembayaran(Forms\Get $get, Forms\Set $set): void
     {            
         if (!empty($get('tot_har'))) {            
-            $sisa = $get('tot_har') - $get('tot_bayar');                     
+            $sisa = (int)str_replace('.', '', $get('tot_har')) - (int)str_replace('.', '', $get('totaldp')) - $get('tot_bayar');                     
             if ($sisa > 0) {                
                 $status = 'Piutang';        
                 $set('status', $status);
@@ -380,9 +415,7 @@ class PenjualanResource extends Resource
         } else {
             $sisa = null;
         }        
-        $set('out_sisa', number_format($sisa, 0, '', '.'));        
-        // $set('out_sisa', $sisa);
-        $set('sisa', $sisa);         
+        $set('sisa', number_format($sisa, 0, '', '.'));                  
     }
 
     public function updateOngkir(Forms\Get $get, Forms\Set $set): void

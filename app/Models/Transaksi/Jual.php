@@ -31,6 +31,9 @@ class Jual extends Model
         'preorder_id',
         'tot_pr'
     ];
+    protected $cast = [
+        'is_pending'    => 'boolean'
+    ];
 
     public function user(): BelongsTo
     {
