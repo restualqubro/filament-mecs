@@ -49,21 +49,17 @@ class PreorderResource extends Resource
                                             })
                                             ->readonly()
                                             ->required()
+                                            ->disabled()
+                                            ->dehydrated()
                                             ->columnSpan([
-                                                'md' => 2
-                                            ]),                                
-                                        Forms\Components\DatePicker::make('tanggal')
-                                            ->default(now())
-                                            ->required()
-                                            ->columnSpan([
-                                                'md' => 2
-                                            ]),                                                               
+                                                'md' => 3
+                                            ]),                                                                                                                                     
                                         Forms\Components\Select::make('customer_id')
                                             ->label('Customer')
                                             ->required()
                                             ->options(Customers::all()->pluck('name','id'))
                                             ->columnSpan([
-                                                'md' => 2
+                                                'md' => 3
                                             ]),
                                         Forms\Components\TextInput::make('nominal')                                            
                                             ->required()
@@ -104,15 +100,39 @@ class PreorderResource extends Resource
                 Tables\Columns\TextColumn::make('nominal')
                     ->label('Nominal DP')
                     ->money('IDR'),
-                Tables\Columns\TextColumn::make('estimasi')
-                    ->label('Estimasi Waktu'),
-
+                    Tables\Columns\TextColumn::make('created_at')
+                    ->label('Tanggal Preorder')
+                    ->date(),
+                Tables\Columns\TextColumn::make('estimasi')                    
+                    ->suffix(' Hari'),
+                Tables\Columns\TextColumn::make('status')                    
+                    ->badge()
+                    ->colors([
+                        'danger'    => 'Cancel',
+                        'success'   => 'Selesai',
+                        'gray'      => 'Baru'
+                    ])
             ])
             ->filters([
                 //
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
+                Tables\Actions\ActionGroup::make([
+                    Tables\Actions\Action::make('print')                    
+                        ->url(fn ($record) => '/print/fakturpreorder/'.$record->id)
+                        ->color('warning')
+                        ->icon('heroicon-o-printer')                    
+                        ->openUrlInNewTab(),    
+                    Tables\Actions\EditAction::make(),
+                    Tables\Actions\Action::make('cancel')
+                        ->label('Cancel')
+                        ->color('danger')
+                        ->icon('heroicon-o-no-symbol')      
+                        ->requiresConfirmation()                  
+                        ->action(fn(Preorder $record) => $record->find($record->id)->update(['status' => 'Cancel']))
+                        // ->hidden(fn(Preorder $record) => $record->status != 'Baru' || auth()->user()->roles->pluck('name')[0] === 'customer_support'),
+                ])
+                
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([

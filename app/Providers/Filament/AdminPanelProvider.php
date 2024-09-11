@@ -27,6 +27,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Print\ServiceReceipt;
 use App\Http\Controllers\Print\SelesaiReceipt;
 use App\Http\Controllers\Print\FakturJual;
+use App\Http\Controllers\Print\FakturPreorder;
 
 class AdminPanelProvider extends PanelProvider
 {
@@ -57,6 +58,7 @@ class AdminPanelProvider extends PanelProvider
                 Route::get('/print/servicereceipt/{id}', [ServiceReceipt::class, 'print']);
                 Route::get('/print/selesaireceipt/{id}', [SelesaiReceipt::class, 'print']);
                 Route::get('/print/fakturjual/{id}', [FakturJual::class, 'print']);
+                Route::get('/print/fakturpreorder/{id}', [FakturPreorder::class, 'print']);
             })
             ->discoverResources(in: app_path('Filament/Resources'), for: 'App\\Filament\\Resources')
             ->resources([   

@@ -95,7 +95,7 @@ class PenjualanResource extends Resource
                                             ->label('Kode Preorder')        
                                             ->reactive()
                                             ->searchable()                                       
-                                            ->options(Preorder::all()->pluck('code','id'))                                                                                     
+                                            ->options(Preorder::where('status', 'Baru')->pluck('code','id'))                                                                                     
                                             ->columnSpan([
                                                 'md' => 2
                                             ])
@@ -103,8 +103,7 @@ class PenjualanResource extends Resource
                                                 $preorder = Preorder::find($state);
                                                 if ($preorder) {                                                    
                                                     $set('nominal_dp', number_format($preorder->nominal, 0, '', '.'));    
-                                                    $set('out_tot_dp', number_format($preorder->nominal, 0, '', '.'));                                                
-                                                    $set('tot_dp', $preorder->nominal);
+                                                    $set('totaldp', number_format($preorder->nominal, 0, '', '.'));                                                                                                    
                                                 }
                                                 }
                                             ), 
@@ -210,7 +209,7 @@ class PenjualanResource extends Resource
                             ]),
                         Forms\Components\Card::make()                                                                                              
                             ->schema([                            
-                            Forms\Components\TextInput::make('tot_pr')
+                            Forms\Components\TextInput::make('totaldp')
                                 ->label('Uang Muka / DP')                                                                    
                                 ->disabled()
                                 ->dehydrated(), 

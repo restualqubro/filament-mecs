@@ -17,8 +17,7 @@ return new class extends Migration
             $table->foreignUlid('customer_id')->references('id')->on('customers');
             $table->foreignUlid('user_id')->references('id')->on('users');
             $table->bigInteger('nominal');
-            $table->string('description');
-            $table->date('tanggal');
+            $table->string('description');            
             $table->string('estimasi', 50);
             $table->timestamps();
         });
