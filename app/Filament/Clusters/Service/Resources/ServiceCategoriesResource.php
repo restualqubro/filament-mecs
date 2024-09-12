@@ -3,17 +3,19 @@
 namespace App\Filament\Clusters\Service\Resources;
 
 use App\Filament\Clusters\Service;
-use App\Filament\Clusters\Service\Resources\CategoriesResource\Pages;
-use App\Filament\Clusters\Service\Resources\CategoriesResource\RelationManagers;
+use App\Filament\Clusters\Service\Resources\ServiceCategoriesResource\Pages;
+use App\Filament\Clusters\Service\Resources\ServiceCategoriesResource\RelationManagers;
 use App\Models\Service\Categories;
 use Filament\Forms;
 use Filament\Forms\Form;
+use Filament\Pages\SubNavigationPosition;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
-use Filament\Pages\SubNavigationPosition;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\SoftDeletingScope;
 
-class CategoriesResource extends Resource
+class ServiceCategoriesResource extends Resource
 {
     protected static ?string $model = Categories::class;
 
@@ -69,7 +71,7 @@ class CategoriesResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListCategories::route('/'),
+            'index' => Pages\ListServiceCategories::route('/'),
             // 'create' => Pages\CreateCategories::route('/create'),
             // 'edit' => Pages\EditCategories::route('/{record}/edit'),
         ];
