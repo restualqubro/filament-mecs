@@ -21,8 +21,7 @@ class Beli extends Model implements HasMedia
 
     protected $table = 'beli';    
     protected $fillable = [
-        'code',
-        'tanggal',
+        'code',        
         'user_id',
         'supplier_id',
         'tot_har',        

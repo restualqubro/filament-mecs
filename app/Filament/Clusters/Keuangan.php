@@ -8,7 +8,7 @@ class Keuangan extends Cluster
 {
     protected static ?string $navigationIcon = 'heroicon-o-banknotes';
 
-    protected static ?string $navigationGroup = 'Transaksi';
+    protected static ?string $navigationGroup = 'Finance';
 
-    protected static ?string $pluralModelLabel = 'Pemasukan & Pengeluaran';
+    protected static ?string $navigationLabel = 'Cash In & Out';
 }

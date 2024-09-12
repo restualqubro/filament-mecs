@@ -17,6 +17,11 @@ use Illuminate\Support\Carbon;
 use Filament\Forms\Components\Repeater;
 use Filament\Pages\SubNavigationPosition;
 use Filament\Support\Enums\MaxWidth;
+use Filament\Infolists\Infolist;
+use Filament\Infolists\Components\TextEntry;
+use Filament\Infolists\Components\Section;
+use Filament\Infolists\Components\RepeatableEntry;
+use Filament\Support\Enums\FontWeight;
 
 class PembelianResource extends Resource
 {
@@ -58,13 +63,14 @@ class PembelianResource extends Resource
                                             ]),                                
                                         Forms\Components\DatePicker::make('tanggal')
                                             ->default(now())
-                                            ->required()
+                                            ->disabled()                                            
                                             ->columnSpan([
                                                 'md' => 2
                                             ]),                                                               
                                         Forms\Components\Select::make('supplier_id')
                                             ->label('Supplier')
                                             ->required()
+                                            ->searchable()
                                             ->options(Supplier::all()->pluck('name','id'))
                                             ->columnSpan([
                                                 'md' => 2
@@ -72,12 +78,8 @@ class PembelianResource extends Resource
                                     ])->columns(6),                                
                                 Forms\Components\Group::make()
                                 ->schema([
-                                    Forms\Components\TextArea::make('description'),                                
-                                    Forms\Components\SpatieMediaLibraryFileUpload::make('media')
-                                        ->label('Dokumentasi Nota/Invoice')
-                                        ->collection('beli'),
-                                ])
-                                ->columns(2)
+                                    Forms\Components\TextArea::make('description'),                                                                    
+                                ])                                
                             ]),
                         Forms\Components\Card::make()
                             ->schema([
@@ -152,6 +154,11 @@ class PembelianResource extends Resource
                                     ->deleteAction(
                                         fn(Forms\Components\Actions\Action $action) => $action->after(fn(Forms\Get $get, Forms\Set $set) => self::updateTotals($get, $set)),
                                     )
+                                    ->mutateRelationshipDataBeforeFillUsing(function (array $data): array {
+                                        $data['jumlah'] = number_format($data['qty'] * $data['hbeli'], 0, '', '.');
+                                 
+                                        return $data;
+                                    })
                                     ->defaultItems(1)
                                     ->columns([
                                         'md' => 10
@@ -159,9 +166,8 @@ class PembelianResource extends Resource
                                     ->columnSpan('full')
                             ]),
                         Forms\Components\Card::make()                                                                                              
-                            ->schema([
-                            Forms\Components\Hidden::make('tot_har'),
-                            Forms\Components\TextInput::make('out_har')
+                            ->schema([                            
+                            Forms\Components\TextInput::make('tot_har')
                                 ->label('Subtotal')                                    
                                 ->disabled()
                                 ->dehydrated()
@@ -174,9 +180,8 @@ class PembelianResource extends Resource
                                 ->afterStateUpdated(function (Forms\Get $get, Forms\Set $set) {
                                     self::updateSisaPembayaran($get, $set);
                                 })
-                                ->required(),
-                            Forms\Components\Hidden::make('sisa'),                                                                                  
-                            Forms\Components\TextInput::make('out_sisa')
+                                ->required(),                            
+                            Forms\Components\TextInput::make('sisa')
                                 ->label('Sisa Pembayaran')                                
                                 ->disabled()
                                 ->dehydrated(),
@@ -194,12 +199,13 @@ class PembelianResource extends Resource
                     ->label('Faktur Pembelian')
                     ->searchable()
                     ->sortable(),
-                Tables\Columns\TextColumn::make('tanggal')
+                Tables\Columns\TextColumn::make('created_at')
                     ->label('Tanggal')
                     ->date(),                
                 Tables\Columns\TextColumn::make('supplier.name')        
                     ->label('Supplier'),
                 Tables\Columns\TextColumn::make('tot_har')                    
+                    ->money('IDR')
                     ->label('Total Harga'),
                 Tables\Columns\BadgeColumn::make('status')
                     ->color(fn (string $state): string => match ($state) {                        
@@ -213,7 +219,8 @@ class PembelianResource extends Resource
                 //
             ])
             ->actions([
-                Tables\Actions\ViewAction::make()->hiddenLabel()->tooltip('Detail'),
+                Tables\Actions\ActionGroup::make([
+                    Tables\Actions\ViewAction::make()->hiddenLabel()->tooltip('Detail'),
                 Tables\Actions\Action::make('pelunasan')->hiddenLabel()->tooltip('Pelunasan')
                     ->label('Pelunasan')
                     ->color('warning')
@@ -264,12 +271,73 @@ class PembelianResource extends Resource
                     })->visible(fn (Beli $record): bool => $record->status === 'Utang')
                     ->modalWidth(MaxWidth::Medium),
                 Tables\Actions\EditAction::make()->hiddenLabel()->tooltip('Edit'),
-                Tables\Actions\DeleteAction::make()->hiddenLabel()->tooltip('Delete')
+                ]),                                
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),
                 ]),
+            ]);
+    }
+
+    public static function infolist(Infolist $infolist): Infolist
+    {
+        return $infolist
+            ->schema([     
+                Section::make('Pembelian Details')
+                    ->schema([
+                        TextEntry::make('code')
+                            ->label('Nomor Faktur')
+                            ->weight(FontWeight::Bold), 
+                        TextEntry::make('created_at')
+                            ->label('Created at'), 
+                        TextEntry::make('supplier.name')
+                            ->label('Nama Supplier'),                                                 
+                        TextEntry::make('status')
+                            ->badge()
+                            ->colors([
+                                'success'   => 'Cash',
+                                'warning'   => 'Lunas',
+                                'danger'    => 'Utang'
+                            ]),
+                        TextEntry::make('tot_har')
+                            ->label('Total Harga Pembelian')
+                            ->money('IDR')
+                            ->weight(FontWeight::Bold),                                                                                                 
+                        TextEntry::make('tot_bayar')
+                            ->label('Total Pembayaran')
+                            ->money('IDR')
+                            ->weight(FontWeight::Bold),    
+                        TextEntry::make('sisa')
+                            ->label('Sisa Pembayaran')
+                            ->money('IDR')
+                            ->weight(FontWeight::Bold),                           
+                        TextEntry::make('description')
+                ])->columns(2),                                                             
+                RepeatableEntry::make('detailBeli')
+                    ->label('Detail Items')
+                    ->schema([                                                                                                                                                                          
+                        TextEntry::make('stock.fullcode')                        
+                            ->label('Code')
+                            ->columnSpan(4),
+                        TextEntry::make('stock.product.name')                        
+                            ->label('Items')
+                            ->columnSpan(4),
+                        TextEntry::make('supplier_warranty')                          
+                            ->columnSpan(2),
+                        TextEntry::make('hbeli')
+                            ->money('IDR')
+                            ->label('Harga Satuan')
+                            ->columnSpan(2),
+                        TextEntry::make('qty')
+                            ->label('Qty')
+                            ->columnSpan(2),                    
+                        TextEntry::make('jumlah')                            
+                            ->money('IDR')
+                    ])      
+                    ->columns(8) 
+                    ->columnSpan('full')
+                    ->grid(2)
             ]);
     }
 
@@ -286,16 +354,16 @@ class PembelianResource extends Resource
         }              
 
         // Update the state with the new values
-        $set('tot_har', $total);
-        $set('out_har', number_format($total, 0, '', '.'));                
+        $set('tot_har', number_format($total, 0, '', '.'));        
         
 
     }
 
     public static function updateSisaPembayaran(Forms\Get $get, Forms\Set $set): void
-    {            
-        if (!empty($get('tot_har'))) {            
-            $sisa = $get('tot_har') - $get('tot_bayar');                     
+    {     
+        $tot_har = (int)str_replace('.', '', $get('tot_har'));        
+        if (!empty($tot_har)) {            
+            $sisa = $tot_har - $get('tot_bayar');                     
             if ($sisa > 0) {                
                 $status = 'Utang';        
                 $set('status', $status);
@@ -306,27 +374,17 @@ class PembelianResource extends Resource
         } else {
             $sisa = null;
         }        
-        $set('out_sisa', number_format($sisa, 0, '', '.'));        
-        // $set('out_sisa', $sisa);
-        $set('sisa', $sisa);         
-    }
-
-    public function updateOngkir(Forms\Get $get, Forms\Set $set): void
-    {        
+        $set('sisa', number_format($sisa, 0, '', '.'));                  
     }
     
-    public static function getRelations(): array
-    {
-        return [
-            //
-        ];
-    }
+        
 
     public static function getPages(): array
     {
         return [
             'index' => Pages\ListPembelians::route('/'),
             'create' => Pages\CreatePembelian::route('/create'),
+            'view'  => Pages\ViewDetails::route('/{record}/view'),
             'edit' => Pages\EditPembelian::route('/{record}/edit'),
         ];
     }

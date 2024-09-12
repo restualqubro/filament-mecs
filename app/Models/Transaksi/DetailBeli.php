@@ -18,7 +18,7 @@ class DetailBeli extends Model
         'hbeli',
         'qty',        
         'hbeli',
-        'warranty',
+        'supplier_warranty',
     ];
 
     public function beli(): BelongsTo
@@ -29,5 +29,10 @@ class DetailBeli extends Model
     public function stock(): BelongsTo
     {
         return $this->belongsTo(Stock::class);
+    }
+
+    public function getJumlahAttribute()
+    {
+        return ($this->qty * $this->hbeli);
     }
 }

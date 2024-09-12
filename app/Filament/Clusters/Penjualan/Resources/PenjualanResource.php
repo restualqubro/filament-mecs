@@ -312,12 +312,13 @@ class PenjualanResource extends Resource
                 //
             ])
             ->actions([
-                Tables\Actions\ViewAction::make()->hiddenLabel()->tooltip('Detail'),  
+                Tables\Actions\ActionGroup::make([
+                    Tables\Actions\ViewAction::make()->hiddenLabel()->tooltip('Detail'),  
                 Tables\Actions\Action::make('print')
                     ->hiddenLabel()
                     ->tooltip('Print')
                     ->url(fn ($record) => '/print/fakturjual/'.$record->id)
-                    ->color('warning')
+                    ->color('primary')
                     ->icon('heroicon-o-printer')                    
                     ->openUrlInNewTab(), 
                 Tables\Actions\Action::make('pelunasan')->hiddenLabel()->tooltip('Pelunasan')
@@ -370,7 +371,7 @@ class PenjualanResource extends Resource
                     })->visible(fn (Jual $record): bool => $record->status === 'Piutang')
                     ->modalWidth(MaxWidth::Medium),             
                 Tables\Actions\EditAction::make()->hiddenLabel()->tooltip('Edit'),
-                Tables\Actions\DeleteAction::make()->hiddenLabel()->tooltip('Delete')
+                ])                                
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([

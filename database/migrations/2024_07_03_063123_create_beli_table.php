@@ -13,8 +13,7 @@ return new class extends Migration
     {
         Schema::create('beli', function (Blueprint $table) {
             $table->ulid('id')->primary();
-            $table->string('code', 20)->unique();
-            $table->date('tanggal');
+            $table->string('code', 20)->unique();            
             $table->foreignUlid('user_id')->references('id')->on('users');
             $table->foreignId('supplier_id')->references('id')->on('supplier');
             $table->bigInteger('tot_har');

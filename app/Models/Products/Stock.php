@@ -24,5 +24,10 @@ class Stock extends Model
     public function product(): BelongsTo
     {
         return $this->belongsTo(Products::class);
-    }    
+    }   
+    
+    public function getFullcodeAttribute()
+    {
+        return "{$this->product->code}-{$this->code}";
+    }
 }

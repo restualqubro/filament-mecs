@@ -4,9 +4,9 @@ namespace App\Filament\Clusters\Pembelian\Resources\PembelianResource\Pages;
 
 use App\Filament\Clusters\Pembelian\Resources\PembelianResource;
 use Filament\Actions;
-use Filament\Resources\Pages\EditRecord;
+use Filament\Resources\Pages\ViewRecord;
 
-class EditPembelian extends EditRecord
+class ViewDetails extends ViewRecord
 {
     protected static string $resource = PembelianResource::class;
 
