@@ -51,7 +51,8 @@ class CustomersResource extends Resource
                     ->label('Tipe Customer')
                     ->options([
                         'Customer'  => 'Customer',
-                        'Reseller'  => 'Reseller'
+                        'Reseller'  => 'Reseller',
+                        'Twincom'   => 'Twincom'
                     ])
                     ->required(),
                 Forms\Components\TextArea::make('address')                    
@@ -101,13 +102,6 @@ class CustomersResource extends Resource
                     Tables\Actions\DeleteBulkAction::make(),
                 ]),
             ]);
-    }
-
-    public static function getRelations(): array
-    {
-        return [
-            //
-        ];
     }
 
     public static function getPages(): array

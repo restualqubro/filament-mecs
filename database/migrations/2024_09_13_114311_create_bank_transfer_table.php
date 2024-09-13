@@ -11,13 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('customers', function (Blueprint $table) {
-            $table->ulid('id')->primary();
-            $table->char('code', 10)->unique();
-            $table->string('name');
-            $table->char('telp', 15);
-            $table->string('address');
-            $table->enum('type', ['Customer', 'Reseller', 'Twincom']);
+        Schema::create('bank_transfer', function (Blueprint $table) {
+            $table->id();
+            $table->bigInteger('nominal');
+            $table->enum('type', ['masuk', 'keluar']);
+            $table->foreignId('account_id')->references('id')->on('bank_account');
+            $table->string('description');
             $table->timestamps();
         });
     }
@@ -27,6 +26,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('customers');
+        Schema::dropIfExists('bank_transfer');
     }
 };

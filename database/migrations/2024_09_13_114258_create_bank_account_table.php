@@ -11,13 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('customers', function (Blueprint $table) {
-            $table->ulid('id')->primary();
-            $table->char('code', 10)->unique();
+        Schema::create('bank_account', function (Blueprint $table) {
+            $table->id();
+            $table->string('number');
             $table->string('name');
-            $table->char('telp', 15);
-            $table->string('address');
-            $table->enum('type', ['Customer', 'Reseller', 'Twincom']);
             $table->timestamps();
         });
     }
@@ -27,6 +24,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('customers');
+        Schema::dropIfExists('bank_account');
     }
 };
