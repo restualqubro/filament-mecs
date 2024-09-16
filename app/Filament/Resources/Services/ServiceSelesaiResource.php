@@ -80,15 +80,15 @@ class ServiceSelesaiResource extends Resource
                                                 ->columnSpan(2),                 
                                         ])->columns(6),                                
                                     Forms\Components\Group::make()
-                                    ->schema([                                        
-                                        Forms\Components\TextInput::make('name')
-                                            ->disabled(),
-                                        Forms\Components\TextInput::make('merk')
-                                            ->disabled(),
-                                        Forms\Components\TextInput::make('seri')
-                                            ->disabled()
-                                    ])
-                                    ->columns(3)
+                                        ->schema([                                        
+                                            Forms\Components\TextInput::make('name')
+                                                ->disabled(),
+                                            Forms\Components\TextInput::make('merk')
+                                                ->disabled(),
+                                            Forms\Components\TextInput::make('seri')
+                                                ->disabled()
+                                        ])
+                                        ->columns(3)
                                 ]),  
                             ]),   
                         Forms\Components\Card::make()

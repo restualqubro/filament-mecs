@@ -9,4 +9,9 @@ use Filament\Resources\Pages\CreateRecord;
 class CreateServiceCancel extends CreateRecord
 {
     protected static string $resource = ServiceCancelResource::class;
+
+    protected function getRedirectUrl(): string
+    {
+        return static::getResource()::getUrl('index');
+    }
 }
