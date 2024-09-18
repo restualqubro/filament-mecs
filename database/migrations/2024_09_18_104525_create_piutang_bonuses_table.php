@@ -11,14 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('service_garansi', function (Blueprint $table) {
-            $table->ulid('id')->primary();
-            $table->foreignUlid('invoice_id')->references('id')->on('service_invoice');
-            $table->string('kelengkapan');
-            $table->string('keluhan');
-            $table->enum('status', ['Baru', 'Proses', 'Selesai', 'Cancel', 'Keluar']);
-            $table->string('update')->nullable();
+        Schema::create('piutang_bonus', function (Blueprint $table) {
+            $table->id();
+            $table->foreignUlid('catalog_id')->references('id')->on('service_catalog');
+            $table->unsignedBigInteger('nominal');
             $table->foreignUlid('user_id')->references('id')->on('users');
+            $table->enum('status', ['unpaid', 'paid']);
             $table->timestamps();
         });
     }
@@ -28,6 +26,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('service_garansi');
+        Schema::dropIfExists('piutang_bonuses');
     }
 };

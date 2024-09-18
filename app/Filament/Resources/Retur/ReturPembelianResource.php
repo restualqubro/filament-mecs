@@ -125,6 +125,15 @@ class ReturPembelianResource extends Resource
                                         ->columnSpan([
                                             'md' => 1
                                         ])
+                                        ->maxValue(function (DetailBeli $item, Forms\Get $get): int
+                                                {      
+                                                    $item = $item->where('beli_id', $get('../../beli_id'))
+                                                                ->where('stock_id', $get('stock_id'))->first();                                                                                    
+                                                    if ($item) {
+                                                        $max = $item->qty;
+                                                        return $max;
+                                                    }                                                                                                                                                                                          
+                                                })                                                     
                                         ->live()
                                         ->afterStateUpdated(
                                             function (Forms\Get $get, Forms\Set $set) {                                                

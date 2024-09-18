@@ -133,7 +133,16 @@ class ReturPenjualanResource extends Resource
                                         Forms\Components\TextInput::make('qty') 
                                             ->label('Qty')   
                                             ->numeric()    
-                                            ->required()                                                                                                                                                                                                                            
+                                            ->required()  
+                                            ->maxValue(function (DetailJual $item, Forms\Get $get): int
+                                                {      
+                                                    $item = $item->where('jual_id', $get('../../jual_id'))
+                                                                ->where('stock_id', $get('stock_id'))->first();                                                                                    
+                                                    if ($item) {
+                                                        $max = $item->qty;
+                                                        return $max;
+                                                    }                                                                                                                                                                                          
+                                                })                                                                                                                                                                                                                                                                       
                                             ->columnSpan([
                                                 'md' => 1
                                             ])

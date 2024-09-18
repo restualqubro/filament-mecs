@@ -79,8 +79,8 @@ class ReturServiceResource extends Resource
                                 ->relationship()
                                 ->collapsible()
                                 ->schema([                                        
-                                    Forms\Components\Select::make('stock_id')
-                                    ->label('Kode Stok')
+                                    Forms\Components\Select::make('servicecatalog_id')
+                                    ->label('Items Service')
                                     ->options(
                                         function (Forms\Get $get) {
                                             $invoiceid = $get('../../invoice_id');                                                
@@ -103,12 +103,19 @@ class ReturServiceResource extends Resource
                                                 ->filter()
                                                 ->contains($value);
                                         }) 
-                                        ->afterStateUpdated(function($state, callable $set) {
-                                            $details = DetailService::where('servicecatalog_id', $state)->first();
-                                            if ($details) {                                                                                                                                                                                                                
-                                                $set('biaya', $details->biaya);                                                
-                                                $set('disc', $details->disc);                                                
-                                            }
+                                        ->afterStateUpdated(function($state, callable $set, callable $get) {
+                                            $invoiceid = $get('../../invoice_id');                                                
+                                            if ($invoiceid)
+                                            {                 
+                                                $selesaiid = Invoice::find($invoiceid)->pluck('selesai_id');
+                                                $details = DetailService::where('servicecatalog_id', $state)
+                                                        ->where('selesai_id', $selesaiid)->first();                                                
+                                                if ($details) {                                                               
+                                                    $set('biaya', $details->biaya);                                                
+                                                    $set('disc', $details->service_disc);                                                
+                                                }
+                                            }                                            
+                                            
                                         })                                           
                                         ->columnSpan([
                                             'md' => 5
@@ -121,7 +128,8 @@ class ReturServiceResource extends Resource
                                         ]),                                                                            
                                     Forms\Components\TextInput::make('disc')                                            
                                         ->label('Discount')
-                                        ->disabled()                                            
+                                        ->disabled()     
+                                        ->minValue(0)                                                                          
                                         ->columnSpan([
                                             'md' => 1
                                         ]),                                                   
@@ -132,12 +140,23 @@ class ReturServiceResource extends Resource
                                         ->columnSpan([
                                             'md' => 1
                                         ])
+                                        ->maxValue(function (DetailService $item, Forms\Get $get): int
+                                                {      
+                                                    $selesai = Invoice::find($get('../../invoice_id'))->selesai_id;                                                    
+                                                    $item = $item->where('selesai_id', $selesai)
+                                                                ->where('servicecatalog_id', $get('servicecatalog_id'))->first();                                                                                                                                        
+                                                    if ($item) {
+                                                        $max = $item->service_qty;
+                                                        return $max;
+                                                    }                                                                                                                                                                                          
+                                                })
                                         ->live()
                                         ->afterStateUpdated(
                                             function (Forms\Get $get, Forms\Set $set) {                                                
                                                 $qty = $get('qty');
-                                                $hbeli = $get('hbeli');                                                    
-                                                $jumlah = $qty * $hbeli;                                                                                                        
+                                                $biaya = $get('biaya');
+                                                $disc = $get('disc');
+                                                $jumlah = $qty * ($biaya - $disc);                                                                                                        
                                                 $set('jumlah', number_format($jumlah, 0, '', '.'));
                                             }
                                         ),                                         
@@ -197,19 +216,16 @@ class ReturServiceResource extends Resource
     public static function updateTotalHarga(Forms\Get $get, Forms\Set $set): void
     {
         // Retrieve all selected products and remove empty rows
-        $selectedProducts = collect($get('detailRetur'))->filter(fn($item) => !empty($item['qty']) && !empty($item['hjual']) && !empty($item['disc']));                
+        $selectedProducts = collect($get('detailRetur'))->filter(fn($item) => !empty($item['qty']) && !empty($item['biaya']));                
         $subtotal = 0;
         $totaldiscount = 0;
         $total = 0;        
         foreach($selectedProducts as $item) {
-            $subtotal += $item['hjual'] * $item['qty'];
+            $subtotal += $item['biaya'] * $item['qty'];
             $totaldiscount += $item['disc'] * $item['qty'];            
-        }                      
-        $tot_dp = $get('tot_dp');        
-        $total = $subtotal - $totaldiscount - $tot_dp;
+        }                              
+        $total = $subtotal - $totaldiscount;
         // Update the state with the new values
-        $set('subtotal', number_format($subtotal, 0, '', '.'));        
-        $set('totaldiscount', number_format($totaldiscount, 0, '', '.'));        
         $set('totalharga', number_format($total, 0, '', '.'));                
         
 
