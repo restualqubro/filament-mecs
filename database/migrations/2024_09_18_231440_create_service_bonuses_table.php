@@ -11,12 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('service_catalog', function (Blueprint $table) {
-            $table->ulid('id')->primary();
-            $table->string('name');
-            $table->bigInteger('biaya_min');
-            $table->bigInteger('biaya_max');            
-            $table->tinyInteger('warranty'); 
+        Schema::create('service_bonuses', function (Blueprint $table) {
+            $table->id();
+            $table->foreignUlid('catalog_id')->references('id')->on('service_catalog');
+            $table->unsignedBigInteger('nominal');
+            $table->foreignUlid('user_id')->references('id')->on('users');
             $table->timestamps();
         });
     }
@@ -26,6 +25,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('service_catalog');
+        Schema::dropIfExists('service_bonuses');
     }
 };

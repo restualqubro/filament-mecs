@@ -26,9 +26,9 @@ class InvoiceResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-credit-card';
 
-    protected static ?string $navigationGroup = 'Service';
+    protected static ?string $navigationGroup = 'Transaksi';
 
-    protected static ?int $navigationSort = 6;
+    protected static ?string $pluralModelLabel = 'Invoice Service';
 
     public static function form(Form $form): Form
     {

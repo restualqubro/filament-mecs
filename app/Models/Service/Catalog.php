@@ -15,8 +15,7 @@ class Catalog extends Model
     protected $fillable = [
         'name',
         'biaya_min',
-        'biaya_max',
-        'bonus',
+        'biaya_max',        
         'warranty'
     ];
 }
