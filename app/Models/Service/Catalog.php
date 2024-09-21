@@ -17,8 +17,6 @@ class Catalog extends Model
         'biaya_min',
         'biaya_max',        
         'warranty', 
-        'bonus', 
-        'user_id'
     ];
 
     protected $casts = [

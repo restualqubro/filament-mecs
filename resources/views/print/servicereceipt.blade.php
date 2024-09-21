@@ -15,8 +15,8 @@
 table {
   min-height:300px;
 }
-.card-header {
-  border: 1px solid black;
+.card {
+  background-color:rgb(223, 223, 223);
 }
 </style>
   
@@ -24,14 +24,16 @@ table {
 <body>
 
     <div class="wrapper">
-        <div class="row">
-        
+        <div class="row">        
           <div class="col-4">
             <div class="row">
               <div class="col-12">
                 <img src="{{$logo}}" style="max-width:100px"/>
-                <br/>Jl. Manggis No 47, Banjarmasin<br/>
-                0851 0042 2583
+                <div class="card">
+                  <small><br/>Jl. Manggis No 47, Banjarmasin<br/>
+                    0851 0042 2583
+                  </small>
+                </div>                
               </div>              
             </div>
           </div>
@@ -62,7 +64,7 @@ table {
         <br/><br/>
         <div class="row" style="min-height:250px;">
             <div class="col-6">
-                <div class="card card-default color-palette-box">
+                <div class="color-palette-box">
                     <div class="card-header">
                         <h4 class="card-title">
                         Unit
@@ -88,7 +90,7 @@ table {
                 </div>
             </div>
             <div class="col-6">
-              <div class="card card-default color-palette-box">
+              <div class="color-palette-box">
                   <div class="card-header">
                       <h4 class="card-title">
                       Kelengkapan
@@ -100,7 +102,7 @@ table {
               </div>
             </div>
             <div class="col-6">
-              <div class="card card-default color-palette-box">
+              <div class="color-palette-box">
                 <div class="card-header">
                     <h4 class="card-title">
                   Keluhan
@@ -112,7 +114,7 @@ table {
               </div>
             </div>
             <div class="col-6">
-              <div class="card card-default color-palette-box">
+              <div class="color-palette-box">
                 <div class="card-header">
                     <h4 class="card-title">
                   Keterangan

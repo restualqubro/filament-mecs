@@ -43,38 +43,87 @@ class ServiceDataResource extends Resource
                 Forms\Components\DatePicker::make('date_in')
                     ->label('Tanggal Masuk')
                     ->required()
-                    ->default('now'),
+                    ->default('now')
+                    ->columnSpan([
+                        'sm' => 2,
+                        'xl' => 3,
+                        '2xl' => 4,
+                    ]),
                 Forms\Components\Select::make('customer_id')
                     ->label('Customer')
                     ->required()
                     ->options(Customers::all()->pluck('name', 'id'))
                     ->searchable()
-                    ->reactive(),
+                    ->reactive()
+                    ->columnSpan([
+                        'sm' => 2,
+                        'xl' => 3,
+                        '2xl' => 4,
+                    ]),
                 Forms\Components\Select::make('category_id')
                     ->label('Kategori')
                     ->required()
                     ->options(Categories::all()->pluck('name', 'id'))
                     ->searchable()
-                    ->reactive(),
+                    ->reactive()
+                    ->columnSpan([
+                        'sm' => 2,
+                        'xl' => 3,
+                        '2xl' => 4,
+                    ]),
                 Forms\Components\TextInput::make('merk')
                     ->label('Merk')
-                    ->required(),
+                    ->required()
+                    ->columnSpan([
+                        'sm' => 2,
+                        'xl' => 3,
+                        '2xl' => 4,
+                    ]),
                 Forms\Components\TextInput::make('seri')
                     ->label('Seri / Tipe')
-                    ->required(),          
+                    ->required()
+                    ->columnSpan([
+                        'sm' => 2,
+                        'xl' => 3,
+                        '2xl' => 4,
+                    ]),          
                 Forms\Components\TextInput::make('sn')          
-                    ->label('Serial Number'),
+                    ->label('Serial Number')
+                    ->columnSpan([
+                        'sm' => 2,
+                        'xl' => 3,
+                        '2xl' => 4,
+                    ]),
                 Forms\Components\TextInput::make('kelengkapan')
                     ->label('Kelengkapan')
                     ->required()
-                    ->columnSpan(2),
+                    ->columnSpan([
+                        'sm' => 2,
+                        'xl' => 3,
+                        '2xl' => 4,
+                    ]),
                 Forms\Components\Textarea::make('keluhan')
                     ->label('Keluhan')
-                    ->required(),
+                    ->required()
+                    ->columnSpan([
+                        'sm' => 2,
+                        'xl' => 3,
+                        '2xl' => 4,
+                    ]),
                 Forms\Components\Textarea::make('description')
-                    ->label('Keterangan'),  
+                    ->label('Keterangan')
+                    ->columnSpan([
+                        'sm' => 2,
+                        'xl' => 3,
+                        '2xl' => 4,
+                    ]),  
                 Forms\Components\Hidden::make('status')
-                    ->default('Baru'),
+                    ->default('Baru')
+                    ->columnSpan([
+                        'sm' => 2,
+                        'xl' => 3,
+                        '2xl' => 4,
+                    ]),
                 Forms\Components\Hidden::make('code')
                     ->default(function () {
                         $last = Data::whereMonth('created_at', '=', date('m'))
@@ -89,7 +138,11 @@ class ServiceDataResource extends Resource
                         }           
                         // $code; 
                     })
-            ])->columns(2);
+            ])->columns([
+                'sm' => 3,
+                'xl' => 6,
+                '2xl' => 8,
+            ]);
     }
 
     public static function table(Table $table): Table

@@ -53,15 +53,7 @@ class ServiceCatalogResource extends Resource
                         Forms\Components\TextInput::make('biaya_max')
                             ->label('Biaya Maximal')
                             ->numeric()
-                            ->required(),
-                        Forms\Components\TextInput::make('bonus')
-                            ->label('Bonus Teknisi')
-                            ->numeric()
-                            ->required(),  
-                        Forms\Components\Select::make('user_id')                            
-                            ->multiple()
-                            ->searchable()
-                            ->options(User::all()->pluck('name', 'id')),  
+                            ->required(),                        
                     ])->columns(2),                                              
             ])->columns('Full');
     }
@@ -74,9 +66,7 @@ class ServiceCatalogResource extends Resource
                 Tables\Columns\TextColumn::make('biaya_min')
                     ->money('IDR'), 
                 Tables\Columns\TextColumn::make('biaya_max')
-                    ->money('IDR'),
-                Tables\Columns\TextColumn::make('bonus')
-                    ->money('IDR'),
+                    ->money('IDR'),                
                 Tables\Columns\TextColumn::make('warranty')
             ])
             ->filters([

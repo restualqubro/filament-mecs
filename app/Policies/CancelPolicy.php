@@ -3,24 +3,24 @@
 namespace App\Policies;
 
 use App\Models\User;
-use App\Models\Service\Categories;
+use App\Models\Service\Cancel;
 use Illuminate\Auth\Access\HandlesAuthorization;
 
-class CategoriesPolicy
+class CancelPolicy
 {
     use HandlesAuthorization;
 
     public function viewAny(User $user): bool
     {
-        return $user->can('view_any_service::categories');
+        return $user->can('view_any_services::service::cancel');
     }
 
     /**
      * Determine whether the user can view the model.
      */
-    public function view(User $user, Categories $categories): bool
+    public function view(User $user, Cancel $cancel): bool
     {
-        return $user->can('view_service::categories');
+        return $user->can('view_services::service::cancel');
     }
 
     /**
@@ -28,23 +28,23 @@ class CategoriesPolicy
      */
     public function create(User $user): bool
     {
-        return $user->can('create_service::categories');
+        return $user->can('create_services::service::cancel');
     }
 
     /**
      * Determine whether the user can update the model.
      */
-    public function update(User $user, Categories $categories): bool
+    public function update(User $user, Cancel $cancel): bool
     {
-        return $user->can('update_service::categories');
+        return $user->can('update_services::service::cancel');
     }
 
     /**
      * Determine whether the user can delete the model.
      */
-    public function delete(User $user, Categories $categories): bool
+    public function delete(User $user, Cancel $cancel): bool
     {
-        return $user->can('delete_service::categories');
+        return $user->can('delete_services::service::cancel');
     }
 
     /**
@@ -52,15 +52,15 @@ class CategoriesPolicy
      */
     public function deleteAny(User $user): bool
     {
-        return $user->can('delete_any_service::categories');
+        return $user->can('delete_any_services::service::cancel');
     }
 
     /**
      * Determine whether the user can permanently delete.
      */
-    public function forceDelete(User $user, Categories $categories): bool
+    public function forceDelete(User $user, Cancel $cancel): bool
     {
-        return $user->can('force_delete_service::categories');
+        return $user->can('force_delete_services::service::cancel');
     }
 
     /**
@@ -68,15 +68,15 @@ class CategoriesPolicy
      */
     public function forceDeleteAny(User $user): bool
     {
-        return $user->can('force_delete_any_service::categories');
+        return $user->can('force_delete_any_services::service::cancel');
     }
 
     /**
      * Determine whether the user can restore.
      */
-    public function restore(User $user, Categories $categories): bool
+    public function restore(User $user, Cancel $cancel): bool
     {
-        return $user->can('restore_service::categories');
+        return $user->can('restore_services::service::cancel');
     }
 
     /**
@@ -84,15 +84,15 @@ class CategoriesPolicy
      */
     public function restoreAny(User $user): bool
     {
-        return $user->can('restore_any_service::categories');
+        return $user->can('restore_any_services::service::cancel');
     }
 
     /**
      * Determine whether the user can replicate.
      */
-    public function replicate(User $user, Categories $categories): bool
+    public function replicate(User $user, Cancel $cancel): bool
     {
-        return $user->can('replicate_service::categories');
+        return $user->can('replicate_services::service::cancel');
     }
 
     /**
@@ -100,6 +100,6 @@ class CategoriesPolicy
      */
     public function reorder(User $user): bool
     {
-        return $user->can('reorder_service::categories');
+        return $user->can('reorder_services::service::cancel');
     }
 }
