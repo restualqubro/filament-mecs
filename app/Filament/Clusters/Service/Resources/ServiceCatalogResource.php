@@ -6,6 +6,7 @@ use App\Filament\Clusters\Service;
 use App\Filament\Clusters\Service\Resources\ServiceCatalogResource\Pages;
 use App\Filament\Clusters\Service\Resources\ServiceCatalogResource\RelationManagers;
 use App\Models\Service\Catalog;
+use App\Models\User;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
@@ -57,7 +58,11 @@ class ServiceCatalogResource extends Resource
                             ->label('Bonus Teknisi')
                             ->numeric()
                             ->required(),  
-                    ])->columns(3),                                              
+                        Forms\Components\Select::make('user_id')                            
+                            ->multiple()
+                            ->searchable()
+                            ->options(User::all()->pluck('name', 'id')),  
+                    ])->columns(2),                                              
             ])->columns('Full');
     }
 
@@ -78,7 +83,10 @@ class ServiceCatalogResource extends Resource
                 //
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
+                Tables\Actions\ActionGroup::make([
+                    Tables\Actions\ViewAction::make(),
+                    Tables\Actions\EditAction::make(),
+                ])                
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([

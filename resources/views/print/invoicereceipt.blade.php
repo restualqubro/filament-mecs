@@ -45,16 +45,22 @@ table {
                 Tanggal<br/>
                 Customer<br/>
                 Contact<br/>
+                Kode<br/>
+                Unit<br/>
               </div>
               <div class="col-0">
               :<br/>
               :<br/>
               :<br/>
+              :<br/>
+              :<br/>
               </div>
               <div class="col-7">              
-              {{date('d M Y', strtotime($jual[0]['created_at']))}}<br/>
-              {{$jual[0]['customer']['name']}}<br/>
-              {{$jual[0]['customer']['telp']}}<br/>              
+              {{date('d M Y', strtotime($items->created_at))}}<br/>
+              {{$items->selesai->service->customer->name}}<br/>
+              {{$items->selesai->service->customer->telp}}<br/>
+              {{$items->selesai->service->code}}<br/>
+              {{$items->selesai->service->merk}}  {{$items->selesai->service->seri}}<br/>
               </div>
             </div>
           </div>
@@ -78,18 +84,18 @@ table {
             $sub = 0;
             $totpot = 0;
             $total = 0;
-            foreach ($items as $i) {
-              $sub += $i['hjual'] * $i['qty'];
-              $totpot += $i['disc'] * $i['qty'];              
-              $total += $i['qty'] * ($i['hjual'] - $i['disc']);              
+            foreach ($data as $i) {
+              $sub += $i['biaya'] * $i['service_qty'];
+              $totpot += $i['service_disc'] * $i['service_qty'];              
+              $total += $i['service_qty'] * ($i['biaya'] - $i['service_disc']);              
             ?>
               <tr>
                 <td>{{ $no++ }}</td>                
-                <td>{{ $i['stock']['product']['name'] }}</td>
-                <td>{{ $i['qty'] }}</td>
-                <td>Rp. {{ number_format($i['hjual'], 0, ".", ".") }}</td>
-                <td>Rp. {{ number_format($i['disc'], 0, ".", ".") }}</td>
-                <td>Rp. {{ number_format($i['qty'] * ($i['hjual'] - $i['disc']), 0, ".", ".") }}</td>
+                <td>{{ $i['catalog']['name'] }}</td>
+                <td>{{ $i['service_qty'] }}</td>
+                <td>Rp. {{ number_format($i['biaya'], 0, ".", ".") }}</td>
+                <td>Rp. {{ number_format($i['service_disc'], 0, ".", ".") }}</td>
+                <td>Rp. {{ number_format($i['service_qty'] * ($i['biaya'] - $i['service_disc']), 0, ".", ".") }}</td>
               </tr>
             <?php
             }
@@ -98,22 +104,37 @@ table {
         </table>
         <hr width="100%" size="10px">
         <div class="row">
-          <div class="col-8">
+          <div class="col-4">
           </div>
           <div class="col-2">
             <b>Sub Total<br />
               Total Potongan<br />
-              Total</b>
+              Total
+                </b>
           </div>
           <div class="col-2">
             <b>Rp. {{ number_format($sub, 0, ".", ".") }}<br />
               Rp. {{ number_format($totpot, 0, ".", ".") }}<br />
-              Rp. {{ number_format($total, 0, ".", ".") }}</b>
+              Rp. {{ number_format($total, 0, ".", ".") }}<br/>
+              </b>
+          </div>
+          <div class="col-2">
+            <b>
+              Total Dibayar<br/>
+              Sisa Pembayaran<br/>
+              Status<br/>
+                </b>
+          </div>
+          <div class="col-2">
+            <b>
+              Rp. {{ number_format($items->totalbayar, 0, ".", ".") }}<br/>
+              Rp. {{ number_format($items->sisa, 0, ".", ".") }}<br/>
+              {{$items->status}}<br/></b>
           </div>
           <hr width="100%" size="10px">          
           <br />
         </div>                        
-          <small class="text-danger">*<span>  Lampiran ini merupakan faktur penjualan dari Mecs Komputer</span></small>
+          {{-- <small class="text-danger">*<span>  Lampiran ini hanya sebagai catatan tim, bukan sebagai pengganti Nota / Faktur Service</span>                    </small> --}}
           
     </div>
 

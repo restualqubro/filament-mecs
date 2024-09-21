@@ -175,7 +175,8 @@ class ServiceDataResource extends Resource
                             $record['status'] = 'Proses';                        
                             LogService::create($record);
                             Data::where('id', $row->id)->update(['status' => 'Proses']);                        
-                        })->hidden(fn(Data $record) => $record->status != 'Baru' || $record->status != 'Proses' || auth()->user()->roles->pluck('name')[0] === 'customer_support'),
+                        }),
+                        // })->hidden(fn(Data $record) => $record->status != 'Baru' || $record->status != 'Proses' || auth()->user()->roles->pluck('name')[0] === 'customer_support'),
                     Tables\Actions\Action::make('cancel')
                         ->label('Cancel')
                         ->color('danger')

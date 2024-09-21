@@ -3,6 +3,8 @@
 namespace App\Filament\Resources\Services\InvoiceResource\Pages;
 
 use App\Filament\Resources\Services\InvoiceResource;
+use App\Models\Finance\UtangBonus;
+use App\Models\Service\DetailService;
 use Filament\Actions;
 use App\Models\Service\LogService;
 use App\Models\Service\Data;
@@ -31,10 +33,9 @@ class CreateInvoice extends CreateRecord
             'description'   => 'Unit Telah selesai proses service, Sudah diambil oleh Customer',
             'user_id'       => auth()->user()->id
         ]);
-        Data::where('id', $selesai->service->id)->update(['status' => 'Keluar']);
-
-        return $data;        
-    }
+        Data::where('id', $selesai->service->id)->update(['status' => 'Keluar']);                  
+        return dd($data);        
+    }    
 
     protected function getRedirectUrl(): string
     {

@@ -38,7 +38,7 @@ class InvoiceResource extends Resource
                 Forms\Components\Card::make()
                     ->schema([
                         Forms\Components\TextInput::make('code')
-                            ->label('Faktur Penjualan')
+                            ->label('Faktur Invoice Service')
                             ->default(function() {
                                 $date = Carbon::now()->format('my');
                                 $last = Invoice::whereRaw("MID(code, 5, 4) = $date")->max('code');                                        
@@ -166,8 +166,9 @@ class InvoiceResource extends Resource
             ->filters([
                 //
             ])
-            ->actions([                
-                Tables\Actions\ViewAction::make()->hiddenLabel()->tooltip('Details'),
+            ->actions([            
+                Tables\Actions\ActionGroup::make([
+                    Tables\Actions\ViewAction::make()->hiddenLabel()->tooltip('Details'),
                 Tables\Actions\Action::make('pelunasan')->hiddenLabel()->tooltip('Pelunasan')
                     ->label('Pelunasan')
                     ->color('warning')
@@ -214,7 +215,12 @@ class InvoiceResource extends Resource
                     ->visible(fn (Invoice $record): bool => $record->status === 'Piutang')
                     ->modalWidth(MaxWidth::Medium),
                 Tables\Actions\EditAction::make()->hiddenLabel()->tooltip('Edit'),
-                Tables\Actions\DeleteAction::make()->hiddenLabel()->tooltip('Delete')
+                Tables\Actions\Action::make('print')                    
+                        ->url(fn ($record) => '/print/invoicereceipt/'.$record->id)
+                        ->color('warning')
+                        ->icon('heroicon-o-printer')                    
+                        ->openUrlInNewTab(),                  
+                ])                    
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([

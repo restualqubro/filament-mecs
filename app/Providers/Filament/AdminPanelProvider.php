@@ -14,7 +14,7 @@ use Filament\Http\Middleware\DispatchServingFilamentEvent;
 use Filament\Pages;
 use Filament\Panel;
 use Filament\PanelProvider;
-use Filament\Widgets;
+use App\Filament\Widgets;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
 use Illuminate\Cookie\Middleware\EncryptCookies;
 use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
@@ -26,6 +26,7 @@ use Illuminate\View\Middleware\ShareErrorsFromSession;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Print\ServiceReceipt;
 use App\Http\Controllers\Print\SelesaiReceipt;
+use App\Http\Controllers\Print\InvoiceReceipt;
 use App\Http\Controllers\Print\FakturJual;
 use App\Http\Controllers\Print\FakturPreorder;
 
@@ -57,6 +58,7 @@ class AdminPanelProvider extends PanelProvider
                 });     
                 Route::get('/print/servicereceipt/{id}', [ServiceReceipt::class, 'print']);
                 Route::get('/print/selesaireceipt/{id}', [SelesaiReceipt::class, 'print']);
+                Route::get('/print/invoicereceipt/{id}', [InvoiceReceipt::class, 'print']);
                 Route::get('/print/fakturjual/{id}', [FakturJual::class, 'print']);
                 Route::get('/print/fakturpreorder/{id}', [FakturPreorder::class, 'print']);
             })
@@ -66,13 +68,13 @@ class AdminPanelProvider extends PanelProvider
             ])
             ->discoverPages(in: app_path('Filament/Pages'), for: 'App\\Filament\\Pages')
             ->pages([
-                Pages\Dashboard::class,
+                // Pages\Dashboard::class,
             ])
             ->discoverClusters(in: app_path('Filament/Clusters'), for: 'App\\Filament\\Clusters')
             ->discoverWidgets(in: app_path('Filament/Widgets'), for: 'App\\Filament\\Widgets')
             ->widgets([
-                Widgets\AccountWidget::class,
-                Widgets\FilamentInfoWidget::class,
+                // Widgets\StatsCustomerUmum::class,
+                // Widgets\FilamentInfoWidget::class,
             ])
             ->middleware([
                 EncryptCookies::class,

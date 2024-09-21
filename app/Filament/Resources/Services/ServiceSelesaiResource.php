@@ -21,6 +21,7 @@ use Filament\Infolists\Components\Section;
 use Filament\Infolists\Components\RepeatableEntry;
 use Carbon\Carbon;
 use Filament\Support\Enums\FontWeight;
+use Illuminate\Support\Facades\DB;
 
 class ServiceSelesaiResource extends Resource
 {    
@@ -170,7 +171,7 @@ class ServiceSelesaiResource extends Resource
                                     // After deleting a row, we need to update the totals
                                     ->deleteAction(
                                         fn(Forms\Components\Actions\Action $action) => $action->after(fn(Forms\Get $get, Forms\Set $set) => self::updateTotalService($get, $set)),
-                                    )
+                                    )                                    
                                     ->defaultItems(1)
                                     ->columns([
                                         'md' => 10
