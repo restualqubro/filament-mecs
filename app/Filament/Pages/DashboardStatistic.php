@@ -4,9 +4,12 @@ namespace App\Filament\Pages;
 
 use Filament\Pages\Page;
 use App\Filament\Widgets;
+use BezhanSalleh\FilamentShield\Traits\HasPageShield;
 
 class DashboardStatistic extends Page
 {
+    use HasPageShield;
+
     protected static ?string $navigationIcon = 'heroicon-o-chart-pie';
 
     protected static ?string $navigationLabel = 'Dashboard Statistic';

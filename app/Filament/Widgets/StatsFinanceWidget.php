@@ -10,10 +10,7 @@ class StatsFinanceWidget extends BaseWidget
     protected function getStats(): array
     {
         return [
-            // PENJUALAN
-            Stat::make('Omzet Penjualan', "1.000.000")
-                ->description('500.000 increase')
-                ->descriptionIcon('heroicon-m-arrow-trending-up'),                
+            // PENJUALAN            
             Stat::make('Profit Penjualan', "20.000.000")
                 ->description('500.000 increase')
                 ->descriptionIcon('heroicon-m-arrow-trending-up'),                

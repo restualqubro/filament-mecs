@@ -72,8 +72,8 @@ class ServiceCancelResource extends Resource
                 //
             ])
             ->actions([
-                Tables\Actions\EditAction::make()->hiddenLabel()->tooltip('Edit Data'),
-                Tables\Actions\Action::make('isKeluar')
+                Tables\Actions\ActionGroup::make([
+                    Tables\Actions\Action::make('isKeluar')
                     ->hiddenLabel()
                     ->tooltip('Pengambilan Unit')
                     ->icon('heroicon-o-arrow-right-start-on-rectangle')
@@ -94,7 +94,8 @@ class ServiceCancelResource extends Resource
                             'description'   => 'Unit sudah diambil oleh Customer',
                             'user_id'       => auth()->user()->id
                         ]);
-                    })->hidden(fn($record): bool => ($record->isKeluar === 1))                                        
+                    })->hidden(fn($record): bool => ($record->isKeluar === 1 && auth()->user()->roles->pluck('name')[0] === 'customer_service'))                                        
+                ])                                
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([

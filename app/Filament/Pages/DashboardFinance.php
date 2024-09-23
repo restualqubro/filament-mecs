@@ -3,10 +3,11 @@
 namespace App\Filament\Pages;
 
 use App\Filament\Widgets;
+use BezhanSalleh\FilamentShield\Traits\HasPageShield;
 use Filament\Pages\Dashboard as BaseDashboard;
 
 class DashboardFinance extends BaseDashboard
-{    
+{        
     protected static ?string $navigationIcon = 'heroicon-o-wallet';
 
     protected static ?string $navigationLabel = 'Dashboard Finance';
@@ -16,6 +17,7 @@ class DashboardFinance extends BaseDashboard
     protected function getHeaderWidgets(): array
     {
         return [
+            Widgets\OmzetPenjualanWidget::class,
             Widgets\StatsFinanceWidget::class,
             Widgets\PiutangBeliTableWidget::class,
         ];

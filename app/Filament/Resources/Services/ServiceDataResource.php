@@ -87,6 +87,18 @@ class ServiceDataResource extends Resource
                         'xl' => 3,
                         '2xl' => 4,
                     ]),          
+                Forms\Components\Select::make('penawaran')
+                    ->label('Penawaran')                    
+                    ->options([
+                        'Setuju' => 'Setuju',
+                        'Tidak'  => 'Tidak'
+                    ])
+                    ->columnSpan([
+                        'sm' => 2,
+                        'xl' => 3,
+                        '2xl' => 4,
+                    ])
+                    ->hidden(fn (string $operation): bool => $operation === 'create'),          
                 Forms\Components\TextInput::make('sn')          
                     ->label('Serial Number')
                     ->columnSpan([
@@ -201,14 +213,14 @@ class ServiceDataResource extends Resource
                         ->color('success')
                         ->icon('heroicon-o-chat-bubble-bottom-center-text')
                         ->openUrlInNewTab()
-                        ->hidden(fn() => auth()->user()->roles->pluck('name')[0] === 'Teknisi'),
+                        ->hidden(fn() => auth()->user()->roles->pluck('name')[0] === 'teknisi'),
                     Tables\Actions\Action::make('print')
                         ->label('Print')
                         ->url(fn ($record) => 'print/servicereceipt/'.$record->id)
                         ->color('warning')
                         ->icon('heroicon-o-printer')                    
                         ->openUrlInNewTab()
-                        ->hidden(fn() => auth()->user()->roles->pluck('name')[0] === 'Teknisi'),
+                        ->hidden(fn() => auth()->user()->roles->pluck('name')[0] === 'teknisi'),
                     Tables\Actions\ViewAction::make(),
                     Tables\Actions\EditAction::make(),                    
                     Tables\Actions\Action::make('status_edit')
@@ -216,7 +228,7 @@ class ServiceDataResource extends Resource
                         ->color('success')
                         ->icon('heroicon-o-document-check')
                         ->form([
-                            Forms\Components\TextArea::make('description')                                                                     
+                            Forms\Components\Textarea::make('description')                                                                     
                                 ->label('Update Details')
                                                             
                         ])
@@ -227,24 +239,15 @@ class ServiceDataResource extends Resource
                             $record['description'] = $data['description'];
                             $record['status'] = 'Proses';                        
                             LogService::create($record);
-                            Data::where('id', $row->id)->update(['status' => 'Proses']);                        
-                        }),
-                        // })->hidden(fn(Data $record) => $record->status != 'Baru' || $record->status != 'Proses' || auth()->user()->roles->pluck('name')[0] === 'customer_support'),
+                            Data::where('id', $row->id)->update(['status' => 'Proses']);                                                
+                        })->hidden(fn(Data $record) => $record->status !== 'Baru' && $record->status !== 'Proses' || auth()->user()->roles->pluck('name')[0] === 'customer_service'),
                     Tables\Actions\Action::make('cancel')
                         ->label('Cancel')
                         ->color('danger')
                         ->icon('heroicon-o-no-symbol')
                         ->form([
-                            Forms\Components\TextArea::make('description')                                                                     
-                                ->label('Cancel Details'),
-                            Forms\Components\Select::make('teknisi_id')
-                                ->label('Teknisi Bersangkutan')
-                                ->options(                                                
-                                    User::get()->mapWithKeys(function (User $user) {
-                                        return [$user->id => sprintf('%s %s', $user->firstname, $user->lastname)];
-                                    })
-                                    )
-                                                            
+                            Forms\Components\Textarea::make('description')                                                                     
+                                ->label('Cancel Details'),                                                                                        
                         ])
                         ->action(function (array $data, Data $row): void {
                             $record[] = array();
@@ -303,7 +306,7 @@ class ServiceDataResource extends Resource
                             ->badge()
                             ->color(fn (string $state): string => match ($state) {
                                 'Setuju' => 'success',
-                                'Tidak' => 'warning',                        
+                                'Tidak ' => 'warning',                        
                             }),
                         TextEntry::make('merk')
                             ->label('Merk/Brand'),
