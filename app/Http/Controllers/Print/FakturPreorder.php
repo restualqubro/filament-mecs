@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Print;
 
 use App\Http\Controllers\Controller;
+use App\Models\Finance\BankAccount;
 use App\Models\Transaksi\Preorder;
 use App\Settings\GeneralSettings;
 use Illuminate\Http\Request;
@@ -13,10 +14,11 @@ class FakturPreorder extends Controller
     public function print($id, GeneralSettings $settings) 
     {
         $data = [
-            'title'     => 'Preorder',
+            'title'     => 'FAKTUR PREORDER',
             'items'     => Preorder::find($id),
             'logo'      => Storage::url($settings->brand_logo),
             'site'      => $settings->brand_name,
+            'banks'     => BankAccount::all(),
         ];                
     	return View('print.fakturpreorder', $data);
     }

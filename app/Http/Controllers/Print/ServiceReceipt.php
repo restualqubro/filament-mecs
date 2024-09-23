@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Print;
 
 use App\Http\Controllers\Controller;
+use App\Models\Finance\BankAccount;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use App\Models\Service\Data;
@@ -18,13 +19,9 @@ class ServiceReceipt extends Controller
             'items'     => Data::find($id),
             'logo'      => Storage::url($settings->brand_logo),
             'name'      => auth()->user()->name,
-            'brand_name'=> $settings->brand_name
-        //     // 'items'     => LayananCuti::where('surat_id', $id)->get(),
-            // 'image'     => base64_encode(QrCode::size(100)->generate(url('/validate/cuti/'.$id)))
+            'brand_name'=> $settings->brand_name,                    
 
         ];  
-        return View('print.examplereceipt', $data);  	
-        // return $pdf->stream();
-    	// return View('print.servicereceipt', $data);
+        return View('print.servicereceipt', $data);  	        
     }
 }

@@ -14,11 +14,11 @@ class SelesaiReceipt extends Controller
 {
     public function print($id, GeneralSettings $settings) 
     {
-        $items = Selesai::where('id', $id)->get();
+        $items = Selesai::find($id);
         $data = [
-            'title'     => 'Selesai Service Receipt',
+            'title'     => 'SELESAI SERVICE RECEIPT',
             'items'     => $items,
-            'data'      => DetailService::where('selesai_id', $id)->get(),
+            'datas'     => DetailService::where('selesai_id', $id)->get(),
             'logo'      => Storage::url($settings->brand_logo),            
         //     // 'items'     => LayananCuti::where('surat_id', $id)->get(),
             // 'image'     => base64_encode(QrCode::size(100)->generate(url('/validate/cuti/'.$id)))
