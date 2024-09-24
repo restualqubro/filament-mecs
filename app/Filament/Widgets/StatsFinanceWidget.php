@@ -9,24 +9,7 @@ class StatsFinanceWidget extends BaseWidget
 {
     protected function getStats(): array
     {
-        return [
-            // PENJUALAN            
-            Stat::make('Profit Penjualan', "20.000.000")
-                ->description('500.000 increase')
-                ->descriptionIcon('heroicon-m-arrow-trending-up'),                
-            Stat::make('Piutang Penjualan', "30.000.000")
-                ->description('500.000 increase')
-                ->descriptionIcon('heroicon-m-arrow-trending-up'),     
-            // SERVICE
-            Stat::make('Omzet Service', "1.000.000")
-                ->description('500.000 increase')
-                ->descriptionIcon('heroicon-m-arrow-trending-up'),                
-            Stat::make('Profit Service', "20.000.000")
-                ->description('500.000 increase')
-                ->descriptionIcon('heroicon-m-arrow-trending-up'),                
-            Stat::make('Piutang Service', "30.000.000")
-                ->description('500.000 increase')
-                ->descriptionIcon('heroicon-m-arrow-trending-up'),                         
+        return [                                                      
             // Transaksi Toko
             Stat::make('Pengeluaran Toko', "1.000.000")
                 ->description('500.000 increase')

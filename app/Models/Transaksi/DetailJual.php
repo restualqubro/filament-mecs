@@ -31,4 +31,9 @@ class DetailJual extends Model
     {
         return $this->belongsTo(Stock::class);
     }
+
+    public function getJumlahAttribute()
+    {
+        return $this->qty * ($this->hjual - $this->disc);
+    }
 }

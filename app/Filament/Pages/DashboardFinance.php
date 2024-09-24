@@ -17,7 +17,7 @@ class DashboardFinance extends BaseDashboard
     protected function getHeaderWidgets(): array
     {
         return [
-            Widgets\OmzetPenjualanWidget::class,
+            Widgets\PenjualanWidget::class,            
             Widgets\StatsFinanceWidget::class,
             Widgets\PiutangBeliTableWidget::class,
         ];

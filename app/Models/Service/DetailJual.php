@@ -30,4 +30,9 @@ class DetailJual extends Model
     {
         return $this->belongsTo(Stock::class);
     }
+
+    public function getNameAttribute()
+    {
+        return "{$this->firstname} {$this->lastname}";
+    }
 }
