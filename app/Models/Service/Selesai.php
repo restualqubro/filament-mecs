@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use App\Models\User;
 use App\Models\Connect\Customers;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class Selesai extends Model
 {
@@ -48,7 +49,12 @@ class Selesai extends Model
     public function detailService(): HasMany
     {
         return $this->HasMany(DetailService::class);
-    }  
+    } 
+    
+    public function invoice(): HasOne
+    {
+        return $this->hasOne(Invoice::class);
+    }
     
 
 }

@@ -202,15 +202,16 @@ class ServiceSelesaiResource extends Resource
                                             ->afterStateUpdated(function($state, callable $set) {
                                                 $component = Stock::find($state);
                                                 if ($component) {                                                    
-                                                    $set('component_hbeli', $component->hbeli);                                                                  
+                                                    $set('hbeli', $component->hbeli);                                                                  
                                                 }
                                             })                                           
                                             ->columnSpan([
                                                 'md' => 5
                                             ]),                                  
-                                        Forms\Components\TextInput::make('component_hbeli')
+                                        Forms\Components\TextInput::make('hbeli')
                                             ->label('Harga Beli')
-                                            ->disabled()                                            
+                                            ->disabled()                  
+                                            ->dehydrated()                          
                                             ->columnSpan([
                                                 'md' => 2
                                             ]),                                                                                                                            

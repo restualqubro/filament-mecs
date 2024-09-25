@@ -15,11 +15,17 @@ class DetailComponent extends Model
     protected $fillable = [
         'selesai_id',
         'stock_id',
-        'component_qty'
+        'component_qty',
+        'hbeli'
     ];
 
     public function stock(): BelongsTo
     {
         return $this->belongsTo(Stock::class);
+    }
+
+    public function selesai(): BelongsTo
+    {
+        return $this->belongsTo(Selesai::class);
     }
 }

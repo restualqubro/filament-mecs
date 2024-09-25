@@ -19,12 +19,12 @@ class UsersTableSeeder extends Seeder
         $sid = Str::ulid();
         DB::table('users')->insert([
             'id' => $sid,
-            'username' => 'superadmin',
-            'firstname' => 'Super',
-            'lastname' => 'Admin',
-            'email' => 'superadmin@starter-kit.com',
+            'username' => 'restuqubro',
+            'firstname' => 'Restu',
+            'lastname' => 'Alqubro',
+            'email' => 'restualqubro@gmail.com',
             'email_verified_at' => now(),
-            'password' => Hash::make('superadmin'),
+            'password' => Hash::make('BecakLaju195'),
             'created_at' => now(),
             'updated_at' => now(),
         ]);

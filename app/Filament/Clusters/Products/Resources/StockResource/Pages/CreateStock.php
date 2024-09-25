@@ -26,4 +26,9 @@ class CreateStock extends CreateRecord
 
         return $data;
     }
+
+    protected function getRedirectUrl(): string
+    {
+        return static::getResource()::getUrl('index');
+    }
 }

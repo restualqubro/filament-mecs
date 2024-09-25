@@ -17,19 +17,13 @@ class PenjualanWidget extends BaseWidget
         return [
             Stat::make('Omzet Penjualan', number_format(DetailJual::whereHas('jual', function ($q) {
                 $q->where('is_pending', '=', 0);
-            })->sum(DB::raw('qty * (hjual - disc)')), 0, '', '.'))
-                ->description('500.000 increase')
-                ->descriptionIcon('heroicon-m-arrow-trending-up'),   
+            })->sum(DB::raw('qty * (hjual - disc)')), 0, '', '.')),   
             Stat::make('Profit Penjualan',  number_format(
                 DetailJual::whereHas('jual', function ($q) {
                     $q->where('is_pending', '=', 0);
                 })->sum('profit'), 0, '', '.')
-            )
-                ->description('500.000 increase')
-                ->descriptionIcon('heroicon-m-arrow-trending-up'),             
-            Stat::make('Piutang Penjualan', number_format(Jual::where('is_pending', 0)->where('status', 'piutang')->sum('sisa'), 0, '', '.'))
-                ->description('500.000 increase')
-                ->descriptionIcon('heroicon-m-arrow-trending-up'),
+            ),             
+            Stat::make('Piutang Penjualan', number_format(Jual::where('is_pending', 0)->where('status', 'piutang')->sum('sisa'), 0, '', '.')),
         ];
     }
 }

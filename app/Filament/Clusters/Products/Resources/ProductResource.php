@@ -76,39 +76,41 @@ class ProductResource extends Resource
                         
                     ])->hidden(fn(string $operation):bool => $operation === 'edit'),                      
                     Forms\Components\Section::make('Product Details')
-                    ->schema([
-                        Forms\Components\TextInput::make('name')
-                            ->label('Nama Product')
-                            ->required()
-                            ->columnSpan(2),
-                        Forms\Components\Select::make('kondisi')
-                            ->label('Kondisi')
-                            ->required()
-                            ->options([
-                                'BARU'  => 'BARU',
-                                'SECOND'=>  'SECOND',
-                            ]),                                                   
-                        Forms\Components\TextInput::make('sale_warranty')
-                            ->label('Garansi Customer')
-                            ->required()
-                            ->numeric(),                       
-                        Forms\Components\TextInput::make('hress')
-                            ->label('Harga Resell')
-                            ->numeric()
-                            ->required(),
-                        Forms\Components\TextInput::make('hjual')
-                            ->label('Harga Jual Umum')
-                            ->numeric()
-                            ->required(),                           
-                        Forms\Components\TextArea::make('description')
-                            ->label('Keterangan/Description')
-                            ->columnSpan(3),
-                        Forms\Components\SpatieMediaLibraryFileUpload::make('media')
-                            ->label('Photo Product')
-                            ->collection('products')
-                            ->multiple()
-                            ->columnSpan(3)
-                    ])->columns('3')
+                        ->schema([
+                            Forms\Components\TextInput::make('name')
+                                ->label('Nama Product')
+                                ->required(),
+                            Forms\Components\Select::make('kondisi')
+                                ->label('Kondisi')
+                                ->required()
+                                ->options([
+                                    'BARU'  => 'BARU',
+                                    'SECOND'=>  'SECOND',
+                                ]),                                                   
+                            Forms\Components\TextInput::make('sale_warranty')
+                                ->label('Garansi Customer')
+                                ->required()
+                                ->numeric(),                       
+                            Forms\Components\TextInput::make('hress')
+                                ->label('Harga Resell')
+                                ->numeric()
+                                ->required(),
+                            Forms\Components\TextInput::make('hjual')
+                                ->label('Harga Jual Umum')
+                                ->numeric()
+                                ->required(),                           
+                            Forms\Components\TextArea::make('description')
+                                ->label('Keterangan/Description'),
+                            Forms\Components\SpatieMediaLibraryFileUpload::make('media')
+                                ->label('Photo Product')
+                                ->collection('products')
+                                ->multiple()
+                                ->columnSpan('full')                            
+                        ])->columns([
+                            'sm' => 3,
+                            'xl' => 3,
+                            '2xl' => 3,
+                        ])
             ]);
     }
 
@@ -183,9 +185,13 @@ class ProductResource extends Resource
                     ->money('IDR'),     
                 TextEntry::make('description')
                     ->label('Description / Specification')
-                    ->columnSpan(2),                                   
+                    ->columnSpan('full'),                                   
                                     
-            ])->columns(2);
+            ])->columns([
+                'sm'    => 1,
+                'lg'    => 2,
+                'xl'    => 2
+            ]);
     }
 
     public static function getPages(): array

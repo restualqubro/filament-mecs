@@ -18,6 +18,7 @@ class DashboardFinance extends BaseDashboard
     {
         return [
             Widgets\PenjualanWidget::class,            
+            Widgets\ServiceWidget::class,            
             Widgets\StatsFinanceWidget::class,
             Widgets\PiutangBeliTableWidget::class,
         ];
