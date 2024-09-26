@@ -2,11 +2,11 @@
 
 namespace App\Filament\Pages;
 
-use Filament\Pages\Page;
+use Filament\Pages\Dashboard as BaseDashboard;
 use App\Filament\Widgets;
 use BezhanSalleh\FilamentShield\Traits\HasPageShield;
 
-class DashboardStatistic extends Page
+class DashboardStatistic extends BaseDashboard
 {
     use HasPageShield;
 
@@ -23,6 +23,7 @@ class DashboardStatistic extends Page
             Widgets\StatsServiceDataWidget::class,
             Widgets\PiutangServiceTableWidget::class,
             Widgets\PiutangJualTableWidget::class,
+            
         ];
     }
 }

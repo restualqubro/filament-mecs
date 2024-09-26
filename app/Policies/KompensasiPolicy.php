@@ -12,7 +12,7 @@ class KompensasiPolicy
 
     public function viewAny(User $user): bool
     {
-        return $user->can('view_any_finance::kompensasi');
+        return $user->can('view_any_kompensasi');
     }
 
     /**
@@ -20,7 +20,7 @@ class KompensasiPolicy
      */
     public function view(User $user, Kompensasi $kompensasi): bool
     {
-        return $user->can('view_finance::kompensasi');
+        return $user->can('view_kompensasi');
     }
 
     /**
@@ -28,7 +28,7 @@ class KompensasiPolicy
      */
     public function create(User $user): bool
     {
-        return $user->can('create_finance::kompensasi');
+        return $user->can('create_kompensasi');
     }
 
     /**
@@ -36,7 +36,7 @@ class KompensasiPolicy
      */
     public function update(User $user, Kompensasi $kompensasi): bool
     {
-        return $user->can('update_finance::kompensasi');
+        return $user->can('update_kompensasi');
     }
 
     /**
@@ -44,7 +44,7 @@ class KompensasiPolicy
      */
     public function delete(User $user, Kompensasi $kompensasi): bool
     {
-        return $user->can('delete_finance::kompensasi');
+        return $user->can('delete_kompensasi');
     }
 
     /**
@@ -52,7 +52,7 @@ class KompensasiPolicy
      */
     public function deleteAny(User $user): bool
     {
-        return $user->can('delete_any_finance::kompensasi');
+        return $user->can('delete_any_kompensasi');
     }
 
     /**
@@ -60,7 +60,7 @@ class KompensasiPolicy
      */
     public function forceDelete(User $user, Kompensasi $kompensasi): bool
     {
-        return $user->can('force_delete_finance::kompensasi');
+        return $user->can('force_delete_kompensasi');
     }
 
     /**
@@ -68,7 +68,7 @@ class KompensasiPolicy
      */
     public function forceDeleteAny(User $user): bool
     {
-        return $user->can('force_delete_any_finance::kompensasi');
+        return $user->can('force_delete_any_kompensasi');
     }
 
     /**
@@ -76,7 +76,7 @@ class KompensasiPolicy
      */
     public function restore(User $user, Kompensasi $kompensasi): bool
     {
-        return $user->can('restore_finance::kompensasi');
+        return $user->can('restore_kompensasi');
     }
 
     /**
@@ -84,7 +84,7 @@ class KompensasiPolicy
      */
     public function restoreAny(User $user): bool
     {
-        return $user->can('restore_any_finance::kompensasi');
+        return $user->can('restore_any_kompensasi');
     }
 
     /**
@@ -92,7 +92,7 @@ class KompensasiPolicy
      */
     public function replicate(User $user, Kompensasi $kompensasi): bool
     {
-        return $user->can('replicate_finance::kompensasi');
+        return $user->can('replicate_kompensasi');
     }
 
     /**
@@ -100,6 +100,6 @@ class KompensasiPolicy
      */
     public function reorder(User $user): bool
     {
-        return $user->can('reorder_finance::kompensasi');
+        return $user->can('reorder_kompensasi');
     }
 }

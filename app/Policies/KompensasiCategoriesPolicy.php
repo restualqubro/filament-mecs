@@ -12,7 +12,7 @@ class KompensasiCategoriesPolicy
 
     public function viewAny(User $user): bool
     {
-        return $user->can('view_any_finance::kompensasi::categories');
+        return $user->can('view_any_kompensasi::categories');
     }
 
     /**
@@ -20,7 +20,7 @@ class KompensasiCategoriesPolicy
      */
     public function view(User $user, KompensasiCategories $kompensasiCategories): bool
     {
-        return $user->can('view_finance::kompensasi::categories');
+        return $user->can('view_kompensasi::categories');
     }
 
     /**
@@ -28,7 +28,7 @@ class KompensasiCategoriesPolicy
      */
     public function create(User $user): bool
     {
-        return $user->can('create_finance::kompensasi::categories');
+        return $user->can('create_kompensasi::categories');
     }
 
     /**
@@ -36,7 +36,7 @@ class KompensasiCategoriesPolicy
      */
     public function update(User $user, KompensasiCategories $kompensasiCategories): bool
     {
-        return $user->can('update_finance::kompensasi::categories');
+        return $user->can('update_kompensasi::categories');
     }
 
     /**
@@ -44,7 +44,7 @@ class KompensasiCategoriesPolicy
      */
     public function delete(User $user, KompensasiCategories $kompensasiCategories): bool
     {
-        return $user->can('delete_finance::kompensasi::categories');
+        return $user->can('delete_kompensasi::categories');
     }
 
     /**
@@ -52,7 +52,7 @@ class KompensasiCategoriesPolicy
      */
     public function deleteAny(User $user): bool
     {
-        return $user->can('delete_any_finance::kompensasi::categories');
+        return $user->can('delete_any_kompensasi::categories');
     }
 
     /**
@@ -60,7 +60,7 @@ class KompensasiCategoriesPolicy
      */
     public function forceDelete(User $user, KompensasiCategories $kompensasiCategories): bool
     {
-        return $user->can('force_delete_finance::kompensasi::categories');
+        return $user->can('force_delete_kompensasi::categories');
     }
 
     /**
@@ -68,7 +68,7 @@ class KompensasiCategoriesPolicy
      */
     public function forceDeleteAny(User $user): bool
     {
-        return $user->can('force_delete_any_finance::kompensasi::categories');
+        return $user->can('force_delete_any_kompensasi::categories');
     }
 
     /**
@@ -76,7 +76,7 @@ class KompensasiCategoriesPolicy
      */
     public function restore(User $user, KompensasiCategories $kompensasiCategories): bool
     {
-        return $user->can('restore_finance::kompensasi::categories');
+        return $user->can('restore_kompensasi::categories');
     }
 
     /**
@@ -84,7 +84,7 @@ class KompensasiCategoriesPolicy
      */
     public function restoreAny(User $user): bool
     {
-        return $user->can('restore_any_finance::kompensasi::categories');
+        return $user->can('restore_any_kompensasi::categories');
     }
 
     /**
@@ -92,7 +92,7 @@ class KompensasiCategoriesPolicy
      */
     public function replicate(User $user, KompensasiCategories $kompensasiCategories): bool
     {
-        return $user->can('replicate_finance::kompensasi::categories');
+        return $user->can('replicate_kompensasi::categories');
     }
 
     /**
@@ -100,6 +100,6 @@ class KompensasiCategoriesPolicy
      */
     public function reorder(User $user): bool
     {
-        return $user->can('reorder_finance::kompensasi::categories');
+        return $user->can('reorder_kompensasi::categories');
     }
 }

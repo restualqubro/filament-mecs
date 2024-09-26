@@ -19,7 +19,7 @@ class PemasukanResource extends Resource
 {
     protected static ?string $model = Pemasukan::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationIcon = 'heroicon-o-arrow-left-start-on-rectangle';
 
     protected static ?string $pluralModelLabel = 'Pemasukan';
 
