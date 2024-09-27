@@ -99,7 +99,7 @@ class ProductResource extends Resource
                                 ->label('Harga Jual Umum')
                                 ->numeric()
                                 ->required(),                           
-                            Forms\Components\TextArea::make('description')
+                            Forms\Components\Textarea::make('description')
                                 ->label('Keterangan/Description'),
                             Forms\Components\SpatieMediaLibraryFileUpload::make('media')
                                 ->label('Photo Product')

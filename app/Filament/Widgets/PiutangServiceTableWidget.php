@@ -13,9 +13,14 @@ class PiutangServiceTableWidget extends BaseWidget
 {
     use InteractsWithTable;
 
+    protected static ?string $heading = 'Omzet';
+
+    protected int | string | array  $columnSpan = 'full';
+
     public function table(Table $table): Table
     {
         return $table
+            ->heading('Piutang Service')
             ->query(Invoice::query()->where('status', 'Piutang'))
             ->groups(['status'])
             ->columns([
@@ -31,6 +36,18 @@ class PiutangServiceTableWidget extends BaseWidget
                 Tables\Columns\TextColumn::make('sisa')
                     ->numeric(decimalPlaces:0)
                     ->label('Sisa Pembayaran')
+            ])
+            ->actions([
+                Tables\Actions\Action::make('contact')
+                        ->label('Contact')
+                        ->url(function(Invoice $record) {                            
+                            return 'https://wa.me/+62'.$record->selesai->service->customer->telp."?
+                            text=Assalamu'alaikum";
+                        })
+                        ->color('success')
+                        ->icon('heroicon-o-chat-bubble-bottom-center-text')
+                        ->openUrlInNewTab()
+                        ->hidden(fn() => auth()->user()->roles->pluck('name')[0] === 'teknisi'),
             ])
             ->defaultSort('code', 'DESC');
     }

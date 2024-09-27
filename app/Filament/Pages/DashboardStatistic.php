@@ -18,9 +18,11 @@ class DashboardStatistic extends BaseDashboard
 
     protected function getHeaderWidgets(): array
     {
-        return [
+        return [            
             Widgets\StatsCustomerUmumWidget::class,
             Widgets\StatsServiceDataWidget::class,
+            Widgets\CustomerWidget::class,
+            Widgets\ServiceDataWidget::class,
             Widgets\PiutangServiceTableWidget::class,
             Widgets\PiutangJualTableWidget::class,
             

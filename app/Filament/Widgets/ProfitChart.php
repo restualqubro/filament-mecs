@@ -4,26 +4,23 @@ namespace App\Filament\Widgets;
 
 use Filament\Widgets\ChartWidget;
 
-class OmzetChart extends ChartWidget
+class ProfitChart extends ChartWidget
 {
-    protected static ?string $heading = 'Omzet Chart Data';
-
-    // protected int | string | array $columnSpan = 'full';
-    
+    protected static ?string $heading = 'Profit Chart';
 
     protected function getData(): array
     {
         return [
             'datasets' => [
                 [
-                    'label' => 'Omzet Penjualan',
+                    'label' => 'Profit Penjualan',
                     'data' =>   [0, 10, 5, 2, 21, 32, 45, 74, 65, 45, 77, 89],                                
-                    'borderColor' => 'rgb(75, 192, 192)',
+                    'borderColor' => 'rgb(35, 219, 192)',
                 ],
                 [
-                    'label' => 'Omzet Service',
+                    'label' => 'Profit Service',
                     'data' =>   [0, 10, 6, 2, 22, 32, 55, 44, 65, 45, 77, 89],                                
-                    'borderColor' => 'rgb(67, 150, 192)',
+                    'borderColor' => 'rgb(214, 108, 47)',
                 ],                
             ],
             'labels' => ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
@@ -33,5 +30,5 @@ class OmzetChart extends ChartWidget
     protected function getType(): string
     {
         return 'line';
-    }    
+    } 
 }

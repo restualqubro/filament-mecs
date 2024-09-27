@@ -73,6 +73,15 @@ class FinanceWidget extends BaseWidget
             Stat::make('Piutang Service', number_format($getPiutangService, 0, '', '.')),
             Stat::make('Piutang Penjualan', number_format($getPiutangPenjualan, 0, '', '.')),
             Stat::make('Utang Pembelian', number_format($getUtangPembelian, 0, '', '.')),
+            Stat::make('Pembelian', number_format($getPiutangService, 0, '', '.')),
+            Stat::make('Kompensasi', number_format($getPiutangPenjualan, 0, '', '.')),
+            Stat::make('Kerugian Item', number_format($getUtangPembelian, 0, '', '.')),
+            Stat::make('Pengeluaran : Konsumsi', number_format($getPiutangService, 0, '', '.')),
+            Stat::make('Pengeluaran : Infaq / Sedekah', number_format($getPiutangPenjualan, 0, '', '.')),
+            Stat::make('Pengeluaran : Mitra Mandiri', number_format($getUtangPembelian, 0, '', '.')),
+            Stat::make('Pengeluaran : Listrik, Internet & PAM', number_format($getUtangPembelian, 0, '', '.')),
+            Stat::make('Pengeluaran : Ongkir', number_format($getUtangPembelian, 0, '', '.')),
+            Stat::make('Pengeluaran : Lainnya', number_format($getUtangPembelian, 0, '', '.'))
         ];
     }
 }

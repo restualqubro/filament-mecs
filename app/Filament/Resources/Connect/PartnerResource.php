@@ -35,7 +35,7 @@ class PartnerResource extends Resource
                     ->tel()
                     ->telRegex('/^[+]*[(]{0,1}[0-9]{1,4}[)]{0,1}[-\s\.\/0-9]*$/')
                     ->prefix('+62'),                            
-                Forms\Components\TextArea::make('address')                    
+                Forms\Components\Textarea::make('address')                    
                     ->label('Alamat')    
             ]);
     }

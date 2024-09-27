@@ -128,7 +128,7 @@ class ServiceGaransiResource extends Resource
                                     'Selesai'   => 'Selesai',
                                     'Keluar'    => 'Keluar',
                                 ]),
-                            Forms\Components\TextArea::make('description')                                                                     
+                            Forms\Components\Textarea::make('description')                                                                     
                                 ->label('Update Details')
                                 ->required()                                                                                          
                         ])

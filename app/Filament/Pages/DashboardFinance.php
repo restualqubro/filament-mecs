@@ -19,6 +19,7 @@ class DashboardFinance extends Page
         return [
             Widgets\FinanceWidget::class,
             Widgets\OmzetChart::class,                        
+            Widgets\ProfitChart::class,                        
         ];
     }
     

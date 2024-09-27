@@ -12,9 +12,14 @@ class PiutangJualTableWidget extends BaseWidget
 {
     use InteractsWithTable;
 
+    protected static ?string $heading = 'Omzet';
+
+    protected int | string | array  $columnSpan = 'full';
+
     public function table(Table $table): Table
     {
         return $table
+            ->heading('Piutang Penjualan')
             ->query(Jual::query()->where('status', 'Piutang'))            
             ->columns([
                 Tables\Columns\TextColumn::make('code')

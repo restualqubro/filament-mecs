@@ -55,7 +55,7 @@ class CustomersResource extends Resource
                         'Twincom'   => 'Twincom'
                     ])
                     ->required(),
-                Forms\Components\TextArea::make('address')                    
+                Forms\Components\Textarea::make('address')                    
                     ->label('Alamat')    
                     ->required()                  
             ]);

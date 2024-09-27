@@ -8,7 +8,7 @@ use App\Models\Transaksi\Beli;
 use Filament\Widgets\TableWidget as BaseWidget;
 
 class PiutangBeliTableWidget extends BaseWidget
-{
+{    
     
     protected int | string | array  $columnSpan = 'full';
 

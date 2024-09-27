@@ -52,8 +52,10 @@ class ProductCategoriesResource extends Resource
                 //
             ])
             ->actions([
-                Tables\Actions\EditAction::make()->hiddenLabel()->tooltip('Edit'),
-                Tables\Actions\DeleteAction::make()->hiddenLabel()->tooltip('Delete')
+                Tables\Actions\ActionGroup::make([
+                    Tables\Actions\EditAction::make(),
+                    Tables\Actions\DeleteAction::make()
+                ]) 
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([

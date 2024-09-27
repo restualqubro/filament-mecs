@@ -78,7 +78,7 @@ class PembelianResource extends Resource
                                     ])->columns(6),                                
                                 Forms\Components\Group::make()
                                 ->schema([
-                                    Forms\Components\TextArea::make('description'),                                                                    
+                                    Forms\Components\Textarea::make('description'),                                                                    
                                 ])                                
                             ]),
                         Forms\Components\Card::make()

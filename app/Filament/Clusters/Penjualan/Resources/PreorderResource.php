@@ -77,7 +77,7 @@ class PreorderResource extends Resource
                                     ])->columns(6),                                
                                 Forms\Components\Group::make()
                                 ->schema([
-                                    Forms\Components\TextArea::make('description')
+                                    Forms\Components\Textarea::make('description')
                                         ->label('Description / Keterangan (Masukkan Item dan Detail Item Preorder)')
                                         ->rows(1)                                                                    
                                 ])
