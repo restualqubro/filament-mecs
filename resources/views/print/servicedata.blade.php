@@ -93,8 +93,8 @@
                     <br/>                    
                     <br/>   
                     <p>Total Items : {{$count}}<br/>
-                    Printed at : {{$dateTime}}</p>    
-                    Printed by : {{$users}}             
+                    Printed at : {{$dateTime}}<br/>
+                    Printed by : {{$users}}</p>                 
                 </div>   
             </div>
           </div>          
@@ -106,23 +106,25 @@
         <table class="table table-bordered">
           <thead>
             <tr>                            
-              <th width="15%">Code</th>
-              <th width="30%">Nama product</th>
-              <th width="15%">Categories</th>
-              <th width="10%">Stok</th>              
-              <th width="15%">Harga Beli</th>
-              <th width="15%">Harga Jual</th>
+              <th width="10%">Code</th>
+              <th width="20%">Customer</th>
+              <th width="10%">Tanggal Masuk</th>
+              <th width="15%">Kategori</th>              
+              <th width="15%">Merk/Seri</th>
+              <th width="15%">Seri/Tipe</th>
+              <th width="15%">Status</th>
             </tr>
           </thead>
           <tbody> 
             @foreach($item as $items)
             <tr>
-                <td>{{$items->fullCode}}</td>
-                <td>{{$items->product->name}}</td>
-                <td>{{$items->product->category->name}}</td>
-                <td>{{$items->stok}}</td>
-                <td>{{number_format($items->hbeli, 0, '', '.')}}</td>
-                <td>{{number_format($items->product->hjual, 0, '', '.')}}</td>
+                <td>{{$items->code}}</td>
+                <td>{{$items->customer->name}}</td>
+                <td>{{$items->created_at->toDateString()}}</td>
+                <td>{{$items->category->name}}</td>
+                <td>{{$items->merk}}</td>
+                <td>{{$items->seri}}</td>
+                <td>{{$items->status}}</td>
             </tr>   
             @endforeach        
           </tbody>

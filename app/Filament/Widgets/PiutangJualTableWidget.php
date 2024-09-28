@@ -38,7 +38,7 @@ class PiutangJualTableWidget extends BaseWidget
                     Tables\Actions\Action::make('contact')
                         ->label('Contact')
                         ->url(function(Jual $record) {                            
-                            return 'https://wa.me/+62'.$record->selesai->service->customer->telp."?
+                            return 'https://wa.me/+62'.$record->customer->telp."?
                             text=Assalamu'alaikum%20Kami%20dari%20Mecs%20Komputer%20kembali%20mengingatkan%20bahwa%20ada%20nota%20penjualan%20jatuh%20tempo%20dengan%20kode%20faktur%20".$record->code."%20sejumlah%20".number_format($record->sisa, 0, '', '.');
                         })
                         ->color('success')

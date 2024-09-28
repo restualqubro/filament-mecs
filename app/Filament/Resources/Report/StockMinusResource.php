@@ -18,9 +18,11 @@ class StockMinusResource extends Resource
 {
     protected static ?string $model = Stock::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationIcon = 'heroicon-o-document-text';
 
     protected static ?string $navigationGroup = 'Report';    
+
+    protected static ?string $pluralModelLabel = 'Stock Minus';
 
     public static function table(Table $table): Table
     {

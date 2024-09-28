@@ -219,7 +219,8 @@ class InvoiceResource extends Resource
                         ->url(fn ($record) => '/print/invoicereceipt/'.$record->id)
                         ->color('warning')
                         ->icon('heroicon-o-printer')                    
-                        ->openUrlInNewTab(),                  
+                        ->openUrlInNewTab(),  
+                Tables\Actions\DeleteAction::make(),                
                 ])                    
             ])
             ->bulkActions([

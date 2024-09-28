@@ -129,7 +129,8 @@ class PreorderResource extends Resource
                         ->color('danger')
                         ->icon('heroicon-o-no-symbol')      
                         ->requiresConfirmation()                  
-                        ->action(fn(Preorder $record) => $record->find($record->id)->update(['status' => 'Cancel']))
+                        ->action(fn(Preorder $record) => $record->find($record->id)->update(['status' => 'Cancel'])),
+                    Tables\Actions\DeleteAction::make(),
                         // ->hidden(fn(Preorder $record) => $record->status != 'Baru' || auth()->user()->roles->pluck('name')[0] === 'customer_support'),
                 ])
                 

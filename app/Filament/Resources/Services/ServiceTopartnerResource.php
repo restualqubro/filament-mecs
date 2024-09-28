@@ -200,7 +200,8 @@ class ServiceTopartnerResource extends Resource
                             ]);
                         })
                         ->modalWidth('md')
-                        ->hidden(fn($record): string => ($record->status === 'BARU' || $record->status === 'Proses' || $record->status === 'Kembali'))
+                        ->hidden(fn($record): string => ($record->status === 'BARU' || $record->status === 'Proses' || $record->status === 'Kembali')),
+                    Tables\Actions\DeleteAction::make(),    
                 ])                
             ])
             ->bulkActions([

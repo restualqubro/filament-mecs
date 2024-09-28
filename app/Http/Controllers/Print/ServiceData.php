@@ -1,32 +1,32 @@
 <?php
 
-namespace App\Http\Controllers\print;
+namespace App\Http\Controllers\Print;
 
 use App\Http\Controllers\Controller;
+use App\Models\Service\Data;
 use App\Settings\GeneralSettings;
-use App\Models\Products\Stock;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
-class StockMinus extends Controller
+class ServiceData extends Controller
 {
     public function print(GeneralSettings $settings) 
     {
-        $categoryid = request('tableFilters.category_id.value');
-        if (!$categoryid) 
+        $status = request('tableFilters.status.value');
+        if (!$status) 
         {
-            $items = Stock::where('stok', '<=', 1)->orderBy('id', 'desc')->get();        
+            $items = Data::orderBy('id', 'desc')->get();        
         }  else {
-            $items = Stock::whereHas('product', fn($q) => $q->where('category_id', $categoryid))->where('stok', '<=', 1)->orderBy('id', 'desc')->get();
+            $items = Data::where('status', $status)->orderBy('id', 'desc')->get();
         }
         $data = [
-            'title'     => 'STOK MINUS',
+            'title'     => 'SERVICE DATA',
             'logo'      => Storage::url($settings->brand_logo),
             'item'      => $items,
             'count'     => $items->count(),
             'dateTime'  => \Carbon\Carbon::now(),
             'users'     => auth()->user()->name,
         ];
-    	return view('print.stockminus', $data);
+    	return view('print.servicedata', $data);
     }
 }

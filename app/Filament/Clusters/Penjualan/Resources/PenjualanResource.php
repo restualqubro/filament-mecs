@@ -281,6 +281,7 @@ class PenjualanResource extends Resource
                     ->sortable(),
                 Tables\Columns\TextColumn::make('tanggal')
                     ->label('Tanggal')
+                    ->default(now())
                     ->date(),                
                 Tables\Columns\TextColumn::make('customer.name')        
                     ->label('Supplier'),
@@ -370,7 +371,8 @@ class PenjualanResource extends Resource
                         ]);
                     })->visible(fn (Jual $record): bool => $record->status === 'Piutang')
                     ->modalWidth(MaxWidth::Medium),             
-                Tables\Actions\EditAction::make()->hiddenLabel()->tooltip('Edit'),
+                Tables\Actions\EditAction::make(),
+                Tables\Actions\DeleteAction::make(),
                 ])                                
             ])
             ->bulkActions([

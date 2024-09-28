@@ -352,6 +352,7 @@ class ServiceSelesaiResource extends Resource
                         ->color('warning')
                         ->icon('heroicon-o-printer')                    
                         ->openUrlInNewTab(),                
+                    Tables\Actions\DeleteAction::make(),
                 ])                
             ])
             ->bulkActions([

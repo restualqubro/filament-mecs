@@ -101,8 +101,8 @@ class StockResource extends Resource
     {
         return [
             'index' => Pages\ListStocks::route('/'),
-            // 'create' => Pages\CreateStock::route('/create'),
-            // 'edit' => Pages\EditStock::route('/{record}/edit'),
+            'create' => Pages\CreateStock::route('/create'),
+            'edit' => Pages\EditStock::route('/{record}/edit'),
         ];
     }
 }

@@ -40,7 +40,7 @@ class ServiceDataResource extends Resource
     {        
         return $form
             ->schema([
-                Forms\Components\DatePicker::make('date_in')
+                Forms\Components\DatePicker::make('created_at')
                     ->label('Tanggal Masuk')
                     ->required()
                     ->default('now')
@@ -262,6 +262,7 @@ class ServiceDataResource extends Resource
                             Data::where('id', $row->id)->update(['status' => 'Cancel']);
                         })
                         ->hidden(fn(Data $record) => $record->status != 'Proses' || auth()->user()->roles->pluck('name')[0] === 'customer_support'),
+                    Tables\Actions\DeleteAction::make(),
             ])
             ])
             ->bulkActions([

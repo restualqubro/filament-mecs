@@ -61,9 +61,8 @@ class PembelianResource extends Resource
                                             ->columnSpan([
                                                 'md' => 2
                                             ]),                                
-                                        Forms\Components\DatePicker::make('tanggal')
-                                            ->default(now())
-                                            ->disabled()                                            
+                                        Forms\Components\DatePicker::make('created_at')
+                                            ->default(now())                                                           
                                             ->columnSpan([
                                                 'md' => 2
                                             ]),                                                               

@@ -94,7 +94,8 @@ class ServiceCancelResource extends Resource
                             'description'   => 'Unit sudah diambil oleh Customer',
                             'user_id'       => auth()->user()->id
                         ]);
-                    })->hidden(fn($record): bool => ($record->isKeluar === 1 && auth()->user()->roles->pluck('name')[0] === 'customer_service'))                                        
+                    })->hidden(fn($record): bool => ($record->isKeluar === 1 && auth()->user()->roles->pluck('name')[0] === 'customer_service')),
+                Tables\Actions\DeleteAction::make(),
                 ])                                
             ])
             ->bulkActions([

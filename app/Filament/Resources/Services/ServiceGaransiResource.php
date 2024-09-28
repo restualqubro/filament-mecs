@@ -143,6 +143,7 @@ class ServiceGaransiResource extends Resource
                             LogService::create($record);
                             Garansi::where('id', $row->id)->update(['status' => $record['status'], 'update' => $record['description']]);                        
                         }),
+                    Tables\Actions\DeleteAction::make(),
                 ])
                 
             ])

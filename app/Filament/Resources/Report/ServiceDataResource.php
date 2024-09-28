@@ -17,34 +17,54 @@ class ServiceDataResource extends Resource
 {
     protected static ?string $model = Data::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationIcon = 'heroicon-o-document-text';
 
     protected static ?string $navigationGroup = 'Report';
 
-    public static function form(Form $form): Form
-    {
-        return $form
-            ->schema([
-                //
-            ]);
-    }
-
+    protected static ?string $pluralModelLabel = 'Service Data';
+    
     public static function table(Table $table): Table
     {
         return $table
             ->columns([
-                //
+                Tables\Columns\TextColumn::make('code')
+                    ->label('KODE SERVICE'),
+                Tables\Columns\TextColumn::make('customer.name')
+                    ->label('Customer')
+                    ->searchable(),
+                Tables\Columns\TextColumn::make('date_in')
+                    ->label('Tanggal Masuk')
+                    ->sortable(),
+                Tables\Columns\TextColumn::make('category.name')
+                    ->label('Kategori'),
+                Tables\Columns\TextColumn::make('merk')
+                    ->label('Brand/Merk')
+                    ->searchable(),
+                Tables\Columns\TextColumn::make('seri')
+                    ->label('Seri/Tipe')
+                    ->searchable(),
+                Tables\Columns\TextColumn::make('status')
+                    ->label('Status')
+                    ->badge()
+                    ->color(fn (string $state): string => match ($state) {
+                        'Baru' => 'gray',
+                        'Proses' => 'warning',
+                        'Selesai' => 'success',
+                        'Cancel' => 'danger',
+                        'Keluar' => 'gray',
+                    })
+                    ->sortable(),
             ])
             ->filters([
-                //
-            ])
-            ->actions([
-                Tables\Actions\EditAction::make(),
-            ])
-            ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
-                ]),
+                Tables\Filters\SelectFilter::make('status')
+                    ->label('by Status')
+                    ->options([
+                        'Baru'      => 'Baru',
+                        'Proses'    => 'Proses',
+                        'Selesai'   => 'Selesai',
+                        'Cancel'    => 'Cancel',
+                        'Keluar'    => 'Keluar'
+                    ])
             ]);
     }
 
