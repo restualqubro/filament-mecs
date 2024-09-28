@@ -29,6 +29,7 @@ use App\Http\Controllers\Print\SelesaiReceipt;
 use App\Http\Controllers\Print\InvoiceReceipt;
 use App\Http\Controllers\Print\FakturJual;
 use App\Http\Controllers\Print\FakturPreorder;
+use App\Http\Controllers\Print\StockMinus;
 
 class AdminPanelProvider extends PanelProvider
 {
@@ -61,6 +62,7 @@ class AdminPanelProvider extends PanelProvider
                 Route::get('/print/invoicereceipt/{id}', [InvoiceReceipt::class, 'print']);
                 Route::get('/print/fakturjual/{id}', [FakturJual::class, 'print']);
                 Route::get('/print/fakturpreorder/{id}', [FakturPreorder::class, 'print']);
+                Route::get('/print/reportstockminus/', [StockMinus::class, 'print']);
             })
             ->discoverResources(in: app_path('Filament/Resources'), for: 'App\\Filament\\Resources')
             ->resources([   

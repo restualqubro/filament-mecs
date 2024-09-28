@@ -18,13 +18,13 @@ class PenarikanResource extends Resource
 {
     protected static ?string $model = Penarikan::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-currency-dollar';
+    protected static ?string $navigationIcon = 'heroicon-o-document-currency-dollar';
 
-    protected static ?string $pluralModelLabel = 'Penarikan Tunai';    
+    protected static ?string $pluralModelLabel = 'Penarikan Tunai';
+    
+    protected static ?string $slug = 'penarikan-tunai';
 
     protected static ?string $cluster = Keuangan::class;
-
-    protected static ?int $navigationSort = 4;
 
     public static function form(Form $form): Form
     {
@@ -98,8 +98,8 @@ class PenarikanResource extends Resource
     {
         return [
             'index' => Pages\ListPenarikans::route('/'),
-            // 'create' => Pages\CreatePenarikan::route('/create'),
-            // 'edit' => Pages\EditPenarikan::route('/{record}/edit'),
+            'create' => Pages\CreatePenarikan::route('/create'),
+            'edit' => Pages\EditPenarikan::route('/{record}/edit'),
         ];
     }
 }

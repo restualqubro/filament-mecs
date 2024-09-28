@@ -33,6 +33,20 @@ class PiutangJualTableWidget extends BaseWidget
                     ->numeric(decimalPlaces:0)
                     ->label('Sisa Pembayaran')
             ])
+            ->actions([
+                Tables\Actions\ActionGroup::make([
+                    Tables\Actions\Action::make('contact')
+                        ->label('Contact')
+                        ->url(function(Jual $record) {                            
+                            return 'https://wa.me/+62'.$record->selesai->service->customer->telp."?
+                            text=Assalamu'alaikum%20Kami%20dari%20Mecs%20Komputer%20kembali%20mengingatkan%20bahwa%20ada%20nota%20penjualan%20jatuh%20tempo%20dengan%20kode%20faktur%20".$record->code."%20sejumlah%20".number_format($record->sisa, 0, '', '.');
+                        })
+                        ->color('success')
+                        ->icon('heroicon-o-chat-bubble-bottom-center-text')
+                        ->openUrlInNewTab()
+                        ->hidden(fn() => auth()->user()->roles->pluck('name')[0] === 'teknisi'),
+                ])                
+            ])            
             ->defaultSort('code', 'DESC');
     }
 }

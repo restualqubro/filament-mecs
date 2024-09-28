@@ -38,16 +38,18 @@ class PiutangServiceTableWidget extends BaseWidget
                     ->label('Sisa Pembayaran')
             ])
             ->actions([
-                Tables\Actions\Action::make('contact')
+                Tables\Actions\ActionGroup::make([
+                    Tables\Actions\Action::make('contact')
                         ->label('Contact')
                         ->url(function(Invoice $record) {                            
                             return 'https://wa.me/+62'.$record->selesai->service->customer->telp."?
-                            text=Assalamu'alaikum";
+                            text=Assalamu'alaikum%20Kami%20dari%20Mecs%20Komputer%20kembali%20mengingatkan%20bahwa%20ada%20invoice%20perbaikan%20jatuh%20tempo%20dengan%20kode%20faktur%20".$record->code."%20sejumlah%20".number_format($record->sisa, 0, '', '.');
                         })
                         ->color('success')
                         ->icon('heroicon-o-chat-bubble-bottom-center-text')
                         ->openUrlInNewTab()
                         ->hidden(fn() => auth()->user()->roles->pluck('name')[0] === 'teknisi'),
+                ])                
             ])
             ->defaultSort('code', 'DESC');
     }

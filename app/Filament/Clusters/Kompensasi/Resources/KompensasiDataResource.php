@@ -21,6 +21,8 @@ class KompensasiDataResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-scissors';
 
+    protected static ?string $pluralModelLabel = 'Kompensasi';
+
     protected static ?string $cluster = Kompensasi::class;
 
     public static function form(Form $form): Form
