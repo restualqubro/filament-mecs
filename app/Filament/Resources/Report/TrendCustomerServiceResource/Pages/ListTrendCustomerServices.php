@@ -12,8 +12,12 @@ class ListTrendCustomerServices extends ListRecords
 
     protected function getHeaderActions(): array
     {
+        $decodeQueryString = urldecode(request()->getQueryString());
         return [
-            Actions\CreateAction::make(),
+            Actions\Action::make('export')
+                ->label('Export PDF')
+                ->url('/print/reporttrendcustomerservices?'. $decodeQueryString)                
+                ->openUrlInNewTab()            
         ];
     }
 }

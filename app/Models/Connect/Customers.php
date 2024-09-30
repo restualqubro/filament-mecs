@@ -2,11 +2,9 @@
 
 namespace App\Models\Connect;
 
-use App\Models\Service\Data;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Customers extends Model
 {
@@ -21,8 +19,4 @@ class Customers extends Model
         'type'
     ];    
 
-    public function service(): HasMany
-    {
-        return $this->hasMany(Data::class, 'customer_id', 'id');
-    }
 }
