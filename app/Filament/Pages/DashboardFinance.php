@@ -8,6 +8,8 @@ use Filament\Pages\Page;
 
 class DashboardFinance extends Page
 {
+    use HasPageShield;
+    
     protected static ?string $navigationIcon = 'heroicon-o-wallet';
 
     protected static ?string $navigationLabel = 'Dashboard Finance';

@@ -166,7 +166,7 @@ class ServiceDataResource extends Resource
                 Tables\Columns\TextColumn::make('customer.name')
                     ->label('Customer')
                     ->searchable(),
-                Tables\Columns\TextColumn::make('date_in')
+                Tables\Columns\TextColumn::make('created_at')
                     ->label('Tanggal Masuk')
                     ->sortable(),
                 Tables\Columns\TextColumn::make('category.name')
